@@ -47,34 +47,55 @@
             z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
         }
             /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
-    /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
-    .login-button {
-      width: 198px; /* กำหนดขนาดของปุ่ม */
-      height: 52px; /* กำหนดความสูงของปุ่ม */
-      background: url('images/loginButton1.png') no-repeat center center;
-      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-      border: none;
-      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-      position: absolute;
-      top: 86%; /* อยู่กลางหน้าจอในแนวตั้ง */
-      left: 50%;
-      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-    }
+        /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+        .login-button {
+        width: 198px; /* กำหนดขนาดของปุ่ม */
+        height: 52px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/loginButton1.png') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 86%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        left: 50%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+        }
 
-    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-    .login-button:hover {
-      background: url('images/loginButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-    }
-    .register-button {
-      position: absolute; top: 91%; left: 88%; 
-      font-size: 28px;
-      text-decoration: underline; 
-      background: none; border: none; 
-      color: #000; font-family: 'Pixelify Sans', sans-serif;
-      z-index: 2;
-    }
+        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+        .login-button:hover {
+        background: url('images/loginButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+        }
+        .register-button {
+        position: absolute; top: 91%; left: 88%; 
+        font-size: 28px;
+        text-decoration: underline; 
+        background: none; border: none; 
+        color: #000; font-family: 'Pixelify Sans', sans-serif;
+        z-index: 2;
+        }
+        .input-wrapper {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: 45%; 
+            height: 50px;
+            z-index: 1;
+        }
+        .input-overlay {
+            position: absolute;
+            width: 87%;
+            height: 50%;
+            left: 5%;
+            background-color: rgba(255, 255, 255, 0); /* ความโปร่งใส 50% */
+            border: none;
+            padding: 8px;
+            font-size: 24px;
+            font-family: 'Pixelify Sans', sans-serif;
+            z-index: 2;
+            outline: none;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -85,12 +106,18 @@
         <p class="head-text" style="top: 42%; left: 25%;">Username:</p>
         <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
         <img src="images/board.PNG" class="board-image"style="top: 52%; left: 50%;">
+        <div class="input-wrapper" style="top: 58%; left: 50%;">
+            <input type="text" class="input-overlay">
+        </div>
     </div>
 
     <div>
         <p class="head-text" style="top: 60%; left: 25%;">Password:</p>
         <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
         <img src="images/board.PNG" class="board-image"style="top: 70%; left: 50%;">
+         <div class="input-wrapper" style="top: 76%; left: 50%;">
+            <input type="password" class="input-overlay">
+         </div>
     </div>
 
     <div>
@@ -99,7 +126,7 @@
       
   
       <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง -->
-      <button class="login-button" onclick="location.href='CharacterDesignPage.html'"></button>
+      <button class="login-button" onclick="location.href='CharacterPage.html'"></button>
 
 </body>
 </html>
