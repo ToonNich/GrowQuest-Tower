@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="css/style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: url('images/bridge.gif') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Pixelify Sans', sans-serif;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.322); /* สีขาวจางลงครึ่งหนึ่ง */
+            z-index: 0;
+        }
+        /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+        .name-image {
+            position: absolute;
+            top: 3%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%; /* ปรับขนาดตามต้องการ */
+            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        }
+        .head-text {
+            position: absolute;
+            font-size: 30px;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            z-index: 1; /* ให้ปุ่มอยู่บนรูปภาพ */
+        }
+        /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+        .board-image {
+            position: absolute;
+            top: 3%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45%; /* ปรับขนาดตามต้องการ */
+            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        }
+            /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+    /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+    .login-button {
+      width: 198px; /* กำหนดขนาดของปุ่ม */
+      height: 52px; /* กำหนดความสูงของปุ่ม */
+      background: url('images/loginButton1.png') no-repeat center center;
+      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      border: none;
+      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      position: absolute;
+      top: 86%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      left: 50%;
+      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .login-button:hover {
+      background: url('images/loginButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+    .register-button {
+      position: absolute; top: 91%; left: 88%; 
+      font-size: 28px;
+      text-decoration: underline; 
+      background: none; border: none; 
+      color: #000; font-family: 'Pixelify Sans', sans-serif;
+      z-index: 2;
+    }
+    </style>
+</head>
+<body>
+    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
+    <img src="images/name1.PNG" class="name-image">
+
+    <div>
+        <p class="head-text" style="top: 42%; left: 25%;">Username:</p>
+        <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+        <img src="images/board.PNG" class="board-image"style="top: 52%; left: 50%;">
+    </div>
+
+    <div>
+        <p class="head-text" style="top: 60%; left: 25%;">Password:</p>
+        <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+        <img src="images/board.PNG" class="board-image"style="top: 70%; left: 50%;">
+    </div>
+
+    <div>
+        <button class="register-button" onclick="location.href='RegisterPage.html'" >Register</button>
+    </div>
+      
+  
+      <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง -->
+      <button class="login-button" onclick="location.href='CharacterDesignPage.html'"></button>
+
+</body>
+</html>

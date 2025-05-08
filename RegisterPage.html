@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <link rel="stylesheet" href="css/style1.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+
+     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
+     .back-button {
+      width: 60px; /* กำหนดขนาดของปุ่ม */
+      height: 44px; /* กำหนดความสูงของปุ่ม */
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      border: none;
+      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      position: absolute;
+      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      left: 4%;
+      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+
+    /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%; /* ปรับขนาดตามต้องการ */
+      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+    }
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    .input-box {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 45%; /* ปรับความกว้างตามต้องการ */
+    padding: 8px;
+    font-size: 18px;
+    border: 0.5px solid #2F6A31;
+    border-radius: 10px;
+    background-color: #D9FFDA;
+    z-index: 2; 
+  }
+
+    /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+    .register-button {
+      width: 196px; /* กำหนดขนาดของปุ่ม */
+      height: 54px; /* กำหนดความสูงของปุ่ม */
+      background: url('images/regisButton1.png') no-repeat center center;
+      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      border: none;
+      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      position: absolute;
+      top: 80%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      left: 50%;
+      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .register-button:hover {
+      background: url('images/regisButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+    
+    .login-button {
+      position: absolute; top: 85%; left: 70%; 
+      font-size: 28px;
+      text-decoration: underline; 
+      background: none; border: none; 
+      color: #000; font-family: 'Pixelify Sans', sans-serif;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='LoginPage.html'"></button>
+  <div>
+    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
+    <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+
+    <div>
+      <p class="head-text" style="top: 6%; left: 23%;">Username:</p>
+      <input type="text" class="input-box " style="top: 20%; left: 49%;">
+    </div>
+
+    <div>
+      <p class="head-text" style="top: 22%; left: 23%;">Email:</p>
+      <input type="text" class="input-box " style="top: 36%; left: 49%;">
+    </div>
+
+    <div>
+      <p class="head-text" style="top: 38%; left: 23%;">Password:</p>
+      <input type="text" class="input-box " style="top: 52%; left: 49%;">
+    </div>
+
+    <div>
+      <p class="head-text" style="top: 54%; left: 23%;">Confirm Password:</p>
+    <input type="text" class="input-box " style="top: 68%; left: 49%;">
+    </div>
+
+    <!-- <div>
+      <p class="head-text" style="top: 80%; left: 70%;text-decoration: underline;" onclick="location.href='LoginPage.html'">Login</p>
+    </div> -->
+
+    <div>
+      <button class="login-button" onclick="location.href='LoginPage.html'" >Login</button>
+    </div>
+    
+
+    <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง -->
+    <button class="register-button" onclick="location.href='LoginPage.html'"></button>
+  </div>
+</body>
+</html>
