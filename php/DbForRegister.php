@@ -31,7 +31,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssss", $username, $hashedPassword, $email, $time);
 
 if ($stmt->execute()) {
-    header("Location: C:/xampp/htdocs/GrowQuest-Tower/LoginPage.html");
+    header("Location: ../LoginPage.html");
     exit();
 } else {
     echo "❌ เกิดข้อผิดพลาดในการลงทะเบียน: " . $stmt->error;
