@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Character Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <style>
+        body { /*230 210*/
+            background: url('images/Wooden Stage.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Pixelify Sans', sans-serif;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.322); /* สีขาวจางลงครึ่งหนึ่ง */
+            z-index: 0;
+        }
+        /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
+        .back-button {
+            width: 60px; /* กำหนดขนาดของปุ่ม */
+            height: 44px; /* กำหนดความสูงของปุ่ม */
+            background: url('images/backButton1.png') no-repeat center center;
+            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+            border: none;
+            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+            position: absolute;
+            top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
+            left: 4%;
+            transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+        }
+        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+        .back-button:hover {
+            background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+            background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+        }
+        /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+        .light-image {
+            position: absolute;
+            top: -38%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%; /* ปรับขนาดตามต้องการ */
+            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        }
+        .head-text {
+            position: absolute;
+            font-size: 30px;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+            }
+        .input-box {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: 25%; /* ปรับความกว้างตามต้องการ */
+            padding: 8px;
+            font-size: 18px;
+            border: 0.5px solid #2F6A31;
+            border-radius: 10px;
+            background-color: #D9FFDA;
+            z-index: 2; 
+        }
+        /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+        .plant-image {
+            position: absolute;
+            top: 14%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32%; /* ปรับขนาดตามต้องการ */
+            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        }
+            /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+        /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+        .save-button {
+        width: 156px; /* กำหนดขนาดของปุ่ม */
+        height: 56px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/Save1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 90%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        left: 50%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+        }
+
+        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+        .save-button:hover {
+        background: url('images/Save2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+        }
+        .preSlide-button {
+        width: 26px; /* กำหนดขนาดของปุ่ม */
+        height: 41px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/PreSlide1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 50%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        left: 3%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+        }
+
+        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+        .preSlide-button :hover {
+        background: url('images/PreSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+        }
+        .nextSlide-button {
+        width: 26px; /* กำหนดขนาดของปุ่ม */
+        height: 41px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/NextSlide1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 50%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        right: 3%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+        }
+
+        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+        .nextSlide-button :hover {
+        background: url('images/NextSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+        }
+    </style>
+</head>
+<body>
+    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
+    <img src="images/light.png" class="light-image">
+    <button class="back-button" onclick="location.href='LoginPage.html'"></button>
+
+    <div>
+        <p class="head-text" style="top: 6%; left: 6%;">Name:</p>
+        <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+        <input type="text" name="Username" class="input-box" style="top: 12%; left: 25%;" required>
+    </div>   
+
+    <div>
+        <button class="preSlide-button"></button>
+        <button class="nextSlide-button"></button>
+    </div>
+    <!-- 🔽 ตัวละครที่เปลี่ยนได้ -->
+    <img id="character" src="images/plant.png" class="plant-image">
+
+      <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง use when unauthen -->
+      <button class="save-button" onclick="location.href='HomePage.html'"></button>
+      <!-- <button type="submit" login-button"></button> -->
+
+</body>
+<script>
+    const characters = [
+      "images/plant.png",
+      "images/plan2.PNG"
+    ];
+    let currentIndex = 0;
+
+    const characterImage = document.getElementById("character");
+
+    document.querySelector(".preSlide-button").addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + characters.length) % characters.length;
+      characterImage.src = characters[currentIndex];
+    });
+
+    document.querySelector(".nextSlide-button").addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % characters.length;
+      characterImage.src = characters[currentIndex];
+    });
+  </script>
+</html>
