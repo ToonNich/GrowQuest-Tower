@@ -111,7 +111,7 @@
         }
 
         /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .preSlide-button :hover {
+        .preSlide-button:hover {
         background: url('images/PreSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
         background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
         }
@@ -130,7 +130,7 @@
         }
 
         /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .nextSlide-button :hover {
+        .nextSlide-button:hover {
         background: url('images/NextSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
         background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
         }
@@ -141,23 +141,39 @@
     <img src="images/light.png" class="light-image">
     <button class="back-button" onclick="location.href='LoginPage.html'"></button>
 
-    <div>
+    <div> 
         <p class="head-text" style="top: 6%; left: 6%;">Name:</p>
         <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
         <input type="text" name="Username" class="input-box" style="top: 12%; left: 25%;" required>
     </div>   
-
     <div>
         <button class="preSlide-button"></button>
         <button class="nextSlide-button"></button>
     </div>
     <!-- 🔽 ตัวละครที่เปลี่ยนได้ -->
     <img id="character" src="images/plant.png" class="plant-image">
+    <button type="button" class="save-button" onclick="window.location.href='HomePage.html'"></button>
+
 
       <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง use when unauthen -->
-      <button class="save-button" onclick="location.href='HomePage.html'"></button>
+      <!-- <button class="save-button" onclick="saveCharacter()"></button> -->
       <!-- <button type="submit" login-button"></button> -->
-
+    
+      <!-- <form id="characterForm">
+        <label for="characterName" class="head-text" style="top: 6%; left: 6%;">Name:</label>
+        <input type="text" id="characterName" name="characterName" class="input-box" style="top: 12%; left: 25%;"required><br><br>
+    
+        <label for="characterImage">Select Plant:</label><br>
+        <input type="radio" id="character1" name="characterImage" value="character1.png" class="plant-image" required>
+        <label for="character1">Plant 1</label><br>
+        <input type="radio" id="character2" name="characterImage" value="character2.png" class="plant-image" required>
+        <label for="character2">Plant 2</label><br> -->
+        <!-- เพิ่มตัวละครอื่นๆ ที่คุณต้องการ -->
+        
+        <!-- <button type="submit" class="save-button"></button>
+      </form>
+    
+      <div id="error-msg"></div> -->
 </body>
 <script>
     const characters = [
@@ -165,17 +181,56 @@
       "images/plan2.PNG"
     ];
     let currentIndex = 0;
-
+  
     const characterImage = document.getElementById("character");
-
+  
     document.querySelector(".preSlide-button").addEventListener("click", () => {
       currentIndex = (currentIndex - 1 + characters.length) % characters.length;
       characterImage.src = characters[currentIndex];
     });
-
+  
     document.querySelector(".nextSlide-button").addEventListener("click", () => {
       currentIndex = (currentIndex + 1) % characters.length;
       characterImage.src = characters[currentIndex];
     });
+
+    document.querySelector(".save-button").addEventListener("click", () => {
+    // ถ้าคุณมีการ validate หรือเก็บข้อมูลก่อนหน้า ให้ทำที่นี่
+    window.location.href = "HomePage.html";
+    });
+
+  
+    // async function saveCharacter() {
+    //   const name = document.querySelector('input[name="Username"]').value;
+    //   const character = characters[currentIndex];
+    //   const userId = localStorage.getItem("userId"); // ดึง user id จาก localStorage
+  
+    //   if (!name || !userId) {
+    //     alert("❌ Missing name or user ID.");
+    //     return;
+    //   }
+  
+    //   try {
+    //     const response = await fetch('SaveCharacter.php', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded'
+    //       },
+    //       body: `name=${encodeURIComponent(name)}&image=${encodeURIComponent(character)}&user_id=${encodeURIComponent(userId)}`
+    //     });
+  
+    //     const data = await response.text(); 
+  
+    //     if (response.ok) {
+    //       window.location.href = "HomePage.html"; 
+    //     } else {
+    //       alert("❌ เกิดข้อผิดพลาดในการบันทึกตัวละคร");
+    //     }
+    //   } catch (error) {
+    //     console.error("❌ Error saving character:", error);
+    //     alert("❌ มีข้อผิดพลาดในการส่งข้อมูล");
+    //   }
+    // }
   </script>
+  
 </html>

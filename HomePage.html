@@ -179,7 +179,7 @@
         }
 
         /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .preSlide-button :hover {
+        .preSlide-button:hover {
         background: url('images/PreSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
         background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
         }
@@ -198,7 +198,7 @@
         }
 
         /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .nextSlide-button :hover {
+        .nextSlide-button:hover {
         background: url('images/NextSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
         background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
         }
@@ -250,8 +250,9 @@
         <button class="nextSlide-button"></button>
     </div>
     <!-- 🔽 ตัวละครที่เปลี่ยนได้ -->
-    <img id="character" src="images/plant.png" class="plant-image">
-    
+    <img id="character" src="" class="plant-image"/>
+    <p id="charName"></p>
+
 </body>
 <script>
     function updateDateTime() {
@@ -346,6 +347,15 @@
       currentIndex = (currentIndex + 1) % characters.length;
       characterImage.src = characters[currentIndex];
     });
+
+    window.onload = () => {
+    const data = JSON.parse(localStorage.getItem("characterData"));
+    if (data) {
+        document.getElementById("character").src = data.image;
+        document.getElementById("charName").textContent = data.name;
+    }
+    };
+
   </script>
 
 

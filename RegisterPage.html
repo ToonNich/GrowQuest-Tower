@@ -96,7 +96,8 @@
   <div>
     <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-    <form action="php/DbForRegister.php" method="post" onsubmit="return validateForm();">
+    <!-- <form action="php/DbForRegister.php" method="post" onsubmit="return validateForm();"> -->
+      <form id="registerForm">
       <p class="head-text" style="top: 6%; left: 23%;">Username:</p>
       <input type="text" name="Username" class="input-box" style="top: 20%; left: 49%;" required>
       <p class="head-text" style="top: 22%; left: 23%;">Email:</p>
@@ -116,23 +117,58 @@
   </div>
 </body>
 <script>
-    function validateForm() {
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-    const email = document.getElementsByName("Email")[0].value;
+  //   function validateForm() {
+  //   const password = document.getElementById("password").value;
+  //   const confirmPassword = document.getElementById("confirmPassword").value;
+  //   const email = document.getElementsByName("Email")[0].value;
     
-    // ตรวจสอบว่า password และ confirm password ตรงกันหรือไม่
-    if (password !== confirmPassword) {
-      document.getElementById("error-msg").innerText = "❌ Password ไม่ตรงกัน";
-      return false;
-    }
-    // ตรวจสอบว่าอีเมลตรงตามรูปแบบที่ถูกต้องหรือไม่
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
-      document.getElementById("error-msg").innerText = "❌ โปรดกรอกอีเมลที่ถูกต้อง";
-      return false;
-    }
-    return true;
+  //   if (password !== confirmPassword) {
+  //     document.getElementById("error-msg").innerText = "❌ Password ไม่ตรงกัน";
+  //     return false;
+  //   }
+  
+  //   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  //   if (!emailPattern.test(email)) {
+  //     document.getElementById("error-msg").innerText = "❌ โปรดกรอกอีเมลที่ถูกต้อง";
+  //     return false;
+  //   }
+  //   return true;
+  // }
+  document.getElementById('registerForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  const password = formData.get("Password");
+  const confirmPassword = formData.get("ConfirmPassword");
+  const email = formData.get("Email");
+
+  // ตรวจสอบ form
+  if (password !== confirmPassword) {
+    document.getElementById("error-msg").innerText = "❌ Password ไม่ตรงกัน";
+    return;
   }
+
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailPattern.test(email)) {
+    document.getElementById("error-msg").innerText = "❌ โปรดกรอกอีเมลที่ถูกต้อง";
+    return;
+  }
+
+  // ส่งข้อมูลแบบ fetch
+  fetch("php/DbForRegister.php", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      window.location.href = "LoginPage.html"; // ✅ redirect ไปหน้า Login
+    } else {
+      document.getElementById("error-msg").innerText = "เกิดข้อผิดพลาดขณะลงทะเบียน";
+    }
+  })
+  .catch(error => {
+    document.getElementById("error-msg").innerText = "เกิดข้อผิดพลาดขณะส่งข้อมูล";
+  });
+});
 </script>
 </html>
