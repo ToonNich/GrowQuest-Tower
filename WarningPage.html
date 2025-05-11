@@ -43,23 +43,51 @@
         height: auto;
         z-index: 2;
     }
-    /* ตัวอย่างตำแหน่งของแต่ละรูป */
-    .icon-temperature { 
-        top: 11.6%; 
-        left: 42.5%;
-        position: absolute;
-        width: 180px; /* ปรับขนาดไอคอน */
-        height: auto;
-        z-index: 2; 
+    .icon-humidity {
+      background: url('images/Huminity.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 15%; 
+      left: 15%;
+      z-index: 2;
+    } 
+    .icon-humidity:hover {
+      background: url('images/Huminity.PNG') no-repeat center center;
+      background-size: cover;
     }
-
-    .icon-chemical{ 
-        top: 13.5%; 
-        right: 15%; 
-        position: absolute;
-        width: 180px; /* ปรับขนาดไอคอน */
-        height: auto;
-        z-index: 2; 
+    .icon-temperature {
+      background: url('images/Temperature.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 180px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 11.6%;; 
+      left: 42.5%;
+      z-index: 2;
+    } 
+    .icon-temperature:hover {
+      background: url('images/Temperature.PNG') no-repeat center center;
+      background-size: cover;
+    }
+    .icon-chemical {
+      background: url('images/Chemical.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 180px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 13.5%; 
+      right: 15%; 
+      z-index: 2;
+    } 
+    .icon-chemical:hover {
+      background: url('images/Chemical.PNG') no-repeat center center;
+      background-size: cover;
     }
     .icon-ec{
         top: 50%; 
@@ -69,6 +97,22 @@
         height: auto;
         z-index: 2; 
     }
+    .icon-ec {
+      background: url('images/ec.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 135px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 50%; 
+      left: 30%;  
+      z-index: 2;
+    } 
+    .icon-ec:hover {
+      background: url('images/ec.PNG') no-repeat center center;
+      background-size: cover;
+    }
     .icon-ph { 
         top: 49%; 
         right: 30.5%; 
@@ -76,6 +120,22 @@
         width: 135px; /* ปรับขนาดไอคอน */
         height: auto;
         z-index: 2; 
+    }
+    .icon-ph {
+      background: url('images/ph.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 135px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 49.5%; 
+      right: 30.5%; 
+      z-index: 2;
+    } 
+    .icon-ph:hover {
+      background: url('images/ph.PNG') no-repeat center center;
+      background-size: cover;
     }
 
     .icon-label {
@@ -160,34 +220,38 @@
   </style>
 </head>
 <body>
-  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  <button class="back-button" onclick="location.href='DashboardPage.html'"></button>
 
   <div class="middle-container">
     <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image" />
 
     <!-- รูปซ้อน -->
     <div>
-        <img src="images/Huminity.PNG" class="icon-humidity" alt="Humidity" />
+        <!-- <img src="images/Huminity.PNG" class="icon-humidity" alt="Humidity" /> -->
+        <button class="icon-humidity"style="width: 160px; height: 90px;" onclick="location.href='WarningHumiPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; left: 18.5%;"/>
     </div>
     <div>
-        <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" />
+        <!-- <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" /> -->
+        <button class="icon-temperature" style="width: 180px; height: 110px;" onclick="location.href='WarningTempPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; left: 47%;"/>
     </div>
     <div>
-        <img src="images/Chemical.PNG" class="icon-chemical" alt="Chemical" />
+        <!-- <img src="images/Chemical.PNG" class="icon-chemical" alt="Chemical" /> -->
+        <button class="icon-chemical" style="width: 180px; height: 90px;" onclick="location.href='WarningChemPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; right: 19.5%;" />
     </div>
     <div>
-        <img src="images/ec.PNG" class="icon-ec" alt="EC" />
+        <!-- <img src="images/ec.PNG" class="icon-ec" alt="EC" /> -->
+        <button class="icon-ec" style="width: 135px; height: 70px;" onclick="location.href='WarningEcPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 57%; left: 32.5%;"/>
     </div>
     <div>
-        <img src="images/ph.PNG" class="icon-ph" alt="pH" />
+        <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
+        <button class="icon-ph" style="width: 130px; height: 70px;" onclick="location.href='WarningPhPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 57%; right: 33.5%;" />
     </div>
 
-    <button class="warning-button" onclick="location.href='WarningPage.html'"></button>
     <button class="history-button" onclick="location.href='HistoryPage.html'"></button>
     <button class="infomation-label-button" onclick="location.href='InfomationLabelPage.html'"></button>
   </div>
