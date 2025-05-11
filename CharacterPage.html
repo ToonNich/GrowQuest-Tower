@@ -75,7 +75,14 @@
             width: 32%; /* ปรับขนาดตามต้องการ */
             z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
         }
-            /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+        .Profile-image {
+            position: absolute;
+            top: 2%;
+            left: 4.5%;
+            transform: translateX(-50%);
+            width: 6.5%; /* ปรับขนาดตามต้องการ */
+            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        }
         /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
         .save-button {
         width: 156px; /* กำหนดขนาดของปุ่ม */
@@ -151,7 +158,7 @@
         <button class="nextSlide-button"></button>
     </div>
     <!-- 🔽 ตัวละครที่เปลี่ยนได้ -->
-    <img id="character" src="images/plant.png" class="plant-image">
+    <img id="character" src="images/NormalPlant.gif" class="plant-image">
     <button type="button" class="save-button" onclick="window.location.href='HomePage.html'"></button>
 
 
@@ -177,8 +184,9 @@
 </body>
 <script>
     const characters = [
-      "images/plant.png",
-      "images/plan2.PNG"
+      "images/NormalPlant.gif",
+      "images/RaPlant.gif",
+      "images/InsectBite.gif"
     ];
     let currentIndex = 0;
   
