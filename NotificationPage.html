@@ -1,312 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
-    <title>Notification</title>
-      <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-      authDomain: "seniorproject-684c1.firebaseapp.com",
-      projectId: "seniorproject-684c1",
-      storageBucket: "seniorproject-684c1.appspot.com",
-      messagingSenderId: "847138584376",
-      appId: "1:847138584376:web:eface0926c96092daef3cd",
-      measurementId: "G-N0CM5TQBM8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.openNotification = async function(button, link, docId) {
-      button.classList.remove('unread');
-      button.classList.add('read');
-      const docRef = doc(db, "notifications", docId);
-      await updateDoc(docRef, { read: true });
-      setTimeout(() => {
-        window.location.href = link;
-      }, 200);
-    }
-
-    window.toggleStar = function(button) {
-      if (button.classList.contains('star3-button')) {
-        button.classList.remove('star3-button');
-        button.classList.add('star1-button');
-      } else {
-        button.classList.remove('star1-button');
-        button.classList.add('star3-button');
-      }
-    }
-  </script>
-    <style>
-        body {
-      background: url('images/info.gif') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Pixelify Sans', sans-serif;
-    }
-    body::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(255, 255, 255, 0.322); 
-        z-index: 0;
-    }
-
-     .back-button {
-      width: 60px; 
-      height: 44px; 
-      background: url('images/backButton1.png') no-repeat center center;
-      background-size: cover; 
-      border: none;
-      cursor: pointer; 
-      position: absolute;
-      top: 6%; 
-      left: 4%;
-      transform: translate(-50%, -50%); 
-      z-index: 2; 
-    }
-    .back-button:hover {
-      background: url('images/backButton2.png') no-repeat center center; 
-      background-size: cover; 
-    }
-    .middle-image {
-      position: absolute;
-      top: 3%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%; 
-      z-index: 1; 
-    }
-    .head-text {
-      position: absolute;
-      font-size: 30px;
-      padding: 10px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      z-index: 2; 
-    }
-
-      .unread {
-        background: url('images/bell1.png') no-repeat center center;
-         width: 70px;
-        height: 80px;
-        background-size: cover;
-        border: none;
-        cursor: pointer;
-        position: absolute;
-        z-index: 2;
-      }
-
-      .read {
-        background: url('images/bell2.png') no-repeat center center;
-         width: 70px;
-        height: 80px;
-        background-size: cover;
-        border: none;
-        cursor: pointer;
-        position: absolute;
-        z-index: 2;
-      }
-
-    .bin-button {
-      width: 40px; 
-      height: 40px; 
-      background: url('images/bin1.PNG') no-repeat center center;
-      background-size: cover; 
-      border: none;
-      cursor: pointer; 
-      position: absolute;
-      z-index: 2; 
-    }
-    
-    .bin-button:hover {
-      background: url('images/bin2.PNG') no-repeat center center; 
-      background-size: cover; 
-    }
-    /* .star1-button {
-      width: 45px; 
-      height: 40px; 
-      background: url('images/star1.PNG') no-repeat center center;
-      background-size: cover; 
-      border: none;
-      cursor: pointer; 
-      position: absolute;
-      z-index: 2; 
-    }
-    
-    .star1-button:hover {
-      background: url('images/star2.PNG') no-repeat center center; 
-      background-size: cover; 
-    }
-    .star3-button {
-      width: 45px; 
-      height: 40px; 
-      background: url('images/star3.PNG') no-repeat center center;
-      background-size: cover; 
-      border: none;
-      cursor: pointer; 
-      position: absolute;
-      z-index: 2; 
-    } */
-
-      .star3-button {
-        width: 45px; 
-        height: 40px; 
-        background: url('images/star3.PNG') no-repeat center center;
-        background-size: cover; 
-        border: none;
-        cursor: pointer; 
-        position: absolute;
-        z-index: 2; 
-      }
-
-      .star1-button {
-        width: 45px; 
-        height: 40px; 
-        background: url('images/star1.PNG') no-repeat center center;
-        background-size: cover; 
-        border: none;
-        cursor: pointer; 
-        position: absolute;
-        z-index: 2; 
-      }
-
-
-    .divider {
-      width: 52%;
-      height: 0.5px;
-      background-color: #000000; 
-      opacity: 0.6;              
-      margin: 0 auto;
-      margin-top: 8px;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-    .alert-title {
-      position: absolute;
-      font-size: 24px;
-      color: #000000;
-      font-weight: bold;
-      z-index: 2;
-      white-space: nowrap;
-    }
-
-    </style>
-</head>
-<body>
-    <button class="back-button" onclick="location.href='HomePage.html'"></button>
-    <div>
-    <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-      <div> 
-        <div class="alert-title" style="top: 12%; left: 30%;">Water Alert</div>
-        <button class="unread"
-          style="top: 17%; left: 26%; transform: translate(-50%, -50%);"
-          onclick="openNotification(this, 'NotificationDetail.html', 'Bk7yiYdUg8DZDZTiCi2T')">
-        </button>
-        <button class="bin-button" style=" top: 22%; right: 24%; transform: translate(-50%, -50%); " ></button>
-        <button class="star3-button"
-        style="top: 22%; right: 28%; transform: translate(-50%, -50%);"
-        onclick="toggleStar(this)"></button>
-
-        <div class="divider" style="top: 25%; position: absolute; left: 50%;"></div>
-      </div>
-
-       <div>
-        <div class="alert-title" style="top: 31%; left: 30%;">Water Alert</div>
-          <button class="unread"
-            style="top:36%; left: 26%; transform: translate(-50%, -50%);"
-            onclick="openNotification(this, 'NotificationDetail.html', 'Bk7yiYdUg8DZDZTiCi2T')">
-          </button>
-        <button class="bin-button" style=" top: 41%; right: 24%; transform: translate(-50%, -50%); " ></button>
-        <button class="star3-button"
-        style="top: 41%; right: 28%; transform: translate(-50%, -50%);"
-        onclick="toggleStar(this)"></button>
-      
-        <div class="divider" style="top: 44%; position: absolute; left: 50%;"></div>
-      </div>
-
-      <div>
-        <div class="alert-title" style="top: 49%; left: 30%;">Water Alert</div>
-         <button class="unread"
-            style="top:54%; left: 26%; transform: translate(-50%, -50%);"
-            onclick="openNotification(this, 'NotificationDetail.html', 'Bk7yiYdUg8DZDZTiCi2T')">
-          </button>
-        <button class="bin-button" style=" top: 60%; right: 24%; transform: translate(-50%, -50%); " ></button>
-        <button class="star3-button"
-        style="top: 60%; right: 28%; transform: translate(-50%, -50%);"
-        onclick="toggleStar(this)"></button>
-
-        <div class="divider" style="top: 63%; position: absolute; left: 50%;"></div>
-      </div>
-      
-       <div>
-        <div class="alert-title" style="top: 68%; left: 30%;">Water Alert</div>
-         <button class="unread"
-            style="top:73%; left: 26%; transform: translate(-50%, -50%);"
-            onclick="openNotification(this, 'NotificationDetail.html', 'Bk7yiYdUg8DZDZTiCi2T')">
-          </button>
-        <button class="bin-button" style=" top: 79%; right: 24%; transform: translate(-50%, -50%); " ></button>
-        <button class="star3-button"
-        style="top: 79%; right: 28%; transform: translate(-50%, -50%);"
-        onclick="toggleStar(this)"></button>
-
-        <div class="divider" style="top: 82%; position: absolute; left: 50%;"></div>
-      </div>
-
-      
-  </div>
-</body>
-  <script>
-    function toggleStar(button) {
-      if (button.classList.contains('star3-button')) {
-        button.classList.remove('star3-button');
-        button.classList.add('star1-button');
-      } else {
-        button.classList.remove('star1-button');
-        button.classList.add('star3-button');
-      }
-    }
-
-    function toggleStar(button) {
-    if (button.classList.contains('star3-button')) {
-      button.classList.remove('star3-button');
-      button.classList.add('star1-button');
-    } else {
-      button.classList.remove('star1-button');
-      button.classList.add('star3-button');
-    }
-  }
-
-    function markAsRead(button) {
-      button.classList.remove('unread');
-      button.classList.add('read');
-    }
-
-    function toggleStar(button) {
-    if (button.classList.contains('star3-button')) {
-      button.classList.remove('star3-button');
-      button.classList.add('star1-button');
-    } else {
-      button.classList.remove('star1-button');
-      button.classList.add('star3-button');
-    }
-  }
-
-  function openNotification(button, link) {
-    button.classList.remove('unread');
-    button.classList.add('read');
-
-    setTimeout(() => {
-      window.location.href = link;
-    }, 200); 
-  }
-  </script>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -389,7 +80,6 @@
       }
     }
 
-    // ✅ เรียกหลัง DOM โหลดเสร็จ
     window.addEventListener('DOMContentLoaded', async () => {
       console.log("📄 DOM โหลดเสร็จแล้ว กำลังโหลดการแจ้งเตือน...");
       await loadNotifications();
@@ -402,6 +92,7 @@
       background-size: cover;
       font-family: 'Pixelify Sans', sans-serif;
     }
+
     body::before {
       content: "";
       position: absolute;
@@ -410,6 +101,7 @@
       background-color: rgba(255, 255, 255, 0.322);
       z-index: 0;
     }
+
     .back-button {
       width: 60px;
       height: 44px;
@@ -423,10 +115,12 @@
       transform: translate(-50%, -50%);
       z-index: 2;
     }
+
     .back-button:hover {
       background: url('images/backButton2.png') no-repeat center center;
       background-size: cover;
     }
+
     .middle-image {
       position: absolute;
       top: 3%;
@@ -435,6 +129,7 @@
       width: 70%;
       z-index: 1;
     }
+
     .alert-title {
       position: absolute;
       font-size: 24px;
@@ -443,6 +138,7 @@
       z-index: 2;
       white-space: nowrap;
     }
+
     .unread, .read {
       width: 70px;
       height: 80px;
@@ -451,9 +147,17 @@
       cursor: pointer;
       position: absolute;
       z-index: 2;
+      background-color: transparent;
+
     }
-    .unread { background: url('images/bell1.png') no-repeat center center; }
-    .read   { background: url('images/bell2.png') no-repeat center center; }
+
+    .unread {
+      background-image: url('images/bell1.PNG');
+    }
+
+    .read {
+      background-image: url('images/bell2.PNG');
+    }
 
     .bin-button {
       width: 40px;
@@ -465,22 +169,30 @@
       position: absolute;
       z-index: 2;
     }
+
     .bin-button:hover {
       background: url('images/bin2.PNG') no-repeat center center;
       background-size: cover;
     }
 
     .star3-button, .star1-button {
-      width: 45px;
+      width: 50px;
       height: 40px;
       background-size: cover;
       border: none;
       cursor: pointer;
       position: absolute;
       z-index: 2;
+        background-color: transparent;
     }
-    .star3-button { background: url('images/star3.PNG') no-repeat center center; }
-    .star1-button { background: url('images/star1.PNG') no-repeat center center; }
+
+    .star3-button {
+      background-image: url('images/star3.PNG');
+    }
+
+    .star1-button {
+      background-image: url('images/star1.PNG');
+    }
 
     .divider {
       width: 52%;

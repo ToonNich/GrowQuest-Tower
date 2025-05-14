@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,11 +58,126 @@
 <body>
     <button class="back-button" onclick="location.href='NotificationPage.html'"></button>
     <div>
-    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
       <p class="head-text" style="top: 25%; left: 50%;">content content</p>
 
       
+  </div>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <title>Notification</title>
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.322);
+      z-index: 0;
+    }
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 6%;
+      left: 4%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 1;
+    }
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+    .notification-container {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      width: 60%;
+      cursor: pointer;
+    }
+    .notification-container:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .notification-icon {
+      width: 70px;
+      height: 70px;
+      background: url('images/bell1.png') no-repeat center center;
+      background-size: contain;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .notification-title {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 24px;
+      margin-left: 20px;
+      color: #000;
+    }
+    .notification-actions {
+      display: inline-block;
+      float: right;
+    }
+    .star-button, .bin-button {
+      width: 40px;
+      height: 40px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .star-button {
+      background-image: url('images/star3.PNG');
+    }
+    .bin-button {
+      background-image: url('images/bin1.PNG');
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+  <div class="notification-container" onclick="window.location.href='NotificationDetail.html'">
+    <span class="notification-icon"></span>
+    <span class="notification-title">Water level is high</span>
+    <span class="notification-actions">
+      <button class="star-button" onclick="event.stopPropagation()"></button>
+      <button class="bin-button" onclick="event.stopPropagation()"></button>
+    </span>
   </div>
 </body>
 </html>
