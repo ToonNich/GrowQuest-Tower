@@ -1,339 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home </title><link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: url('images/Farm_BG.png') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Pixelify Sans', sans-serif;
-        }
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(255, 255, 255, 0.155); /* สีขาวจางลงครึ่งหนึ่ง */
-            z-index: 0;
-        }
-        .midnight-images {
-            width: 100px; /* กำหนดขนาดของปุ่ม */
-            height: 85px;
-            background: url('images/Midnight.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 3%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            right: 78.5%;
-            z-index: 3; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        .box {
-            position: absolute;
-            top: 9%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* จัดให้อยู่กึ่งกลาง */
-            width: 26%;
-            height: 90px;
-            background-color: #FFF2CB;
-            border: 2px solid #FFBF00;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            z-index: 2;
-        }
-        .account-button {
-            width: 5%; /* กำหนดขนาดของปุ่ม */
-            height: 10%;
-            background: url('images/Account1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 3%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            right: 1.5%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .account-button:hover {
-        background: url('images/Account2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .notification-button {
-            width: 5%; /* กำหนดขนาดของปุ่ม */
-            height: 10%;
-            background: url('images/Noti1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 17%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            right: 1.5%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .notification-button:hover {
-        background: url('images/Noti2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }.notificationAlert-button {
-            width: 5%; /* กำหนดขนาดของปุ่ม */
-            height: 10%;
-            background: url('images/NotiAlert1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 17%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            right: 1.5%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .notificationAlert-button:hover {
-        background: url('images/NotiAlert2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .infomation-button {
-            width: 5%; /* กำหนดขนาดของปุ่ม */
-            height: 10%;
-            background: url('images/info1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 31%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            right: 1.5%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */ 
-        .infomation-button:hover {
-        background: url('images/info2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .wateringcan-button {
-            width: 5%; /* กำหนดขนาดของปุ่ม */
-            height: 10%;
-            background: url('images/WateringCan1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 17%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            left: 2%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */ 
-        .wateringcan-button:hover {
-        background: url('images/WateringCan2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .camera-button {
-            width: 5%; /* กำหนดขนาดของปุ่ม */
-            height: 10%;
-            background: url('images/Camera1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 31%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            left: 2%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */ 
-        .camera-button:hover {
-        background: url('images/Camera2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .dashboard-button {
-            width: 236px; /* กำหนดขนาดของปุ่ม */
-            height: 56px; /* กำหนดความสูงของปุ่ม */
-            background: url('images/Dashboard1.PNG') no-repeat center center;
-            background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-            border: none;
-            cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-            position: absolute;
-            top: 90%; /* อยู่กลางหน้าจอในแนวตั้ง */
-            right: 1.5%;
-            z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .dashboard-button:hover {
-            background: url('images/Dashboard2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-            background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .preSlide-button {
-        width: 26px; /* กำหนดขนาดของปุ่ม */
-        height: 41px; /* กำหนดความสูงของปุ่ม */
-        background: url('images/PreSlide1.PNG') no-repeat center center;
-        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-        border: none;
-        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-        position: absolute;
-        top: 50%; /* อยู่กลางหน้าจอในแนวตั้ง */
-        left: 3%;
-        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: url('images/Farm_BG.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
 
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .preSlide-button:hover {
-        background: url('images/PreSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        .nextSlide-button {
-        width: 26px; /* กำหนดขนาดของปุ่ม */
-        height: 41px; /* กำหนดความสูงของปุ่ม */
-        background: url('images/NextSlide1.PNG') no-repeat center center;
-        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-        border: none;
-        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-        position: absolute;
-        top: 50%; /* อยู่กลางหน้าจอในแนวตั้ง */
-        right: 3%;
-        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-        }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.155);
+      z-index: 0;
+    }
 
-        /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-        .nextSlide-button:hover {
-        background: url('images/NextSlideTwo.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-        }
-        /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
-        .plant-image {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30%; /* ปรับขนาดตามต้องการ */
-            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
-        }
-        /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
-        .Profile-image {
-            position: absolute;
-            top: 2%;
-            left: 4.5%;
-            transform: translateX(-50%);
-            width: 6.5%; /* ปรับขนาดตามต้องการ */
-            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
-        }
-        .hp-image {
-            position: absolute;
-            top: 8%;
-            left: 18%;
-            transform: translateX(-50%);
-            width: 20%; /* ปรับขนาดตามต้องการ */
-            z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
-        }
-    </style>
+    .box {
+      position: absolute;
+      top: 9%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 26%;
+      height: 90px;
+      background-color: #FFF2CB;
+      border: 2px solid #FFBF00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
+
+    .midnight-images {
+      width: 100px;
+      height: 85px;
+      background: url('images/Midnight.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 3%;
+      right: 78.5%;
+      z-index: 3;
+    }
+
+    .account-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/Account1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 3%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .account-button:hover {
+      background: url('images/Account2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .notification-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/Noti1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 17%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .notification-button:hover {
+      background: url('images/Noti2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .notificationAlert-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/NotiAlert1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 17%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .notificationAlert-button:hover {
+      background: url('images/NotiAlert2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .infomation-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/info1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 31%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .infomation-button:hover {
+      background: url('images/info2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .wateringcan-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/WateringCan1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 17%;
+      left: 2%;
+      z-index: 2;
+    }
+
+    .wateringcan-button:hover {
+      background: url('images/WateringCan2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .camera-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/Camera1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 31%;
+      left: 2%;
+      z-index: 2;
+    }
+
+    .camera-button:hover {
+      background: url('images/Camera2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .dashboard-button {
+      width: 236px;
+      height: 56px;
+      background: url('images/Dashboard1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 90%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .dashboard-button:hover {
+      background: url('images/Dashboard2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .preSlide-button, .nextSlide-button {
+      width: 26px;
+      height: 41px;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    .preSlide-button {
+      left: 3%;
+      background: url('images/PreSlide1.PNG') no-repeat center center;
+    }
+
+    .preSlide-button:hover {
+      background: url('images/PreSlideTwo.PNG') no-repeat center center;
+    }
+
+    .nextSlide-button {
+      right: 3%;
+      background: url('images/NextSlide1.PNG') no-repeat center center;
+    }
+
+    .nextSlide-button:hover {
+      background: url('images/NextSlideTwo.PNG') no-repeat center center;
+    }
+
+    .plant-image {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      z-index: 1;
+    }
+
+    .Profile-image {
+      position: absolute;
+      top: 2%;
+      left: 4.5%;
+      transform: translateX(-50%);
+      width: 6.5%;
+      z-index: 1;
+    }
+
+    .hp-image {
+      position: absolute;
+      top: 8%;
+      left: 18%;
+      transform: translateX(-50%);
+      width: 20%;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
-    <button class="account-button" onclick="location.href='AccountPage.html'"></button>
-    <button class="notification-button" onclick="location.href='NotificationPage.html'"></button>
-    <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
-    <button class="wateringcan-button"></button>
-    <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
-    <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
-    <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
-    <img src="images/HP1.PNG" alt="Hp" class="hp-image">
+  <button class="account-button" onclick="location.href='AccountPage.html'"></button>
+  <button class="notification-button" onclick="location.href='NotificationPage.html'"></button>
+  <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
+  <button class="wateringcan-button"></button>
+  <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
+  <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
+  <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
+  <img src="images/HP1.PNG" alt="Hp" class="hp-image">
 
-    <div class="box">
-        <button id="time-button" class="midnight-images"></button>
-        <div id="datetime-box" style="text-align: center; font-size: 22px; padding-left: 20%; text-align: left;"></div>
-    </div>
+  <div class="box">
+    <button id="time-button" class="midnight-images"></button>
+    <div id="datetime-box" style="text-align: center; font-size: 22px; padding-left: 20%; text-align: left;"></div>
+  </div>
 
-    <div>
-        <button class="preSlide-button"></button>
-        <button class="nextSlide-button"></button>
-    </div>
-    <!-- 🔽 ตัวละครที่เปลี่ยนได้ -->
-    <img id="character" src="images/NormalPlant.gif" class="plant-image"/>
-    <p id="charName"></p>
+  <div>
+    <button class="preSlide-button"></button>
+    <button class="nextSlide-button"></button>
+  </div>
 
-</body>
-<script>
+  <img id="character" src="images/NormalPlant.gif" class="plant-image" />
+  <p id="charName"></p>
+
+  <script>
     function updateDateTime() {
-        const now = new Date();
-
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
-
-        const dateStr = now.toLocaleDateString('en-US', options);
-        
-        // เวลาแบบ 24 ชั่วโมง (ไม่มีวินาที)
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const timeStr = `${hours}:${minutes}`;
-
-        const fullDateTime = `${dateStr} at ${timeStr}`;
-        document.getElementById("datetime-box").textContent = fullDateTime;
+      const now = new Date();
+      const options = {
+        weekday: 'short', // ✅ short day name
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      const dateStr = now.toLocaleDateString('en-US', options);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+      document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
     }
-
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
 
     function updateDateTimeAndButton() {
-        const now = new Date();
+      const now = new Date();
+      const options = {
+        weekday: 'short', // ✅ short day name
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      const dateStr = now.toLocaleDateString('en-US', options);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+      document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
 
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
+      const hour = now.getHours();
+      const button = document.getElementById("time-button");
 
-        const dateStr = now.toLocaleDateString('en-US', options);
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const timeStr = `${hours}:${minutes}`;
-        const fullDateTime = `${dateStr} at ${timeStr}`;
-        document.getElementById("datetime-box").textContent = fullDateTime;
+      let imageUrl = '';
+      if (hour >= 5 && hour < 8) imageUrl = 'images/Morning.PNG';
+      else if (hour >= 8 && hour < 11) imageUrl = 'images/LateMorning.PNG';
+      else if (hour >= 11 && hour < 15) imageUrl = 'images/Afternoon.PNG';
+      else if (hour >= 15 && hour < 18) imageUrl = 'images/Evening.PNG';
+      else if (hour >= 18 && hour < 21) imageUrl = 'images/Night.PNG';
+      else if (hour >= 21 && hour < 24) imageUrl = 'images/LateNight.PNG';
+      else imageUrl = 'images/Midnight.PNG';
 
-        const hour = now.getHours();
-        const button = document.getElementById("time-button");
-
-        let imageUrl = '';
-
-        if (hour >= 5 && hour < 8) {
-            // ตอนเช้า
-            imageUrl = 'images/Morning.PNG';
-        } else if (hour >= 8 && hour < 11) {
-            // ตอนสาย
-            imageUrl = 'images/LateMorning.PNG';
-        } else if (hour >= 11 && hour < 15) {
-            // ตอนบ่าย
-            imageUrl = 'images/Afternoon.PNG';
-        } else if (hour >= 15 && hour < 18) {
-            // ตอนเย็น
-            imageUrl = 'images/Evening.PNG';
-        } else if (hour >= 18 && hour < 21) {
-            // ตอนค่ำ
-            imageUrl = 'images/Night.PNG';
-        } else if (hour >= 21 && hour < 24) {
-            // ตอนดึก
-            imageUrl = 'images/LateNight.PNG';
-        } else {
-            // ตอนกลางคืน (เที่ยงคืน - ตี 5)
-            imageUrl = 'images/Midnight.PNG';
-        }
-
-        button.style.backgroundImage = `url('${imageUrl}')`;
+      button.style.backgroundImage = `url('${imageUrl}')`;
     }
 
-    setInterval(updateDateTimeAndButton, 1000);
+    setInterval(() => {
+      updateDateTime();
+      updateDateTimeAndButton();
+    }, 1000);
+
+    updateDateTime();
     updateDateTimeAndButton();
 
-    const characters = [
-      "images/plant.png",
-      "images/plan2.PNG"
-    ];
+    const characters = ["images/plant.png", "images/plan2.PNG"];
     let currentIndex = 0;
 
     const characterImage = document.getElementById("character");
@@ -349,15 +327,12 @@
     });
 
     window.onload = () => {
-    const data = JSON.parse(localStorage.getItem("characterData"));
-    if (data) {
+      const data = JSON.parse(localStorage.getItem("characterData"));
+      if (data) {
         document.getElementById("character").src = data.image;
         document.getElementById("charName").textContent = data.name;
-    }
+      }
     };
-
   </script>
-
-
-
+</body>
 </html>

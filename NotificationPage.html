@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
     <title>Notification</title>
     <style>
         body {
@@ -53,6 +54,141 @@
       margin-bottom: 20px;
       z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
     }
+    /* .noti1-button {
+      width: 70px; 
+      height: 80px; 
+      background: url('images/bell2.png') no-repeat center center;
+      background-size: cover; 
+      border: none;
+      cursor: pointer; 
+      position: absolute;
+      z-index: 2; 
+    }
+    .noti2-button {
+     width: 70px; 
+      height: 80px; 
+      background: url('images/bell1.png') no-repeat center center;
+      background-size: cover; 
+      border: none;
+      cursor: pointer; 
+      position: absolute;
+      z-index: 2; 
+    } */
+     /* .bell-button {
+        width: 70px;
+        height: 80px;
+        background-size: cover;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        z-index: 2;
+      } */
+
+      .unread {
+        background: url('images/bell1.png') no-repeat center center;
+         width: 70px;
+        height: 80px;
+        background-size: cover;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        z-index: 2;
+      }
+
+      .read {
+        background: url('images/bell2.png') no-repeat center center;
+         width: 70px;
+        height: 80px;
+        background-size: cover;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        z-index: 2;
+      }
+
+    .bin-button {
+      width: 40px; 
+      height: 40px; 
+      background: url('images/bin1.PNG') no-repeat center center;
+      background-size: cover; 
+      border: none;
+      cursor: pointer; 
+      position: absolute;
+      z-index: 2; 
+    }
+    
+    .bin-button:hover {
+      background: url('images/bin2.PNG') no-repeat center center; 
+      background-size: cover; 
+    }
+    /* .star1-button {
+      width: 45px; 
+      height: 40px; 
+      background: url('images/star1.PNG') no-repeat center center;
+      background-size: cover; 
+      border: none;
+      cursor: pointer; 
+      position: absolute;
+      z-index: 2; 
+    }
+    
+    .star1-button:hover {
+      background: url('images/star2.PNG') no-repeat center center; 
+      background-size: cover; 
+    }
+    .star3-button {
+      width: 45px; 
+      height: 40px; 
+      background: url('images/star3.PNG') no-repeat center center;
+      background-size: cover; 
+      border: none;
+      cursor: pointer; 
+      position: absolute;
+      z-index: 2; 
+    } */
+
+      .star3-button {
+        width: 45px; 
+        height: 40px; 
+        background: url('images/star3.PNG') no-repeat center center;
+        background-size: cover; 
+        border: none;
+        cursor: pointer; 
+        position: absolute;
+        z-index: 2; 
+      }
+
+      .star1-button {
+        width: 45px; 
+        height: 40px; 
+        background: url('images/star1.PNG') no-repeat center center;
+        background-size: cover; 
+        border: none;
+        cursor: pointer; 
+        position: absolute;
+        z-index: 2; 
+      }
+
+
+    .divider {
+      width: 52%;
+      height: 0.5px;
+      background-color: #000000; /* ปรับเป็นสีน้ำตาลเข้มแบบภาพ */
+      opacity: 0.6;              /* ให้ดูไม่ทึบเกินไป */
+      margin: 0 auto;
+      margin-top: 8px;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .alert-title {
+      position: absolute;
+      font-size: 24px;
+      color: #000000;
+      font-weight: bold;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
     </style>
 </head>
 <body>
@@ -60,7 +196,110 @@
     <div>
     <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+      <div> 
+        <div class="alert-title" style="top: 12%; left: 30%;">Water Alert</div>
+        <button class="unread"
+          style="top: 17%; left: 26%; transform: translate(-50%, -50%);"
+          onclick="openNotification(this, 'NotificationDetail.html')">
+        </button>
+        <button class="bin-button" style=" top: 22%; right: 24%; transform: translate(-50%, -50%); " ></button>
+        <button class="star3-button"
+        style="top: 22%; right: 28%; transform: translate(-50%, -50%);"
+        onclick="toggleStar(this)"></button>
+
+        <div class="divider" style="top: 25%; position: absolute; left: 50%;"></div>
+      </div>
+
+       <div>
+        <div class="alert-title" style="top: 31%; left: 30%;">Water Alert</div>
+          <button class="unread"
+            style="top:36%; left: 26%; transform: translate(-50%, -50%);"
+            onclick="openNotification(this, 'NotificationDetail.html')">
+          </button>
+        <button class="bin-button" style=" top: 41%; right: 24%; transform: translate(-50%, -50%); " ></button>
+        <button class="star3-button"
+        style="top: 41%; right: 28%; transform: translate(-50%, -50%);"
+        onclick="toggleStar(this)"></button>
+      
+        <div class="divider" style="top: 44%; position: absolute; left: 50%;"></div>
+      </div>
+
+      <div>
+        <div class="alert-title" style="top: 49%; left: 30%;">Water Alert</div>
+         <button class="unread"
+            style="top:54%; left: 26%; transform: translate(-50%, -50%);"
+            onclick="openNotification(this, 'NotificationDetail.html')">
+          </button>
+        <button class="bin-button" style=" top: 60%; right: 24%; transform: translate(-50%, -50%); " ></button>
+        <button class="star3-button"
+        style="top: 60%; right: 28%; transform: translate(-50%, -50%);"
+        onclick="toggleStar(this)"></button>
+
+        <div class="divider" style="top: 63%; position: absolute; left: 50%;"></div>
+      </div>
+      
+       <div>
+        <div class="alert-title" style="top: 68%; left: 30%;">Water Alert</div>
+         <button class="unread"
+            style="top:73%; left: 26%; transform: translate(-50%, -50%);"
+            onclick="openNotification(this, 'NotificationDetail.html')">
+          </button>
+        <button class="bin-button" style=" top: 79%; right: 24%; transform: translate(-50%, -50%); " ></button>
+        <button class="star3-button"
+        style="top: 79%; right: 28%; transform: translate(-50%, -50%);"
+        onclick="toggleStar(this)"></button>
+
+        <div class="divider" style="top: 82%; position: absolute; left: 50%;"></div>
+      </div>
+
       
   </div>
 </body>
+  <script>
+    function toggleStar(button) {
+      if (button.classList.contains('star3-button')) {
+        button.classList.remove('star3-button');
+        button.classList.add('star1-button');
+      } else {
+        button.classList.remove('star1-button');
+        button.classList.add('star3-button');
+      }
+    }
+
+    function toggleStar(button) {
+    if (button.classList.contains('star3-button')) {
+      button.classList.remove('star3-button');
+      button.classList.add('star1-button');
+    } else {
+      button.classList.remove('star1-button');
+      button.classList.add('star3-button');
+    }
+  }
+
+    function markAsRead(button) {
+      button.classList.remove('unread');
+      button.classList.add('read');
+    }
+
+    function toggleStar(button) {
+    if (button.classList.contains('star3-button')) {
+      button.classList.remove('star3-button');
+      button.classList.add('star1-button');
+    } else {
+      button.classList.remove('star1-button');
+      button.classList.add('star3-button');
+    }
+  }
+
+  function openNotification(button, link) {
+    // เปลี่ยน icon เป็นอ่านแล้ว
+    button.classList.remove('unread');
+    button.classList.add('read');
+
+    // ไปยังหน้าเนื้อหาการแจ้งเตือน
+    setTimeout(() => {
+      window.location.href = link;
+    }, 200); // เลื่อนนิดนึงให้เห็น effect ก่อนเปลี่ยนหน้า
+  }
+  </script>
 </html>

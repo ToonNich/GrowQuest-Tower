@@ -45,7 +45,7 @@
 
     .head-text {
       position: absolute;
-      top: 15%;
+      top: 12%;
       left: 25%;
       font-size: 30px;
       z-index: 2;
@@ -53,7 +53,7 @@
 
     .chart-container {
       position: absolute;
-      top: 20%;
+      top: 12%; /* ✅ reduced top gap */
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
@@ -71,7 +71,7 @@
       padding: 10px;
       width: 100%;
       max-width: 900px;
-      height: 600px !important; /* ✅ เปลี่ยนความสูงที่นี่ */
+      height: 600px !important;
     }
 
     .pagination {
@@ -83,28 +83,36 @@
     }
 
     .pagination button {
-      padding: 8px 14px;
-      font-size: 16px;
-      background: #ffffff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 10px 16px;
+      font-size: 18px;
+      font-family: 'Pixelify Sans', sans-serif;
+      background-color: #ffd700;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #333;
+      border-radius: 8px; /* ✅ softer rounded corners */
       cursor: pointer;
-      color: #0000EE;
+      color: #000;
+      transition: all 0.1s;
+    }
+
+    .pagination button:hover {
+      background-color: #ffa500;
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px #333;
     }
 
     .pagination button.disabled {
-      background-color: #f0f0f0;
-      color: #999;
+      background-color: #ccc;
+      color: #666;
       cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
     }
   </style>
 </head>
 <body>
   <div id="app">
     <button @click="goBack" class="back-button"></button>
-    <img src="images/Scroll Long.PNG" class="middle-image" />
-    <p class="head-text">Information</p>
-
     <div class="chart-container">
       <canvas
         v-for="(item, index) in currentData"
@@ -116,7 +124,7 @@
         <button 
           :disabled="currentPage === 1" 
           @click="changePage(currentPage - 1)">
-          ก่อนหน้า
+          Previous
         </button>
 
         <button 
@@ -130,7 +138,7 @@
         <button 
           :disabled="currentPage === totalPages" 
           @click="changePage(currentPage + 1)">
-          ถัดไป
+          Next
         </button>
       </div>
     </div>
@@ -172,7 +180,7 @@
       },
       methods: {
         goBack() {
-          window.location.href = 'HomePage.html';
+          window.location.href = 'DashboardPage.html';
         },
         async fetchData() {
           try {
@@ -194,47 +202,45 @@
           this.currentPage = page;
         },
         renderCharts() {
-  // ลบกราฟเก่าถ้ามี
-  this.chartInstances.forEach(chart => chart.destroy());
-  this.chartInstances = [];
+          this.chartInstances.forEach(chart => chart.destroy());
+          this.chartInstances = [];
 
-  this.$nextTick(() => {
-    this.currentData.forEach((item, index) => {
-      const ctx = this.$refs['chart-' + index][0].getContext('2d');
+          this.$nextTick(() => {
+            this.currentData.forEach((item, index) => {
+              const ctx = this.$refs['chart-' + index][0].getContext('2d');
 
-      const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['EC', 'Humidity', 'Temperature', 'PH'],
-          datasets: [{
-            label: item.label,
-            data: item.data,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            fill: false,
-            tension: 0.1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: true
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+              const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: ['EC', 'Humidity', 'Temperature', 'PH'],
+                  datasets: [{
+                    label: item.label,
+                    data: item.data,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      display: true
+                    }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true
+                    }
+                  }
+                }
+              });
+
+              this.chartInstances.push(chart);
+            });
+          });
         }
-      });
-
-      this.chartInstances.push(chart);
-    });
-  });
-}
-
       },
       watch: {
         currentPage() {
