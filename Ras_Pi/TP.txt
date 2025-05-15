@@ -1,0 +1,57 @@
+class CentroidTracker:
+    def __init__(self, max_distance=50, max_disappeared=10):
+        self.next_object_id = 1
+        self.objects = OrderedDict()
+        self.disappeared = OrderedDict()
+        self.max_distance = max_distance
+        self.max_disappeared = max_disappeared
+
+    def register(self, centroid):
+        self.objects[self.next_object_id] = centroid
+        self.disappeared[self.next_object_id] = 0
+        self.next_object_id += 1
+
+    def deregister(self, object_id):
+        del self.objects[object_id]
+        del self.disappeared[object_id]
+
+    def update(self, input_centroids):
+        if len(input_centroids) == 0:
+            # No leaves detected → mark all as disappeared
+            for object_id in list(self.disappeared.keys()):
+                self.disappeared[object_id] += 1
+                if self.disappeared[object_id] > self.max_disappeared:
+                    self.deregister(object_id)
+            return self.objects
+
+        if len(self.objects) == 0:
+            for centroid in input_centroids:
+                self.register(centroid)
+        else:
+            used = set()
+            for object_id, existing_centroid in self.objects.items():
+                best_match = None
+                best_distance = float("inf")
+                for i, new_centroid in enumerate(input_centroids):
+                    if i in used:
+                        continue
+                    dist = math.dist(existing_centroid, new_centroid)
+                    if dist < best_distance and dist < self.max_distance:
+                        best_distance = dist
+                        best_match = i
+
+                if best_match is not None:
+                    self.objects[object_id] = input_centroids[best_match]
+                    self.disappeared[object_id] = 0
+                    used.add(best_match)
+                else:
+                    self.disappeared[object_id] += 1
+                    if self.disappeared[object_id] > self.max_disappeared:
+                        self.deregister(object_id)
+
+            # Add any remaining new centroids
+            for i, centroid in enumerate(input_centroids):
+                if i not in used:
+                    self.register(centroid)
+
+        return self.objects
