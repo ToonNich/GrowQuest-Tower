@@ -1,82 +1,17 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notification</title>
-    <style>
-        body {
-      background: url('images/info.gif') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Pixelify Sans', sans-serif;
-    }
-    body::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(255, 255, 255, 0.322); /* สีขาวจางลงครึ่งหนึ่ง */
-        z-index: 0;
-    }
-     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
-     .back-button {
-      width: 60px; /* กำหนดขนาดของปุ่ม */
-      height: 44px; /* กำหนดความสูงของปุ่ม */
-      background: url('images/backButton1.png') no-repeat center center;
-      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-      border: none;
-      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
-      position: absolute;
-      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
-      left: 4%;
-      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-    }
-    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-    .back-button:hover {
-      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-    }
-    .middle-image {
-      position: absolute;
-      top: 3%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%; /* ปรับขนาดตามต้องการ */
-      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
-    }
-    .head-text {
-      position: absolute;
-      font-size: 30px;
-      padding: 10px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
-    }
-    </style>
-</head>
-<body>
-    <button class="back-button" onclick="location.href='NotificationPage.html'"></button>
-    <div>
-    <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-      <p class="head-text" style="top: 25%; left: 50%;">content content</p>
-
-      
-  </div>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Detail</title>
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
-  <title>Notification</title>
   <style>
     body {
       background: url('images/info.gif') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Pixelify Sans', sans-serif;
+      margin: 0;
+      padding: 0;
     }
     body::before {
       content: "";
@@ -111,73 +46,103 @@
       width: 70%;
       z-index: 1;
     }
-    .head-text {
+    .notification-detail {
       position: absolute;
-      font-size: 30px;
-      padding: 10px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      z-index: 2;
-    }
-    .notification-container {
-      position: absolute;
-      top: 25%;
+      top: 8%;
       left: 50%;
       transform: translateX(-50%);
+      width: 50%;
+      background-color: transparent;
+      border-radius: 16px;
+      padding: 30px;
       z-index: 2;
-      width: 60%;
-      cursor: pointer;
-    }
-    .notification-container:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    .notification-icon {
-      width: 70px;
-      height: 70px;
-      background: url('images/bell1.png') no-repeat center center;
-      background-size: contain;
-      display: inline-block;
-      vertical-align: middle;
+      /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
     }
     .notification-title {
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 24px;
-      margin-left: 20px;
+      font-size: 28px;
+      font-weight: bold;
       color: #000;
+      margin-bottom: 12px;
     }
-    .notification-actions {
-      display: inline-block;
-      float: right;
+    #timestamp {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 16px;
     }
-    .star-button, .bin-button {
-      width: 40px;
-      height: 40px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      border: none;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-    .star-button {
-      background-image: url('images/star3.PNG');
-    }
-    .bin-button {
-      background-image: url('images/bin1.PNG');
+    .notification-content {
+      font-size: 20px;
+      color: #333;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
-  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  <button class="back-button" onclick="location.href='NotificationPage.html'"></button>
   <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-  <div class="notification-container" onclick="window.location.href='NotificationDetail.html'">
-    <span class="notification-icon"></span>
-    <span class="notification-title">Water level is high</span>
-    <span class="notification-actions">
-      <button class="star-button" onclick="event.stopPropagation()"></button>
-      <button class="bin-button" onclick="event.stopPropagation()"></button>
-    </span>
+
+  <div class="notification-detail">
+    <div class="notification-title" id="title">Loading...</div>
+    <div id="timestamp">⏳</div>
+    <div class="notification-content" id="content">Please, wait...</div>
   </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadNotification() {
+      if (!id) {
+        document.getElementById("title").innerText = "Notification ID not found";
+        document.getElementById("content").innerText = "Please return to the previous page.";
+        document.getElementById("timestamp").innerText = "";
+        return;
+      }
+
+      const docRef = doc(db, "notifications", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        document.getElementById("title").innerText = data.title || "No header.";
+        document.getElementById("content").innerText = data.content || "There are no notification details.";
+
+        if (data.timestamp?.toDate) {
+          const date = data.timestamp.toDate();
+          const formatted = date.toLocaleString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+          document.getElementById("timestamp").innerText = `📅 Date: ${formatted}`;
+        } else {
+          document.getElementById("timestamp").innerText = "";
+        }
+      } else {
+        document.getElementById("title").innerText = "No information found";
+        document.getElementById("content").innerText = "This notification has been deleted or is invalid.";
+        document.getElementById("timestamp").innerText = "";
+      }
+    }
+
+    loadNotification();
+  </script>
 </body>
 </html>

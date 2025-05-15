@@ -233,7 +233,8 @@
           renderNotifications();
           renderPagination();
           setTimeout(() => {
-            window.location.href = noti.detailLink || 'NotificationDetail.html';
+            window.location.href = `NotificationDetail.html?id=${noti.id}`;
+
           }, 150);
         });
 
