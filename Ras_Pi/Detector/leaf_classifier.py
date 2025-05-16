@@ -9,11 +9,14 @@ def classify_size(w_cm, h_cm):
     else:
         return "Large"
 
-def summarize_growth_stage(small, medium, large):
+def summarize_tower_growth(small, medium, large):
+    total = small + medium + large
     score = (small * 1) + (medium * 2) + (large * 3)
-    if score <= 4:
-        return "🌱 Sprout (LV.1)"
-    elif 5 <= score <= 6:
-        return "🌿 Bud (LV.2)"
+    avg = score / total if total else 0
+
+    if avg <= 1.5:
+        return "🌱 Tower Stage: Sprout (LV.1)"
+    elif avg <= 2.2:
+        return "🌿 Tower Stage: Bud (LV.2)"
     else:
-        return "🌼 Bloom (LV.3)"
+        return "🌼 Tower Stage: Bloom (LV.3)"
