@@ -142,20 +142,38 @@
     }
 
     .camera-button {
-      width: 5%;
-      height: 10%;
+      width: 4.5%;
+      height: 9.5%;
       background: url('images/Camera1.PNG') no-repeat center center;
       background-size: cover;
       border: none;
       cursor: pointer;
       position: absolute;
-      top: 31%;
-      left: 2%;
+      top: 30%;
+      left: 2.25%;
       z-index: 2;
     }
 
     .camera-button:hover {
       background: url('images/Camera2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+      .checkPlant-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/CheckPlantBut2.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 43%;
+      left: 2%;
+      z-index: 2;
+    }
+
+    .checkPlant-button:hover {
+      background: url('images/CheckPlantBut1.PNG') no-repeat center center;
       background-size: cover;
     }
 
@@ -184,7 +202,7 @@
       border: none;
       cursor: pointer;
       position: absolute;
-      top: 50%;
+      top: 55%;
       transform: translate(-50%, -50%);
       z-index: 2;
     }
@@ -241,6 +259,7 @@
   <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
   <button class="wateringcan-button"></button>
   <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
+  <button class="checkPlant-button" onclick="location.href='CheckPlantStage.html'"></button>
   <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
   <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
   <img src="images/HP1.PNG" alt="Hp" class="hp-image">
@@ -250,10 +269,10 @@
     <div id="datetime-box" style="text-align: center; font-size: 22px; padding-left: 20%; text-align: left;"></div>
   </div>
 
-  <div>
+  <!-- <div>
     <button class="preSlide-button"></button>
     <button class="nextSlide-button"></button>
-  </div>
+  </div> -->
 
   <img id="character" src="images/NormalPlant.gif" class="plant-image" />
   <p id="charName"></p>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+           /* Container สำหรับปุ่ม */
+    .button-container {
+      position: relative;
+      height: 100vh; /* ให้ container สูงเท่าหน้าจอ */
+      z-index: 2;
+    }
+
+    /* ปุ่ม back */
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      z-index: 3; /* ให้อยู่หน้าสุด */
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button class="back-button" onclick="location.href='HomePage.html'"></button>
+    </div>
+    
+</body>
+</html>
