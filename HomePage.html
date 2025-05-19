@@ -123,6 +123,39 @@
       background-size: cover;
     }
 
+    /* เริ่มต้นสถานะปิด */
+    .light-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/CloseLight.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 45%;
+      right: 1.5%;
+      z-index: 2;
+      transition: background-image 0.2s ease;
+    }
+
+    /* Hover ขณะปิด */
+    .light-button:hover:not(.on) {
+      background: url('images/OpenLight.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* สถานะเปิด */
+    .light-button.on {
+      background: url('images/OpenLight.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* Hover ขณะเปิด */
+    .light-button.on:hover {
+      background: url('images/OpenLight.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
     .wateringcan-button {
       width: 5%;
       height: 10%;
@@ -139,6 +172,16 @@
     .wateringcan-button:hover {
       background: url('images/WateringCan2.PNG') no-repeat center center;
       background-size: cover;
+    }
+
+    .watering-gif {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20%; /* ปรับขนาดตามต้องการ */
+      pointer-events: none;
+      display: none;
+      z-index: 99;
     }
 
     .camera-button {
@@ -257,7 +300,10 @@
   <button class="account-button" onclick="location.href='AccountPage.html'"></button>
   <button class="notification-button" onclick="location.href='NotificationPage.html'"></button>
   <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
+  <!-- <button class="light-button"></button> -->
+  <button class="light-button" id="lightButton"></button>
   <button class="wateringcan-button"></button>
+  <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
   <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
   <button class="checkPlant-button" onclick="location.href='CheckPlantStage.html'"></button>
   <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
@@ -269,15 +315,21 @@
     <div id="datetime-box" style="text-align: center; font-size: 22px; padding-left: 20%; text-align: left;"></div>
   </div>
 
-  <!-- <div>
-    <button class="preSlide-button"></button>
-    <button class="nextSlide-button"></button>
-  </div> -->
-
   <img id="character" src="images/NormalPlant.gif" class="plant-image" />
   <p id="charName"></p>
 
   <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const lightButton = document.getElementById("lightButton");
+
+      if (lightButton) {
+        lightButton.addEventListener("click", () => {
+          lightButton.classList.toggle("on");
+        });
+      }
+    });
+
     function updateDateTime() {
       const now = new Date();
       const options = {
@@ -335,16 +387,7 @@
 
     const characterImage = document.getElementById("character");
 
-    document.querySelector(".preSlide-button").addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + characters.length) % characters.length;
-      characterImage.src = characters[currentIndex];
-    });
-
-    document.querySelector(".nextSlide-button").addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % characters.length;
-      characterImage.src = characters[currentIndex];
-    });
-
+   
     window.onload = () => {
       const data = JSON.parse(localStorage.getItem("characterData"));
       if (data) {
@@ -352,6 +395,28 @@
         document.getElementById("charName").textContent = data.name;
       }
     };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const wateringBtn = document.querySelector(".wateringcan-button");
+      const wateringGif = document.getElementById("wateringGif");
+
+      // เมื่อกดเม้าค้างที่ปุ่ม
+      wateringBtn.addEventListener("mousedown", () => {
+        wateringGif.style.display = "block";
+      });
+
+      // เมื่อปล่อยเม้าท์
+      document.addEventListener("mouseup", () => {
+        wateringGif.style.display = "none";
+      });
+
+      // เคลื่อน gif ตาม mouse
+      document.addEventListener("mousemove", (e) => {
+        wateringGif.style.left = `${e.clientX}px`;
+        wateringGif.style.top = `${e.clientY}px`;
+      });
+    });
+
   </script>
 </body>
 </html>
