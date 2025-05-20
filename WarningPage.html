@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -101,7 +101,7 @@
       position: absolute;
       width: 135px; /* ปรับขนาดไอคอน */
       height: auto;
-      top: 47%; 
+      top: 49%; 
       left: 16%;  
       z-index: 2;
     } 
@@ -118,12 +118,29 @@
       position: absolute;
       width: 135px; /* ปรับขนาดไอคอน */
       height: auto;
-      top: 47%; 
+      top: 49%; 
       left:44.5% ;
       z-index: 2;
     } 
     .icon-ph:hover {
       background: url('images/ph.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .icon-light {
+      background: url('images/LightIcon.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 135px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 47%; 
+      right: 15%;
+      z-index: 2;
+    } 
+    .icon-light:hover {
+      background: url('images/LightIcon.PNG') no-repeat center center;
       background-size: cover;
     }
 
@@ -177,7 +194,7 @@
         border: none;
         cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
         position: absolute;
-        top:88%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        top:93%; /* อยู่กลางหน้าจอในแนวตั้ง */
         right: 14%;
         transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
         z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
@@ -196,7 +213,7 @@
         border: none;
         cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
         position: absolute;
-        top: 88%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        top: 93%; /* อยู่กลางหน้าจอในแนวตั้ง */
         right: 8%;
         transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
         z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
@@ -265,38 +282,55 @@
       <button class="icon-chemical" style="width: 180px; height: 90px;" onclick="location.href='WarningChemPage.html'"></button>
       <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; right: 19.5%;" />
 
-      <div class="switch-mode-container">
-        <img id="switchImage" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" />
+      <div class="switch-chem-container">
+        <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 30.5%; right: 15%; position: absolute;" />
 
         <button class="auto-button"
-          onmouseover="changeImage('images/AutoButton.PNG')"
-          onmouseout="resetImage()"
-          onclick="changeImage('images/AutoButton.PNG', 'auto')"
+          style="top: 31%; right: 15.2%; position: absolute;"
+          onmouseover="changeImage('switchImageChem', 'images/AutoButton.PNG')"
+          onmouseout="resetImage('switchImageChem')"
+          onclick="changeImage('switchImageChem', 'images/AutoButton.PNG', 'auto')"
         ></button>
 
         <button class="manual-button"
-          onmouseover="changeImage('images/MaunualButton.PNG')"
-          onmouseout="resetImage()"
-          onclick="changeImage('images/MaunualButton.PNG', 'manual')"
+          style="top: 37%; right: 15.2%; position: absolute;"
+          onmouseover="changeImage('switchImageChem', 'images/MaunualButton.PNG')"
+          onmouseout="resetImage('switchImageChem')"
+          onclick="changeImage('switchImageChem', 'images/MaunualButton.PNG', 'manual')"
         ></button>
-
       </div>
     </div>
     <div>
         <!-- <img src="images/ec.PNG" class="icon-ec" alt="EC" /> -->
         <button class="icon-ec" style="width: 135px; height: 70px;" onclick="location.href='WarningEcPage.html'"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 54%; left: 18.5%;"/>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 18.5%;"/>
     </div>
     <div>
         <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
         <button class="icon-ph" style="width: 130px; height: 70px;" onclick="location.href='WarningPhPage.html'"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 54%; left: 47%;" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 47%;" />
     </div>
 
     <div>
         <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
-        <button class="icon-light" style="width: 130px; height: 70px;" onclick="location.href='WarningPhPage.html'"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 54%; right: 19.5%;" />
+        <button class="icon-light" style="width: 155px; height: 95px;" onclick="location.href='WarningLightPage.html'"></button>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; right: 19.5%;" />
+        <!-- 🔁 ปุ่มควบคุมไฟ -->
+        <div class="switch-mode-container">
+          <img id="switchImageLight" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 71.5%; right: 15%;" />
+          <button class="auto-button"
+            style="top: 72%; right: 15.2%;"
+            onmouseover="changeImage('switchImageLight', 'images/AutoButton.PNG')"
+            onmouseout="resetImage('switchImageLight')"
+            onclick="changeImage('switchImageLight', 'images/AutoButton.PNG', 'auto')"
+          ></button>
+          <button class="manual-button"
+            style="top: 79%; right: 15.2%; "
+            onmouseover="changeImage('switchImageLight', 'images/MaunualButton.PNG')"
+            onmouseout="resetImage('switchImageLight')"
+            onclick="changeImage('switchImageLight', 'images/MaunualButton.PNG', 'manual')"
+          ></button>
+        </div>
     </div>
 
     <button class="history-button" onclick="location.href='HistoryPage.html'"></button>
@@ -304,29 +338,55 @@
   </div>
 </body>
 <script>
-  const defaultImage = "images/SwitchAutoManual.PNG";
-  let isClicked = false;
-  let currentMode = ""; // "auto" or "manual"
 
-  function changeImage(src, mode = "") {
-    if (mode) {
-      isClicked = true;
-      currentMode = mode;
-    }
-    document.getElementById("switchImage").src = src;
-  }
+  const defaultImages = {
+  switchImageChem: "images/SwitchAutoManual.PNG",
+  switchImageLight: "images/SwitchAutoManual.PNG"
+};
 
-  function resetImage() {
-    if (!isClicked) {
-      document.getElementById("switchImage").src = defaultImage;
-    } else {
-      // กำหนดให้แสดงรูปตามโหมดล่าสุดที่คลิก
-      if (currentMode === "auto") {
-        document.getElementById("switchImage").src = "images/AutoButton.PNG";
-      } else if (currentMode === "manual") {
-        document.getElementById("switchImage").src = "images/MaunualButton.PNG";
-      }
-    }
+const clickedStates = {
+  switchImageChem: false,
+  switchImageLight: false
+};
+
+const currentModes = {
+  switchImageChem: "",
+  switchImageLight: ""
+};
+
+function changeImage(id, src, mode = "") {
+  const img = document.getElementById(id);
+  if (!img) return;
+
+  if (mode) {
+    clickedStates[id] = true;
+    currentModes[id] = mode;
+    localStorage.setItem(id + "_mode", mode); // 🔁 Save
   }
+  img.src = src;
+}
+
+function resetImage(id) {
+  const img = document.getElementById(id);
+  if (!img) return;
+
+  const savedMode = localStorage.getItem(id + "_mode");
+  if (!clickedStates[id] && !savedMode) {
+    img.src = defaultImages[id] || "images/SwitchAutoManual.PNG";
+  } else {
+    const mode = currentModes[id] || savedMode;
+    if (mode === "auto") img.src = "images/AutoButton.PNG";
+    else if (mode === "manual") img.src = "images/MaunualButton.PNG";
+  }
+}
+
+// window.onload = () => {
+//   ["switchImageLight", "switchImageChem"].forEach(id => resetImage(id));
+// };
+window.onload = () => {
+  ["switchImageLight", "switchImageChem"].forEach(id => resetImage(id));
+};
+
+
 </script>
 </html>
