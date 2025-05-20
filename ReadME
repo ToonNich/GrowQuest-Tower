@@ -1,0 +1,96 @@
+เข้าใจแล้วครับ — ตอนนี้คุณเก็บ **ข้อมูลจริงใน MySQL** และต้องการให้ **Firebase** เป็นระบบ "แจ้งเตือน" โดย:
+
+* ใช้ค่าจาก MySQL เพื่อวิเคราะห์ว่า "ผิดปกติ" หรือไม่
+* แล้วสร้างการแจ้งเตือน (notification) ขึ้นใน Firebase (Firestore หรือ Realtime Database)
+
+---
+
+## ✅ วิธีทำงานร่วมกัน: MySQL → Firebase (แจ้งเตือน)
+
+คุณสามารถใช้ **สคริปต์ Node.js** หรือ Python เป็นตัวกลาง (middleware) ที่:
+
+1. **อ่านข้อมูลล่าสุดจาก MySQL**
+2. **วิเคราะห์เงื่อนไขความผิดปกติ**
+3. **เขียนข้อมูลแจ้งเตือนเข้าสู่ Firebase**
+
+---
+
+## 🔧 ตัวอย่างขั้นตอน (Node.js)
+
+### 1. ติดตั้ง dependency
+
+```bash
+npm install firebase-admin mysql2
+```
+
+---
+
+### 2. เขียนสคริปต์เชื่อมทั้งสองระบบ
+
+```js
+// connect_mysql_to_firebase.js
+
+const admin = require("firebase-admin");
+const mysql = require("mysql2");
+
+// ตั้งค่า Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(require("./firebase-key.json")),
+  databaseURL: "https://<your-project-id>.firebaseio.com"
+});
+
+const firestore = admin.firestore();
+
+// ตั้งค่า MySQL
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "your_user",
+  password: "your_password",
+  database: "sensor_db"
+});
+
+// Query ข้อมูลล่าสุด
+connection.query("SELECT * FROM temperature_log ORDER BY timestamp DESC LIMIT 1", (err, results) => {
+  if (err) throw err;
+  const latest = results[0];
+  console.log("Latest:", latest);
+
+  // ตรวจสอบเงื่อนไขผิดปกติ เช่น อุณหภูมิ > 40°C หรือความชื้น < 20%
+  if (latest.temp > 40 || latest.humidity < 20) {
+    // เขียนการแจ้งเตือนเข้าสู่ Firebase
+    firestore.collection("alerts").add({
+      message: `อุณหภูมิ: ${latest.temp}°C, ความชื้น: ${latest.humidity}%`,
+      timestamp: admin.firestore.Timestamp.now(),
+      read: false
+    }).then(() => {
+      console.log("แจ้งเตือนถูกส่งไปยัง Firebase แล้ว");
+    });
+  }
+});
+```
+
+---
+
+## ✅ คุณสามารถตั้ง Cron Job ให้รันทุก 1–5 นาที:
+
+* ใช้ `node connect_mysql_to_firebase.js`
+* หรือใช้ระบบอย่าง PM2, หรือ Cloud Scheduler (ถ้ารันบน GCP)
+
+---
+
+## ✅ Firebase ฝั่งแสดงผล
+
+ในหน้าแจ้งเตือน (NotificationPage.html หรือ Firebase Web SDK):
+
+* อ่านจาก Firestore collection `alerts`
+* แสดงเฉพาะ `read: false` หรือแสดงทั้งหมด พร้อมสถานะ
+
+---
+
+### ต้องการตัวอย่างเพิ่มเติม?
+
+* ถ้าคุณมีโครงสร้างตาราง MySQL (`temperature_log`) บอกมาได้
+* หรืออยากให้ Firebase เก็บข้อมูลย้อนหลัง (log sensor ทุกตัว)
+* หรือให้ Cloud Functions ทำงานแทน (หากใช้ Firebase Hosting อยู่แล้ว)
+
+แจ้งมาเพิ่มเติมได้เลยครับ จะจัดโค้ดตามระบบของคุณให้ทันที.

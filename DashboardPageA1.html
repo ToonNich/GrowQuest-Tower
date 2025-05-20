@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Information</title>
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      font-family: 'Pixelify Sans', sans-serif;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
+      z-index: 0;
+    }
+
+    .middle-container {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      margin-top: 3%;
+      z-index: 1;
+    }
+
+    .middle-image {
+      width: 100%;
+      display: block;
+    }
+
+    .icon-humidity {
+        top: 15%; 
+        left: 15%;
+        position: absolute;
+        width: 160px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2;
+    }
+    /* ตัวอย่างตำแหน่งของแต่ละรูป */
+    .icon-temperature { 
+        top: 11.6%; 
+        left: 42.5%;
+        position: absolute;
+        width: 180px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2; 
+    }
+
+    .icon-chemical{ 
+        top: 13.5%; 
+        right: 15%; 
+        position: absolute;
+        width: 180px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2; 
+    }
+    .icon-ec{
+        top: 50%; 
+        left: 30%; 
+        position: absolute;
+        width: 135px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2; 
+    }
+    .icon-ph { 
+        top: 49%; 
+        right: 30.5%; 
+        position: absolute;
+        width: 135px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2; 
+    }
+
+    .icon-label {
+        position: absolute;
+        width: 70px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2; 
+    }
+
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 1%;
+      left: 2%;
+      z-index: 3;
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+    .warning-button {
+        width: 60px; /* กำหนดขนาดของปุ่ม */
+        height: 40px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/warning1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 87%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        left: 14%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .warning-button:hover {
+        background: url('images/warning2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+    .history-button {
+        width: 65px; /* กำหนดขนาดของปุ่ม */
+        height: 65px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/history1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 86.5%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        right: 14%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .history-button:hover {
+        background: url('images/history2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    } 
+
+    .infomation-label-button {
+        width: 65px; /* กำหนดขนาดของปุ่ม */
+        height: 65px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/Info1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 86.5%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        right: 8%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .infomation-label-button:hover {
+        background: url('images/Info2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+
+    /* .SwitchAutoManual {
+      position: absolute;
+      top: 37.5%;
+      right: 15%;
+      width: 40px;
+      height: auto;
+    } 
+
+    .auto-button {
+      position: absolute;
+      top: 38%;
+      right: 15.2%;
+      width: 35px;
+      height: 65px;
+
+      z-index: 4; 
+    }
+
+    .manual-button {
+      position: absolute;
+      top: 44%;
+      right: 15.2%;
+      width: 35px;
+      height: 70px;
+      z-index: 4; 
+    } */
+
+  .SwitchAutoManual { 
+    position: absolute;
+    top: 37.5%;
+    right: 15%;
+    width: 40px;
+    height: auto;
+    z-index: 1;
+  } 
+
+  .auto-button {
+    position: absolute;
+    top: 38%;
+    right: 15.2%;
+    width: 35px;
+    height: 65px;
+    z-index: 4;
+    background: transparent;
+    border: none;
+  }
+
+  .manual-button {
+    position: absolute;
+    top: 44%;
+    right: 15.2%;
+    width: 35px;
+    height: 70px;
+    z-index: 4;
+    background: transparent;
+    border: none;
+  }
+
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+
+  <div class="middle-container">
+    <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image" />
+
+    <!-- รูปซ้อน -->
+    <div>
+        <img src="images/Huminity.PNG" class="icon-humidity" alt="Humidity" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; left: 18.5%;"/>
+    </div>
+    <div>
+        <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; left: 47%;"/>
+    </div>
+    <!-- <div>
+        <img src="images/Chemical.PNG" class="icon-chemical" alt="Chemical" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; right: 19.5%;" />
+        <div class="switch-mode-container">
+        <img src="images/SwitchAutoManual.PNG" alt="button-button" class="SwitchAutoManual">
+        <button class="auto-button">Auto</button>
+        <button class="manual-button">Manual</button>
+      </div>
+    </div> -->
+    <div>
+      <img src="images/Chemical.PNG" class="icon-chemical" alt="Chemical" />
+      <img src="images/label.PNG" class="icon-label" alt="label" style="top: 23%; right: 19.5%;" />
+
+      <div class="switch-mode-container">
+        <img id="switchImage" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" />
+
+        <button class="auto-button"
+          onmouseover="changeImage('images/AutoButton.PNG')"
+          onmouseout="resetImage()"
+          onclick="changeImage('images/AutoButton.PNG', 'auto')"
+        ></button>
+
+        <button class="manual-button"
+          onmouseover="changeImage('images/MaunualButton.PNG')"
+          onmouseout="resetImage()"
+          onclick="changeImage('images/MaunualButton.PNG', 'manual')"
+        ></button>
+
+      </div>
+    </div>
+
+    <div>
+        <img src="images/ec.PNG" class="icon-ec" alt="EC" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 57%; left: 32.5%;"/>
+    </div>
+    <div>
+        <img src="images/ph.PNG" class="icon-ph" alt="pH" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 57%; right: 33.5%;" />
+    </div>
+
+    <button class="warning-button" onclick="location.href='WarningPage.html'"></button>
+    <button class="history-button" onclick="location.href='HistoryPage.html'"></button>
+    <button class="infomation-label-button" onclick="location.href='InfomationLabelPage.html'"></button>
+  </div>
+</body>
+<script>
+  const defaultImage = "images/SwitchAutoManual.PNG";
+  let isClicked = false;
+  let currentMode = ""; // "auto" or "manual"
+
+  function changeImage(src, mode = "") {
+    if (mode) {
+      isClicked = true;
+      currentMode = mode;
+    }
+    document.getElementById("switchImage").src = src;
+  }
+
+  function resetImage() {
+    if (!isClicked) {
+      document.getElementById("switchImage").src = defaultImage;
+    } else {
+      // กำหนดให้แสดงรูปตามโหมดล่าสุดที่คลิก
+      if (currentMode === "auto") {
+        document.getElementById("switchImage").src = "images/AutoButton.PNG";
+      } else if (currentMode === "manual") {
+        document.getElementById("switchImage").src = "images/MaunualButton.PNG";
+      }
+    }
+  }
+</script>
+</html>
