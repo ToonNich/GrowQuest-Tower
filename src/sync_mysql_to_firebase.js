@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
   database: "senior_project"
 });
 // Query ข้อมูลล่าสุด
-connection.query("SELECT * FROM temperature_log ORDER BY timestamp DESC LIMIT 1", (err, results) => {
+connection.query("SELECT * FROM Temperature ORDER BY timestamp DESC LIMIT 1", (err, results) => {
   if (err) throw err;
   const latest = results[0];
   console.log("Latest:", latest);
