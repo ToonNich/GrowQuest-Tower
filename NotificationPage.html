@@ -208,7 +208,7 @@
     let currentPage = 1;
 
     async function fetchNotifications() {
-      const snapshot = await getDocs(collection(db, "notifications"));
+      const snapshot = await getDocs(collection(db, "alerts"));
       notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderNotifications();
       renderPagination();
@@ -227,7 +227,8 @@
         const div = document.createElement('div');
         div.className = 'notification-item';
         div.addEventListener('click', async () => {
-          const docRef = doc(db, "notifications", noti.id);
+          // const docRef = doc(db, "notifications", noti.id);
+          const docRef = doc(db, "alerts", noti.id);
           await updateDoc(docRef, { read: true });
           noti.read = true;
           renderNotifications();
@@ -260,7 +261,8 @@
           e.stopPropagation();
           const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
           if (!confirmed) return;
-          await deleteDoc(doc(db, "notifications", noti.id));
+          // await deleteDoc(doc(db, "notifications", noti.id));
+          await deleteDoc(doc(db, "alerts", noti.id));
           await fetchNotifications();
         });
 
@@ -277,8 +279,11 @@
     window.toggleStar = async function(event, docId, currentState) {
       event.stopPropagation();
       const newState = !currentState;
-      const docRef = doc(db, "notifications", docId);
+      // const docRef = doc(db, "notifications", docId);
+      // await updateDoc(docRef, { starred: newState });
+      const docRef = doc(db, "alerts", docId);
       await updateDoc(docRef, { starred: newState });
+
       await fetchNotifications(); // โหลดใหม่เพื่ออัปเดต UI
     }
 

@@ -1,38 +1,48 @@
-// connect_mysql_to_firebase.js
-
 const admin = require("firebase-admin");
 const mysql = require("mysql2");
 
-// ตั้งค่า Firebase Admin SDK
+// โหลด Service Account Key จากไฟล์
 admin.initializeApp({
-  credential: admin.credential.cert(require("AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0")),
-  databaseURL: "seniorproject-684c1"
+  credential: admin.credential.cert(require("./firebase-key.json")),
+  databaseURL: "https://seniorproject-684c1.firebaseio.com"
 });
 
 const firestore = admin.firestore();
 
-// ตั้งค่า MySQL
+// ตั้งค่าการเชื่อมต่อ MySQL
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
   database: "senior_project"
 });
-// Query ข้อมูลล่าสุด
-connection.query("SELECT * FROM Temperature ORDER BY timestamp DESC LIMIT 1", (err, results) => {
+
+// ดึงข้อมูลล่าสุดจากตาราง value_test
+connection.query("SELECT * FROM value_test ORDER BY timestamp DESC LIMIT 1", (err, results) => {
   if (err) throw err;
+
   const latest = results[0];
   console.log("Latest:", latest);
 
-  // ตรวจสอบเงื่อนไขผิดปกติ เช่น อุณหภูมิ > 40°C หรือความชื้น < 20%
-  if (latest.temp > 40 || latest.humidity < 20) {
-    // เขียนการแจ้งเตือนเข้าสู่ Firebase
+  // ดึงค่าจากคอลัมน์ (ปรับชื่อให้ตรงกับฐานข้อมูลจริงของคุณ)
+  const { Temperature, Humidity, EC, Ph, Chemical } = latest;
+
+  // เงื่อนไขค่าผิดปกติ (ตัวอย่าง)
+  const isAbnormal =
+    Temperature > 40 || Humidity < 20 || Ph < 5.5 || Ph > 8 || EC > 3 || Chemical === 'toxic';
+
+  if (isAbnormal) {
+    const msg = `แจ้งเตือน: Temp=${Temperature}°C, RH=${Humidity}%, pH=${Ph}, EC=${EC}, Chem=${Chemical}`;
+
     firestore.collection("alerts").add({
-      message: `อุณหภูมิ: ${latest.temp}°C, ความชื้น: ${latest.humidity}%`,
+      message: msg,
+      values: { Temperatureature, Humidity, EC, Ph, Chemical },
       timestamp: admin.firestore.Timestamp.now(),
       read: false
     }).then(() => {
-      console.log("แจ้งเตือนถูกส่งไปยัง Firebase แล้ว");
+      console.log("📢 แจ้งเตือนถูกส่งไปยัง Firebase แล้ว");
     });
+  } else {
+    console.log("✅ ข้อมูลปกติ ไม่ส่งแจ้งเตือน");
   }
 });

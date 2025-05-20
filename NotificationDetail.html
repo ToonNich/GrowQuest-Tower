@@ -114,12 +114,14 @@
         return;
       }
 
-      const docRef = doc(db, "notifications", id);
+      // const docRef = doc(db, "notifications", id);
+      const docRef = doc(db, "alerts", id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
         document.getElementById("title").innerText = data.title || "No header.";
+        // document.getElementById("content").innerText = data.content || "There are no notification details.";
         document.getElementById("content").innerText = data.content || "There are no notification details.";
 
         if (data.timestamp?.toDate) {
