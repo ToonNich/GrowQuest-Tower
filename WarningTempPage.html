@@ -73,6 +73,24 @@
     height: auto;
     z-index: 4;
    }
+   
+
+ .tube-outer {
+  width: 45px;
+  height: 315px;
+  border: 6px solid white;
+  background-color: transparent;
+  overflow: hidden;
+  position: absolute; /* ต้องมี */
+}
+
+.tube-inner {
+  width: 100%;
+  background-color: #00ffff;
+  position: absolute;
+  bottom: 0;
+  transition: height 0.5s ease-in-out;
+}
   </style>
 </head>
 <body>
@@ -83,10 +101,51 @@
     <div>
         <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" />
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 27%; left: 28%;" />
+         <!-- ✅ หลอดสาร -->
+        <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
+          <div class="tube-inner" id="temperatureBar"></div>
+        </div>
     </div>
     <div>
       <img src="images/Blackboard.PNG" class="board-images" alt="board" />
     </div>
   </div>
+  <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+    authDomain: "seniorproject-684c1.firebaseapp.com",
+    projectId: "seniorproject-684c1",
+    storageBucket: "seniorproject-684c1.appspot.com",
+    messagingSenderId: "847138584376",
+    appId: "1:847138584376:web:eface0926c96092daef3cd",
+    measurementId: "G-N0CM5TQBM8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadTemperature() {
+    const snapshot = await getDocs(collection(db, "alerts"));
+    const docs = snapshot.docs.map(doc => doc.data());
+    if (docs.length === 0) return;
+    const latest = docs[docs.length - 1];
+    const values = latest.values;
+
+    // อัปเดตหลอด
+    updateTube('temperatureBar', values.temp, 100);
+    console.log("Temperature from Firestore:", values.temp);
+  }
+
+  function updateTube(id, value, max) {
+    const percent = Math.min(100, (value / max) * 100);
+    const el = document.getElementById(id);
+    if (el) el.style.height = `${percent}%`;
+  }
+
+  window.onload = loadTemperature;
+</script>
 </body>
 </html>
