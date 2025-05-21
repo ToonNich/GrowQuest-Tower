@@ -281,6 +281,17 @@
   transition: height 0.5s ease-in-out;
 }
 
+.warning-icon {
+  position: absolute;
+  width: 40px;
+  height: 35px;
+  background: url('images/warning1.PNG') no-repeat center center;
+  background-size: cover;
+  z-index: 5;
+  display: none; /* ซ่อนเริ่มต้น */
+}
+
+
   </style>
 </head>
 <body>
@@ -297,6 +308,7 @@
         <!-- <img src="images/Huminity.PNG" class="icon-humidity" alt="Humidity" /> -->
         <button class="icon-humidity"style="width: 160px; height: 90px;" onclick="location.href='WarningHumiPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 18.5%;"/>
+        <div class="warning-icon" id="warningHumidity" style="top: 11%; left: 27%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
           <div class="tube-outer" style="top: 15.5%; left: 19.2%">
@@ -310,6 +322,7 @@
         <!-- <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" /> -->
         <button class="icon-temperature" style="width: 180px; height: 110px;" onclick="location.href='WarningTempPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 47.4%;"/>
+        <div class="warning-icon" id="warningTemp" style="top: 11%; left: 57%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
           <div class="tube-outer" style="top: 15.5%; left: 48%;">
@@ -322,6 +335,7 @@
     <div>
       <button class="icon-chemical" style="width: 180px; height: 90px;" onclick="location.href='WarningChemPage.html'"></button>
       <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; right: 19.5%;" />
+      <div class="warning-icon" id="warningChemical" style="top: 11%; right: 14%;"></div>
       <!-- หลอดสาร -->
         <div class="tube-container">
           <div class="tube-outer"  style="top: 15.5%; right: 20.2%;">
@@ -353,6 +367,7 @@
         <!-- <img src="images/ec.PNG" class="icon-ec" alt="EC" /> -->
         <button class="icon-ec" style="width: 135px; height: 70px;" onclick="location.href='WarningEcPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 18.5%;"/>
+        <div class="warning-icon" id="warningEC" style="top: 52.5%; left: 24%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
           <div class="tube-outer" style="top: 57%; left: 19.2%;">
@@ -366,6 +381,7 @@
         <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
         <button class="icon-ph" style="width: 130px; height: 70px;" onclick="location.href='WarningPhPage.html'"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 47.4%;" />
+        <div class="warning-icon" id="warningPH" style="top: 52.5%; left: 53%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
           <div class="tube-outer" style="top: 57%; left: 48%;">
@@ -431,7 +447,8 @@
 </script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    // import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -445,37 +462,36 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const latestQuery = query(collection(db, "alerts"), orderBy("timestamp", "desc"), limit(1));
 
-    async function loadSensorData() {
-      const snapshot = await getDocs(collection(db, "alerts"));
-      const docs = snapshot.docs.map(doc => doc.data());
-      if (docs.length === 0) return;
-      const latest = docs[docs.length - 1];
+    onSnapshot(latestQuery, (snapshot) => {
+      if (snapshot.empty) return;
+
+      const latest = snapshot.docs[0].data();
       const values = latest.values;
-      // updateTube('humidityBar', latest.humidity, 100);
-      // updateTube('temperatureBar', latest.temp, 50);
-      // updateTube('chemicalBar', latest.chemical, 100);
-      // updateTube('ecBar', latest.ec, 5);
-      // updateTube('phBar', latest.ph, 14);
-      // updateTube('lightBar', latest.light, 100);
+
       updateTube('humidityBar', values.humidity, 100);
       updateTube('temperatureBar', values.temp, 50);
-      updateTube('chemicalBar', parseFloat(values.chemical), 100); // string ต้อง parse เป็น float
+      updateTube('chemicalBar', parseFloat(values.chemical), 100);
       updateTube('ecBar', values.ec, 5);
       updateTube('phBar', values.ph, 14);
       updateTube('lightBar', values.light, 100);
 
-      console.log("Latest sensor values:", values);
+      showWarningIcon('warningHumidity', values.humidity > 90 || values.humidity < 20);
+      showWarningIcon('warningTemp', values.temp > 40 || values.temp < 10);
+      showWarningIcon('warningPH', values.ph > 8 || values.ph < 5.5);
+      showWarningIcon('warningEC', values.ec > 3 || values.ec < 0.2);
+      showWarningIcon('warningChemical', values.chemical > 50 || values.chemical < 5);
 
-    }
+      console.log("📡 Real-time update:", values);
+    });
+
 
     function updateTube(id, value, max) {
       const percent = Math.min(100, (value / max) * 100);
       const el = document.getElementById(id);
       if (el) el.style.height = `${percent}%`;
     }
-
-    /*loadSensorData();*/
 
     const defaultImages = {
       switchImageChem: "images/SwitchAutoManual.PNG",
@@ -519,14 +535,17 @@ function resetImage(id) {
   }
 }
 
-// ✅ ทำให้เรียกใช้ได้จาก HTML
-window.changeImage = changeImage;
-window.resetImage = resetImage;
+      // ✅ ทำให้เรียกใช้ได้จาก HTML
+      window.changeImage = changeImage;
+      window.resetImage = resetImage;
 
+    function showWarningIcon(id, condition) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = condition ? 'block' : 'none';
+    }
 
     window.onload = () => {
       ["switchImageLight", "switchImageChem"].forEach(resetImage);
-      loadSensorData();
     };
   </script>
 </body>

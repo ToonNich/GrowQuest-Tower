@@ -27,7 +27,7 @@ async function checkEventQueue() {
     if (rows.length === 0) return;
 
     const event = rows[0];
-    const { id, temp, humidity, ec, ph, chemical } = event;
+    const { id, temp, humidity, ec, ph, chemical, light } = event;
 
     // Check full abnormal conditions
     const isAbnormal =
@@ -80,7 +80,7 @@ async function checkEventQueue() {
         title,
         content,
         message,
-        values: { temp, humidity, ec, ph, chemical },
+        values: { temp, humidity, ec, ph, chemical, light },
         timestamp: admin.firestore.Timestamp.now(),
         read: false
       });
