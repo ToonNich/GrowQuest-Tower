@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warning Humidity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
+     .back-button {
+      width: 60px; /* กำหนดขนาดของปุ่ม */
+      height: 44px; /* กำหนดความสูงของปุ่ม */
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      border: none;
+      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      position: absolute;
+      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      left: 4%;
+      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+
+    /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%; /* ปรับขนาดตามต้องการ */
+      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+    }
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    .icon-huminity {
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 180px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 13.5%; 
+      left: 25%; 
+      z-index: 2;
+    } 
+    .icon-label {
+      position: absolute;
+      width: 70px; /* ปรับขนาดไอคอน */
+      height: auto;
+      z-index: 4; 
+    }
+
+   .board-images {
+    position: absolute;
+    top: 12%;
+    right: 22%;
+    width: 600px;
+    height: auto;
+    z-index: 4;
+   }
+
+
+ .tube-outer {
+  width: 45px;
+  height: 315px;
+  border: 6px solid white;
+  background-color: transparent;
+  overflow: hidden;
+  position: absolute; /* ต้องมี */
+}
+
+.tube-inner {
+  width: 100%;
+  background-color: #00ffff;
+  position: absolute;
+  bottom: 0;
+  transition: height 0.5s ease-in-out;
+}
+
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='DashboardPage.html'"></button>
+  <div>
+    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
+    <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+    <div>
+        <img src="images/Huminity.PNG" class="icon-huminity" alt="huminity" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 27%; left: 28%;" />
+        <!-- ✅ หลอดสาร -->
+        <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
+          <div class="tube-inner" id="humidityBar"></div>
+        </div>
+    </div>
+    <div>
+      <img src="images/Blackboard.PNG" class="board-images" alt="board" />
+    </div>
+  </div>
+  <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+    authDomain: "seniorproject-684c1.firebaseapp.com",
+    projectId: "seniorproject-684c1",
+    storageBucket: "seniorproject-684c1.appspot.com",
+    messagingSenderId: "847138584376",
+    appId: "1:847138584376:web:eface0926c96092daef3cd",
+    measurementId: "G-N0CM5TQBM8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadHumidity() {
+    const snapshot = await getDocs(collection(db, "alerts"));
+    const docs = snapshot.docs.map(doc => doc.data());
+    if (docs.length === 0) return;
+    const latest = docs[docs.length - 1];
+    const values = latest.values;
+
+    // อัปเดตหลอด
+    updateTube('humidityBar', values.humidity, 100);
+    console.log("Humidity from Firestore:", values.humidity);
+  }
+
+  function updateTube(id, value, max) {
+    const percent = Math.min(100, (value / max) * 100);
+    const el = document.getElementById(id);
+    if (el) el.style.height = `${percent}%`;
+  }
+
+  window.onload = loadHumidity;
+</script>
+
+</body>
+</html>

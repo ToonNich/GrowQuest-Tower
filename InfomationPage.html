@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <title>Information</title>
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+      margin: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
+      z-index: 0;
+    }
+
+    /* Container สำหรับปุ่ม */
+    .button-container {
+      position: relative;
+      height: 100vh; /* ให้ container สูงเท่าหน้าจอ */
+      z-index: 2;
+    }
+
+    /* ปุ่ม back */
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      z-index: 3; /* ให้อยู่หน้าสุด */
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 1;
+    }
+
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  </div>
+
+  <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image">
+  <p class="head-text" style="top: 15%; left: 25%;">Infomationnnnnnnnnnnnnnnnnnnnnnnnnnnn</p>
+</body>
+</html>

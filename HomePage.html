@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: url('images/Farm_BG.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.155);
+      z-index: 0;
+    }
+
+    .box {
+      position: absolute;
+      top: 9%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 26%;
+      height: 90px;
+      background-color: #FFF2CB;
+      border: 2px solid #FFBF00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
+
+    .midnight-images {
+      width: 100px;
+      height: 85px;
+      background: url('images/Midnight.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 3%;
+      right: 75%;
+      z-index: 3;
+    }
+
+    .account-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/Account1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 3%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .account-button:hover {
+      background: url('images/Account2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .notification-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/Noti1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 17%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .notification-button:hover {
+      background: url('images/Noti2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .notificationAlert-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/NotiAlert1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 17%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .notificationAlert-button:hover {
+      background: url('images/NotiAlert2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .infomation-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/info1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 31%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .infomation-button:hover {
+      background: url('images/info2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* เริ่มต้นสถานะปิด */
+    .light-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/CloseLight.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 45%;
+      right: 1.5%;
+      z-index: 2;
+      transition: background-image 0.2s ease;
+    }
+
+    /* Hover ขณะปิด */
+    .light-button:hover:not(.on) {
+      background: url('images/OpenLight.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* สถานะเปิด */
+    .light-button.on {
+      background: url('images/OpenLight.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* Hover ขณะเปิด */
+    .light-button.on:hover {
+      background: url('images/OpenLight.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .wateringcan-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/WateringCan1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 17%;
+      left: 2%;
+      z-index: 2;
+    }
+
+    .wateringcan-button:hover {
+      background: url('images/WateringCan2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .watering-gif {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20%; /* ปรับขนาดตามต้องการ */
+      pointer-events: none;
+      display: none;
+      z-index: 99;
+    }
+
+    .camera-button {
+      width: 4.5%;
+      height: 9.5%;
+      background: url('images/Camera1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 30%;
+      left: 2.25%;
+      z-index: 2;
+    }
+
+    .camera-button:hover {
+      background: url('images/Camera2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+      .checkPlant-button {
+      width: 5%;
+      height: 10%;
+      background: url('images/CheckPlantBut2.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 43%;
+      left: 2%;
+      z-index: 2;
+    }
+
+    .checkPlant-button:hover {
+      background: url('images/CheckPlantBut1.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .dashboard-button {
+      width: 236px;
+      height: 56px;
+      background: url('images/Dashboard1.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 90%;
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .dashboard-button:hover {
+      background: url('images/Dashboard2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .preSlide-button, .nextSlide-button {
+      width: 26px;
+      height: 41px;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 55%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    .preSlide-button {
+      left: 3%;
+      background: url('images/PreSlide1.PNG') no-repeat center center;
+    }
+
+    .preSlide-button:hover {
+      background: url('images/PreSlideTwo.PNG') no-repeat center center;
+    }
+
+    .nextSlide-button {
+      right: 3%;
+      background: url('images/NextSlide1.PNG') no-repeat center center;
+    }
+
+    .nextSlide-button:hover {
+      background: url('images/NextSlideTwo.PNG') no-repeat center center;
+    }
+
+    .plant-image {
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 35%;
+      z-index: 1;
+    }
+
+    .Profile-image {
+      position: absolute;
+      top: 2%;
+      left: 4.5%;
+      transform: translateX(-50%);
+      width: 6.5%;
+      z-index: 1;
+    }
+
+    .hp-image {
+      position: absolute;
+      top: 8%;
+      left: 18%;
+      transform: translateX(-50%);
+      width: 20%;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <button class="account-button" onclick="location.href='AccountPage.html'"></button>
+  <button class="notification-button" onclick="location.href='NotificationPage.html'"></button>
+  <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
+  <!-- <button class="light-button"></button> -->
+  <button class="light-button" id="lightButton"></button>
+  <button class="wateringcan-button"></button>
+  <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
+  <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
+  <button class="checkPlant-button" onclick="location.href='CheckPlantStage.html'"></button>
+  <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
+  <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
+  <img src="images/HP1.PNG" alt="Hp" class="hp-image">
+
+  <div class="box">
+    <button id="time-button" class="midnight-images"></button>
+    <div id="datetime-box" style="text-align: center; font-size: 22px; padding-left: 20%; text-align: left;"></div>
+  </div>
+
+  <img id="character" src="images/Stage4Normal.gif" class="plant-image" />
+  <p id="charName"></p>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const lightButton = document.getElementById("lightButton");
+
+      if (lightButton) {
+        lightButton.addEventListener("click", () => {
+          lightButton.classList.toggle("on");
+        });
+      }
+    });
+
+    function updateDateTime() {
+      const now = new Date();
+      const options = {
+        weekday: 'short', // ✅ short day name
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      const dateStr = now.toLocaleDateString('en-US', options);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+      document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
+    }
+
+    function updateDateTimeAndButton() {
+      const now = new Date();
+      const options = {
+        weekday: 'short', // ✅ short day name
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      const dateStr = now.toLocaleDateString('en-US', options);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+      document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
+
+      const hour = now.getHours();
+      const button = document.getElementById("time-button");
+
+      let imageUrl = '';
+      if (hour >= 5 && hour < 8) imageUrl = 'images/Morning.PNG';
+      else if (hour >= 8 && hour < 11) imageUrl = 'images/LateMorning.PNG';
+      else if (hour >= 11 && hour < 15) imageUrl = 'images/Afternoon.PNG';
+      else if (hour >= 15 && hour < 18) imageUrl = 'images/Evening.PNG';
+      else if (hour >= 18 && hour < 21) imageUrl = 'images/Night.PNG';
+      else if (hour >= 21 && hour < 24) imageUrl = 'images/LateNight.PNG';
+      else imageUrl = 'images/Midnight.PNG';
+
+      button.style.backgroundImage = `url('${imageUrl}')`;
+    }
+
+    setInterval(() => {
+      updateDateTime();
+      updateDateTimeAndButton();
+    }, 1000);
+
+    updateDateTime();
+    updateDateTimeAndButton();
+
+    const characters = ["images/plant.png", "images/plan2.PNG"];
+    let currentIndex = 0;
+
+    const characterImage = document.getElementById("character");
+
+   
+    window.onload = () => {
+      const data = JSON.parse(localStorage.getItem("characterData"));
+      if (data) {
+        document.getElementById("character").src = data.image;
+        document.getElementById("charName").textContent = data.name;
+      }
+    };
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   const wateringBtn = document.querySelector(".wateringcan-button");
+    //   const wateringGif = document.getElementById("wateringGif");
+
+    //   // เมื่อกดเม้าค้างที่ปุ่ม
+    //   wateringBtn.addEventListener("mousedown", () => {
+    //     wateringGif.style.display = "block";
+    //   });
+
+    //   // เมื่อปล่อยเม้าท์
+    //   document.addEventListener("mouseup", () => {
+    //     wateringGif.style.display = "none";
+    //   });
+
+    //   // เคลื่อน gif ตาม mouse
+    //   document.addEventListener("mousemove", (e) => {
+    //     wateringGif.style.left = `${e.clientX}px`;
+    //     wateringGif.style.top = `${e.clientY}px`;
+    //   });
+    // });
+document.addEventListener("DOMContentLoaded", () => {
+  const wateringBtn = document.querySelector(".wateringcan-button");
+  const wateringGif = document.getElementById("wateringGif");
+  const plantImage = document.getElementById("character");
+
+  wateringBtn.addEventListener("mousedown", () => {
+    wateringGif.style.display = "block";
+    plantImage.src = "images/Stage4Warerting.gif"; // แสดงอนิเมชันพืชถูกรดน้ำ
+  });
+
+  document.addEventListener("mouseup", () => {
+    wateringGif.style.display = "none";
+    plantImage.src = "images/Stage4Normal.gif"; // กลับเป็นพืชปกติเมื่อปล่อยเมาส์
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    wateringGif.style.left = `${e.clientX}px`;
+    wateringGif.style.top = `${e.clientY}px`;
+  });
+});
+;
+
+  const character = document.getElementById("character");
+
+// เมื่อคลิกหรือกดค้างที่พืช
+character.addEventListener("mousedown", () => {
+  character.src = "images/Stage4Touch.gif"; // แสดงอนิเมชั่นเมื่อคลิก
+});
+
+// เมื่อปล่อยเม้าส์
+document.addEventListener("mouseup", () => {
+  character.src = "images/Stage4Normal.gif"; // กลับไปเป็นภาพเดิม
+});
+
+
+  </script>
+</body>
+</html>

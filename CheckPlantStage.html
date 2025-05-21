@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Processor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    .main-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 40px auto;
+      display: flex;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      height: 90vh; /* สูงเต็มจอแต่ไม่เกิน */
+    }
+
+    .left-pane, .right-pane {
+      width: 50%;
+      padding: 30px;
+    }
+
+    .left-pane {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;     /* ✅ Scroll ได้เฉพาะฝั่งซ้าย */
+      overflow-x: hidden;
+      border-right: 2px solid #999;
+      height: 100%;
+    }
+
+    .right-pane {
+      text-align: center;
+      overflow: hidden;     /* ❌ ไม่ให้ scroll ฝั่งขวา */
+    }
+
+    .left-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      width: 100%;
+    }
+
+    .upload-container {
+      background-color: #fff8dc;
+      border: 4px solid black;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 6px 6px 0 #333;
+      image-rendering: pixelated;
+      text-align: center;
+    }
+
+    .upload-container h2 {
+      margin-top: 0;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .upload-container h2::before {
+      content: "";
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: url('images/upload-icon.png') no-repeat center center;
+      background-size: contain;
+      image-rendering: pixelated;
+    }
+
+    .real-file-input {
+      display: none;
+    }
+
+    .custom-upload-btn {
+      display: inline-block;
+      background-color: #ffcc00;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-family: 'Pixelify Sans', monospace;
+      color: black;
+      border: 3px solid black;
+      box-shadow: 4px 4px 0 #333;
+      cursor: pointer;
+      margin-top: 10px;
+      user-select: none;
+    }
+
+    .custom-upload-btn:hover {
+      background-color: #ffe066;
+      box-shadow: 2px 2px 0 #333;
+    }
+
+    .file-name {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+      font-family: 'Pixelify Sans', monospace;
+      word-break: break-word;
+      text-align: center;
+    }
+
+    .image-preview-box {
+      width: 100%;
+      text-align: center;
+    }
+
+    .image-preview-box h2 {
+      margin-bottom: 10px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .image-preview-box h2::before {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: url('images/preview-icon.png') no-repeat center center;
+      background-size: contain;
+      image-rendering: pixelated;
+    }
+
+    .preview-img {
+      max-width: 100%;
+      max-height: 70vh;
+      border: 4px dashed #999;
+      margin-top: 10px;
+    }
+
+    .button-container {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ปุ่ม Back -->
+  <div class="button-container">
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  </div>
+
+  <!-- เนื้อหาหลัก -->
+  <div class="main-container">
+    <!-- ฝั่งซ้าย: Upload + Preview -->
+    <div class="left-pane">
+      <div class="left-inner">
+        <div class="upload-container">
+          <h2>Upload Image</h2>
+          <input type="file" id="imageInput" class="real-file-input" accept="image/*" />
+          <label for="imageInput" class="custom-upload-btn">🎮 Choose Image</label>
+          <div id="fileName" class="file-name">No file chosen</div>
+        </div>
+
+        <div class="image-preview-box">
+          <h2>Preview</h2>
+          <img id="outputImage" class="preview-img" src="" alt="Image will appear here" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ฝั่งขวา -->
+    <div class="right-pane">
+      <h2>🧠 Processed Result</h2>
+      <!-- เพิ่มผลลัพธ์ในอนาคต -->
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const imageInput = document.getElementById("imageInput");
+    const outputImage = document.getElementById("outputImage");
+    const fileNameDisplay = document.getElementById("fileName");
+
+    imageInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        fileNameDisplay.textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          outputImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+</body>
+</html>

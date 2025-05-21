@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(255, 255, 255, 0.322); /* สีขาวจางลงครึ่งหนึ่ง */
+        z-index: 0;
+    }
+     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
+     .back-button {
+      width: 60px; /* กำหนดขนาดของปุ่ม */
+      height: 44px; /* กำหนดความสูงของปุ่ม */
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      border: none;
+      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      position: absolute;
+      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      left: 4%;
+      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+    /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%; /* ปรับขนาดตามต้องการ */
+      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+    }
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+
+    /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
+    .save-button {
+      width: 156px; /* กำหนดขนาดของปุ่ม */
+      height: 54px; /* กำหนดความสูงของปุ่ม */
+      background: url('images/Save1.PNG') no-repeat center center;
+      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      border: none;
+      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      position: absolute;
+      top: 83%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      left: 50%;
+      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .save-button:hover {
+      background: url('images/Save2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+    .board-image {
+        position: absolute;
+        top: 3%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 45%; /* ปรับขนาดตามต้องการ */
+        z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+    }
+    .Profile-image {
+        position: absolute;
+        top: 12%;
+        left: 27%;
+        transform: translateX(-50%);
+        width: 6.5%; /* ปรับขนาดตามต้องการ */
+        z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+    }
+    .input-wrapper {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        width: 45%; 
+        height: 50px;
+        z-index: 1;
+    }
+    .input-overlay {
+        position: absolute;
+        width: 87%;
+        height: 50%;
+        left: 5%;
+        background-color: rgba(255, 255, 255, 0); /* ความโปร่งใส 50% */
+        border: none;
+        padding: 8px;
+        font-size: 24px;
+        font-family: 'Pixelify Sans', sans-serif;
+        z-index: 2;
+        outline: none;
+        border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  <div>
+    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
+    <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+    <!-- <form action="php/DbForRegister.php" method="post" onsubmit="return validateForm();"> -->
+    <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
+    <p class="head-text" style="top: 14%; left: 32%;">Name</p>    
+      <form id="registerForm">
+        <div>
+            <p class="head-text" style="top: 25%; left: 25%;">Username:</p>
+            <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+            <img src="images/board.PNG" class="board-image"style="top: 33%; left: 50%;">
+            <div class="input-wrapper" style="top: 39%; left: 50%;">
+                <input type="text" class="input-overlay" required>
+            </div>
+        </div>
+        <div>
+            <p class="head-text" style="top: 40%; left: 25%;">Email:</p>
+            <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+            <img src="images/board.PNG" class="board-image"style="top: 48%; left: 50%;">
+            <div class="input-wrapper" style="top: 54%; left: 50%;" >
+                <input type="password" class="input-overlay" required>
+            </div>
+        </div>
+        <div>
+            <p class="head-text" style="top: 55%; left: 25%;">Password:</p>
+            <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+            <img src="images/board.PNG" class="board-image"style="top: 63%; left: 50%;">
+            <div class="input-wrapper" style="top: 69%; left: 50%;">
+                <input type="password" class="input-overlay" required>
+            </div>
+        </div>
+        <!-- ข้อความแสดงข้อผิดพลาด -->
+        <p id="error-msg" style="color: red; font-size: 12px;"></p>
+
+        <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง -->
+        <button type="submit" class="save-button"></button>
+    </form>
+  </div>
+</body>
+</html>

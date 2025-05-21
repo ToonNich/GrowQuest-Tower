@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rounded Status with Hover</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #b3ecff;
+      margin: 0;
+      font-family: 'Pixelify Sans', monospace;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 40px;   /* เพิ่มระยะห่างจากด้านบน */
+      right: 40px; /* เพิ่มระยะห่างจากด้านขวา */
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .status-box {
+      padding: 10px 16px;
+      font-size: 16px;
+      color: white;
+      background-color: #ff6f61;
+      border: 3px solid black;
+      border-radius: 16px;
+      box-shadow:
+        inset -2px -2px 0 rgba(255, 255, 255, 0.3),
+        inset 2px 2px 0 rgba(0, 0, 0, 0.2),
+        3px 3px 0 #000;
+      user-select: none;
+      cursor: default;
+      text-align: center;
+      min-width: 110px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .status-box:hover {
+      transform: scale(1.06);
+      box-shadow:
+        inset -2px -2px 0 rgba(255, 255, 255, 0.4),
+        inset 2px 2px 0 rgba(0, 0, 0, 0.2),
+        0 0 8px #000;
+    }
+
+    .status-box.humidity {
+      background-color: #27ae60;
+    }
+
+    .status-box.temp {
+      background-color: #f1c40f;
+      color: black;
+    }.preSlide-button, .nextSlide-button {
+      width: 26px;
+      height: 41px;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 55%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+    }
+
+    .preSlide-button {
+      left: 3%;
+      background: url('images/PreSlide1.PNG') no-repeat center center;
+    }
+
+    .preSlide-button:hover {
+      background: url('images/PreSlideTwo.PNG') no-repeat center center;
+    }
+
+    .nextSlide-button {
+      right: 3%;
+      background: url('images/NextSlide1.PNG') no-repeat center center;
+    }
+
+    .nextSlide-button:hover {
+      background: url('images/NextSlideTwo.PNG') no-repeat center center;
+    }
+
+        /* Container สำหรับปุ่ม */
+    .button-container {
+      position: relative;
+      height: 100vh; /* ให้ container สูงเท่าหน้าจอ */
+      z-index: 2;
+    }
+
+    /* ปุ่ม back */
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      z-index: 3; /* ให้อยู่หน้าสุด */
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-box" id="ecBox">Loading...</div>
+    <div class="status-box humidity" id="humidityBox">Loading...</div>
+    <div class="status-box temp" id="tempBox">Loading...</div>
+  </div>
+
+
+  <div>
+    <button class="preSlide-button"></button>
+    <button class="nextSlide-button"></button>
+  </div>
+</body>
+<script>
+  async function loadStatusFromMySQL() {
+    try {
+      const response = await fetch("php/getStatus.php");
+      const data = await response.json();
+
+      document.getElementById("ecBox").textContent = `EC ${data.EC}%`;
+      document.getElementById("humidityBox").textContent = `Humidity ${data.Humidity}%`;
+      document.getElementById("tempBox").textContent = `Temp ${data.Temperature}°C`;
+
+    } catch (err) {
+      console.error("Error loading status:", err);
+    }
+  }
+
+  loadStatusFromMySQL();
+</script>
+
+</html>

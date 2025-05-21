@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.322);
+      z-index: 0;
+    }
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 6%;
+      left: 4%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 1;
+    }
+    .notification-detail {
+      position: absolute;
+      top: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      background-color: transparent;
+      border-radius: 16px;
+      padding: 30px;
+      z-index: 2;
+      /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+    }
+    .notification-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 12px;
+    }
+    #timestamp {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+    .notification-content {
+      font-size: 20px;
+      color: #333;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='NotificationPage.html'"></button>
+  <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+
+  <div class="notification-detail">
+    <div class="notification-title" id="title">Loading...</div>
+    <div id="timestamp">⏳</div>
+    <div class="notification-content" id="content">Please, wait...</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadNotification() {
+      if (!id) {
+        document.getElementById("title").innerText = "Notification ID not found";
+        document.getElementById("content").innerText = "Please return to the previous page.";
+        document.getElementById("timestamp").innerText = "";
+        return;
+      }
+
+      // const docRef = doc(db, "notifications", id);
+      const docRef = doc(db, "alerts", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        document.getElementById("title").innerText = data.title || "No header.";
+        // document.getElementById("content").innerText = data.content || "There are no notification details.";
+        document.getElementById("content").innerText = data.content || "There are no notification details.";
+
+        if (data.timestamp?.toDate) {
+          const date = data.timestamp.toDate();
+          const formatted = date.toLocaleString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+          document.getElementById("timestamp").innerText = `📅 Date: ${formatted}`;
+        } else {
+          document.getElementById("timestamp").innerText = "";
+        }
+      } else {
+        document.getElementById("title").innerText = "No information found";
+        document.getElementById("content").innerText = "This notification has been deleted or is invalid.";
+        document.getElementById("timestamp").innerText = "";
+      }
+    }
+
+    loadNotification();
+  </script>
+</body>
+</html>

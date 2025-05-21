@@ -1,0 +1,596 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Information</title>
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      font-family: 'Pixelify Sans', sans-serif;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
+      z-index: 0;
+    }
+
+    .middle-container {
+      position: relative;
+      width: 70%;
+      margin: 0 auto;
+      margin-top: 3%;
+      z-index: 1;
+    }
+
+    .middle-image {
+      width: 100%;
+      display: block;
+    }
+/* 
+    .icon-humidity {
+        top: 15%; 
+        left: 15%;
+        position: absolute;
+        width: 160px;
+        height: auto;
+        z-index: 2;
+    } */
+    .icon-humidity {
+      background: url('images/Huminity.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      /* top: 15%;  */
+      top: 7%;
+      left: 15%;
+      z-index: 2;
+    } 
+    .icon-humidity:hover {
+      background: url('images/Huminity.PNG') no-repeat center center;
+      background-size: cover;
+    }
+    .icon-temperature {
+      background: url('images/Temperature.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 180px; /* ปรับขนาดไอคอน */
+      height: auto;
+      /* top: 11.6%;;  */
+      top: 3.6%;; 
+      left: 42.5%;
+      z-index: 2;
+    } 
+    .icon-temperature:hover {
+      background: url('images/Temperature.PNG') no-repeat center center;
+      background-size: cover;
+    }
+    .icon-chemical {
+      background: url('images/Chemical.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 180px; /* ปรับขนาดไอคอน */
+      height: auto;
+      /* top: 13.5%;  */
+      top: 5.5%; 
+      right: 15%; 
+      z-index: 2;
+    } 
+    .icon-chemical:hover {
+      background: url('images/Chemical.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .icon-ec {
+      background: url('images/ec.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 135px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 49%; 
+      left: 16%;  
+      z-index: 2;
+    } 
+    .icon-ec:hover {
+      background: url('images/ec.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .icon-ph {
+      background: url('images/ph.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 135px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 49%; 
+      left:44.5% ;
+      z-index: 2;
+    } 
+    .icon-ph:hover {
+      background: url('images/ph.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .icon-light {
+      background: url('images/LightIcon.PNG') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      width: 135px; /* ปรับขนาดไอคอน */
+      height: auto;
+      top: 47%; 
+      right: 15%;
+      z-index: 2;
+    } 
+    .icon-light:hover {
+      background: url('images/LightIcon.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    .icon-label {
+        position: absolute;
+        width: 70px; /* ปรับขนาดไอคอน */
+        height: auto;
+        z-index: 2; 
+    }
+
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 1%;
+      left: 2%;
+      z-index: 3;
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+    .warning-button {
+        width: 60px; /* กำหนดขนาดของปุ่ม */
+        height: 40px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/warning1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 87%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        left: 14%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .warning-button:hover {
+        background: url('images/warning2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    }
+    .history-button {
+        width: 65px; /* กำหนดขนาดของปุ่ม */
+        height: 65px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/history1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top:93%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        right: 14%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .history-button:hover {
+        background: url('images/history2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    } 
+
+    .infomation-label-button {
+        width: 65px; /* กำหนดขนาดของปุ่ม */
+        height: 65px; /* กำหนดความสูงของปุ่ม */
+        background: url('images/Info1.PNG') no-repeat center center;
+        background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+        border: none;
+        cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+        position: absolute;
+        top: 93%; /* อยู่กลางหน้าจอในแนวตั้ง */
+        right: 8%;
+        transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
+        z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    }
+    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
+    .infomation-label-button:hover {
+        background: url('images/Info2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
+        background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+    } 
+    .SwitchAutoManual { 
+    position: absolute;
+    /* top: 37.5%; */
+    top: 30.5%;
+    right: 15%;
+    width: 40px;
+    height: auto;
+    z-index: 1;
+    } 
+
+  .auto-button {
+    position: absolute;
+    /* top: 38%; */
+     top: 31%;
+    right: 15.2%;
+    width: 35px;
+    height: 65px;
+    z-index: 4;
+    background: transparent;
+    border: none;
+    }
+
+  .manual-button {
+    position: absolute;
+    /* top: 44%; */
+    top: 37%;
+    right: 15.2%;
+    width: 35px;
+    height: 70px;
+    z-index: 4;
+    background: transparent;
+    border: none;
+   }
+   /* หลอดสาร */
+.tube-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 30px;
+}
+
+.tube-outer {
+  width: 45px;
+  height: 315px;
+  border: 6px solid white;
+  background-color: transparent;
+  position: absolute;
+  overflow: hidden;
+}
+
+.tube-inner {
+  width: 100%;
+  background-color: #00ffff;
+  position: absolute;
+  bottom: 0;
+  transition: height 0.5s ease-in-out;
+}
+
+.warning-icon {
+  position: absolute;
+  width: 40px;
+  height: 35px;
+  background: url('images/warning1.PNG') no-repeat center center;
+  background-size: cover;
+  z-index: 5;
+  display: none; /* ซ่อนเริ่มต้น */
+}
+
+
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+
+  <div class="middle-container">
+    <!-- <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image" />
+     -->
+    <img src="images/SC1.png" alt="Middle Layer" class="middle-image" />
+    
+
+    <!-- Huminity -->
+    <div>
+        <!-- <button id="labelHumidity" class="icon-humidity"style="width: 160px; height: 90px;" onclick="location.href='WarningHumiPage.html'"></button> -->
+         <button id="labelHumidity" class="icon-humidity" style="width: 160px; height: 90px;"
+          onclick="dismissAndRedirect('humidity', 'WarningHumiPage.html')">
+          </button>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 18.5%;"/>
+        <div class="warning-icon" id="warningHumidity" style="top: 11%; left: 27%;"></div>
+        <!-- หลอดสาร -->
+        <div class="tube-container">
+          <div class="tube-outer" style="top: 15.5%; left: 19.2%">
+            <div class="tube-inner" id="humidityBar" ></div>
+          </div>
+        </div>
+    </div>
+
+     <!-- Temperature -->
+    <div>
+        <!-- <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" /> -->
+        <button id="labelTemp" class="icon-temperature" style="width: 180px; height: 110px;" 
+        onclick="dismissAndRedirect('temp', 'WarningTempPage.html')"></button>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 47.4%;"/>
+        <div class="warning-icon" id="warningTemp" style="top: 11%; left: 57%;"></div>
+        <!-- หลอดสาร -->
+        <div class="tube-container">
+          <div class="tube-outer" style="top: 15.5%; left: 48%;">
+            <div class="tube-inner" id="temperatureBar" ></div>
+          </div>
+        </div>
+    </div>
+
+     <!-- chemical -->
+    <div>
+      <button id="labelChemical" class="icon-chemical" style="width: 180px; height: 90px;" 
+      onclick="dismissAndRedirect('chemical', 'WarningChemPage.html')"></button>
+      <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; right: 19.5%;" />
+      <div class="warning-icon" id="warningChemical" style="top: 11%; right: 14%;"></div>
+      <!-- หลอดสาร -->
+        <div class="tube-container">
+          <div class="tube-outer"  style="top: 15.5%; right: 20.2%;">
+            <div class="tube-inner" id="chemicalBar" ></div>
+          </div>
+        </div>
+
+      <div class="switch-chem-container">
+        <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 30.5%; right: 15%; position: absolute;" />
+
+        <button class="auto-button"
+          style="top: 31%; right: 15.2%; position: absolute;"
+          onmouseover="changeImage('switchImageChem', 'images/AutoButton.PNG')"
+          onmouseout="resetImage('switchImageChem')"
+          onclick="changeImage('switchImageChem', 'images/AutoButton.PNG', 'auto')"
+        ></button>
+
+        <button class="manual-button"
+          style="top: 37%; right: 15.2%; position: absolute;"
+          onmouseover="changeImage('switchImageChem', 'images/MaunualButton.PNG')"
+          onmouseout="resetImage('switchImageChem')"
+          onclick="changeImage('switchImageChem', 'images/MaunualButton.PNG', 'manual')"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Ec -->
+    <div>
+        <!-- <img src="images/ec.PNG" class="icon-ec" alt="EC" /> -->
+        <button id="labelEC" class="icon-ec" style="width: 135px; height: 70px;" 
+        onclick="dismissAndRedirect('ec', 'WarningEcPage.html')"></button>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 18.5%;"/>
+        <div class="warning-icon" id="warningEC" style="top: 52.5%; left: 24%;"></div>
+        <!-- หลอดสาร -->
+        <div class="tube-container">
+          <div class="tube-outer" style="top: 57%; left: 19.2%;">
+            <div class="tube-inner" id="ecBar" ></div>
+          </div>
+        </div>
+    </div>
+
+    <!-- pH -->
+    <div>
+        <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
+        <button id="labelPH" class="icon-ph" style="width: 130px; height: 70px;" 
+        onclick="dismissAndRedirect('ph', 'WarningPhPage.html')"></button>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 47.4%;" />
+        <div class="warning-icon" id="warningPH" style="top: 52.5%; left: 53%;"></div>
+        <!-- หลอดสาร -->
+        <div class="tube-container">
+          <div class="tube-outer" style="top: 57%; left: 48%;">
+            <div class="tube-inner" id="phBar" ></div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Light -->
+    <div>
+        <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
+        <button class="icon-light" style="width: 155px; height: 95px;" onclick="location.href='WarningLightPage.html'"></button>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; right: 19.5%;" />
+        <!-- หลอดสาร -->
+        <div class="tube-container">
+          <div class="tube-outer" style="top: 57%; right: 20.2%;">
+            <div class="tube-inner" id="lightBar" ></div>
+          </div>
+        </div>
+        <!-- 🔁 ปุ่มควบคุมไฟ -->
+        <div class="switch-mode-container">
+          <img id="switchImageLight" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 71.5%; right: 15%;" />
+          <button class="auto-button"
+            style="top: 72%; right: 15.2%;"
+            onmouseover="changeImage('switchImageLight', 'images/AutoButton.PNG')"
+            onmouseout="resetImage('switchImageLight')"
+            onclick="changeImage('switchImageLight', 'images/AutoButton.PNG', 'auto')"
+          ></button>
+          <button class="manual-button"
+            style="top: 79%; right: 15.2%; "
+            onmouseover="changeImage('switchImageLight', 'images/MaunualButton.PNG')"
+            onmouseout="resetImage('switchImageLight')"
+            onclick="changeImage('switchImageLight', 'images/MaunualButton.PNG', 'manual')"
+          ></button>
+        </div>
+    </div>
+
+    <button class="history-button" onclick="location.href='HistoryPage.html'"></button>
+    <button class="infomation-label-button" onclick="location.href='InfomationLabelPage.html'"></button>
+  </div>
+  <script>
+  function changeImage(id, src, mode = "") {
+    const img = document.getElementById(id);
+    if (!img) return;
+    if (mode) {
+      localStorage.setItem(id + "_mode", mode); // 🔁 Save
+    }
+    img.src = src;
+  }
+
+  function resetImage(id) {
+    const img = document.getElementById(id);
+    const mode = localStorage.getItem(id + "_mode");
+    if (!mode) {
+      img.src = "images/SwitchAutoManual.PNG";
+    } else if (mode === "auto") {
+      img.src = "images/AutoButton.PNG";
+    } else if (mode === "manual") {
+      img.src = "images/MaunualButton.PNG";
+    }
+  }
+
+</script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import {getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const latestQuery = query(collection(db, "alerts"), orderBy("timestamp", "desc"), limit(1));
+    let latestDocRef = null; // 🔁 เก็บ docRef ล่าสุด
+
+    onSnapshot(latestQuery, (snapshot) => {
+      if (snapshot.empty) return;
+
+      const docSnap = snapshot.docs[0];
+      latestDocRef = docSnap.ref; // ✅ เก็บไว้ใช้อัปเดต
+
+      const latest = snapshot.docs[0].data();
+      const values = latest.values;
+
+      updateTube('humidityBar', values.humidity, 100);
+      updateTube('temperatureBar', values.temp, 50);
+      updateTube('chemicalBar', parseFloat(values.chemical), 100);
+      updateTube('ecBar', values.ec, 5);
+      updateTube('phBar', values.ph, 14);
+      updateTube('lightBar', values.light, 100);
+
+      const dismissed = latest.dismissed || {};
+      showWarningIcon('warningHumidity', !dismissed.humidity && (values.humidity > 90 || values.humidity < 20));
+      showWarningIcon('warningTemp', !dismissed.temp && (values.temp > 40 || values.temp < 10));
+      showWarningIcon('warningPH', !dismissed.ph && (values.ph > 8 || values.ph < 5.5));
+      showWarningIcon('warningEC', !dismissed.ec && (values.ec > 3 || values.ec < 0.2));
+      showWarningIcon('warningChemical', !dismissed.chemical && (values.chemical > 50 || values.chemical < 5));
+
+      console.log("📡 Real-time update:", values);
+    });
+
+
+    function updateTube(id, value, max) {
+      const percent = Math.min(100, (value / max) * 100);
+      const el = document.getElementById(id);
+      if (el) el.style.height = `${percent}%`;
+    }
+
+    const defaultImages = {
+      switchImageChem: "images/SwitchAutoManual.PNG",
+      switchImageLight: "images/SwitchAutoManual.PNG"
+    };
+
+    const clickedStates = {
+      switchImageChem: false,
+      switchImageLight: false
+    };
+
+    const currentModes = {
+      switchImageChem: "",
+      switchImageLight: ""
+    };
+
+    function changeImage(id, src, mode = "") {
+  const img = document.getElementById(id);
+  if (!img) return;
+
+  if (mode) {
+    clickedStates[id] = true;
+    currentModes[id] = mode;
+    localStorage.setItem(id + "_mode", mode);
+  }
+  img.src = src;
+}
+
+function resetImage(id) {
+  const img = document.getElementById(id);
+  if (!img) return;
+
+  const savedMode = localStorage.getItem(id + "_mode");
+  if (!clickedStates[id] && !savedMode) {
+    img.src = defaultImages[id];
+  } else {
+    const mode = currentModes[id] || savedMode;
+    img.src = mode === "auto" ? "images/AutoButton.PNG" :
+              mode === "manual" ? "images/MaunualButton.PNG" :
+              defaultImages[id];
+  }
+}
+
+      // ✅ ทำให้เรียกใช้ได้จาก HTML
+      window.changeImage = changeImage;
+      window.resetImage = resetImage;
+
+    function showWarningIcon(id, condition) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = condition ? 'block' : 'none';
+    }
+
+    const labelToWarningMap = {
+      labelHumidity: "warningHumidity",
+      labelTemp: "warningTemp",
+      labelChemical: "warningChemical",
+      labelEC: "warningEC",
+      labelPH: "warningPH",
+      labelLight: "warningLight"
+    };
+
+    Object.keys(labelToWarningMap).forEach(labelId => {
+      const label = document.getElementById(labelId);
+      if (label) {
+        label.addEventListener("click", () => {
+          const warningId = labelToWarningMap[labelId];
+          const warningEl = document.getElementById(warningId);
+          if (warningEl) warningEl.style.display = "none";
+        });
+      }
+    });
+
+    function dismissAndRedirect(key, url) {
+      if (!latestDocRef) return;
+
+      updateDoc(latestDocRef, {
+        [`dismissed.${key}`]: true
+      }).then(() => {
+        console.log(`✅ Dismissed "${key}" updated`);
+        location.href = url;
+      }).catch(err => {
+        console.error("❌ Update failed:", err);
+      });
+    }
+    window.dismissAndRedirect = dismissAndRedirect;
+    window.onload = () => {
+      ["switchImageLight", "switchImageChem"].forEach(resetImage);
+    };
+  </script>
+</body>
+</html>
