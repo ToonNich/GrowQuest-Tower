@@ -305,8 +305,10 @@
 
     <!-- Huminity -->
     <div>
-        <!-- <img src="images/Huminity.PNG" class="icon-humidity" alt="Humidity" /> -->
-        <button class="icon-humidity"style="width: 160px; height: 90px;" onclick="location.href='WarningHumiPage.html'"></button>
+        <!-- <button id="labelHumidity" class="icon-humidity"style="width: 160px; height: 90px;" onclick="location.href='WarningHumiPage.html'"></button> -->
+         <button id="labelHumidity" class="icon-humidity" style="width: 160px; height: 90px;"
+          onclick="dismissAndRedirect('humidity', 'WarningHumiPage.html')">
+          </button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 18.5%;"/>
         <div class="warning-icon" id="warningHumidity" style="top: 11%; left: 27%;"></div>
         <!-- หลอดสาร -->
@@ -320,7 +322,8 @@
      <!-- Temperature -->
     <div>
         <!-- <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" /> -->
-        <button class="icon-temperature" style="width: 180px; height: 110px;" onclick="location.href='WarningTempPage.html'"></button>
+        <button id="labelTemp" class="icon-temperature" style="width: 180px; height: 110px;" 
+        onclick="dismissAndRedirect('temp', 'WarningTempPage.html')"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 47.4%;"/>
         <div class="warning-icon" id="warningTemp" style="top: 11%; left: 57%;"></div>
         <!-- หลอดสาร -->
@@ -333,7 +336,8 @@
 
      <!-- chemical -->
     <div>
-      <button class="icon-chemical" style="width: 180px; height: 90px;" onclick="location.href='WarningChemPage.html'"></button>
+      <button id="labelChemical" class="icon-chemical" style="width: 180px; height: 90px;" 
+      onclick="dismissAndRedirect('chemical', 'WarningChemPage.html')"></button>
       <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; right: 19.5%;" />
       <div class="warning-icon" id="warningChemical" style="top: 11%; right: 14%;"></div>
       <!-- หลอดสาร -->
@@ -365,7 +369,8 @@
     <!-- Ec -->
     <div>
         <!-- <img src="images/ec.PNG" class="icon-ec" alt="EC" /> -->
-        <button class="icon-ec" style="width: 135px; height: 70px;" onclick="location.href='WarningEcPage.html'"></button>
+        <button id="labelEC" class="icon-ec" style="width: 135px; height: 70px;" 
+        onclick="dismissAndRedirect('ec', 'WarningEcPage.html')"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 18.5%;"/>
         <div class="warning-icon" id="warningEC" style="top: 52.5%; left: 24%;"></div>
         <!-- หลอดสาร -->
@@ -379,7 +384,8 @@
     <!-- pH -->
     <div>
         <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
-        <button class="icon-ph" style="width: 130px; height: 70px;" onclick="location.href='WarningPhPage.html'"></button>
+        <button id="labelPH" class="icon-ph" style="width: 130px; height: 70px;" 
+        onclick="dismissAndRedirect('ph', 'WarningPhPage.html')"></button>
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 47.4%;" />
         <div class="warning-icon" id="warningPH" style="top: 52.5%; left: 53%;"></div>
         <!-- หลอดสาร -->
@@ -447,8 +453,8 @@
 </script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    // import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
     import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import {getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -463,9 +469,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const latestQuery = query(collection(db, "alerts"), orderBy("timestamp", "desc"), limit(1));
+    let latestDocRef = null; // 🔁 เก็บ docRef ล่าสุด
 
     onSnapshot(latestQuery, (snapshot) => {
       if (snapshot.empty) return;
+
+      const docSnap = snapshot.docs[0];
+      latestDocRef = docSnap.ref; // ✅ เก็บไว้ใช้อัปเดต
 
       const latest = snapshot.docs[0].data();
       const values = latest.values;
@@ -477,11 +487,12 @@
       updateTube('phBar', values.ph, 14);
       updateTube('lightBar', values.light, 100);
 
-      showWarningIcon('warningHumidity', values.humidity > 90 || values.humidity < 20);
-      showWarningIcon('warningTemp', values.temp > 40 || values.temp < 10);
-      showWarningIcon('warningPH', values.ph > 8 || values.ph < 5.5);
-      showWarningIcon('warningEC', values.ec > 3 || values.ec < 0.2);
-      showWarningIcon('warningChemical', values.chemical > 50 || values.chemical < 5);
+      const dismissed = latest.dismissed || {};
+      showWarningIcon('warningHumidity', !dismissed.humidity && (values.humidity > 90 || values.humidity < 20));
+      showWarningIcon('warningTemp', !dismissed.temp && (values.temp > 40 || values.temp < 10));
+      showWarningIcon('warningPH', !dismissed.ph && (values.ph > 8 || values.ph < 5.5));
+      showWarningIcon('warningEC', !dismissed.ec && (values.ec > 3 || values.ec < 0.2));
+      showWarningIcon('warningChemical', !dismissed.chemical && (values.chemical > 50 || values.chemical < 5));
 
       console.log("📡 Real-time update:", values);
     });
@@ -544,6 +555,39 @@ function resetImage(id) {
       if (el) el.style.display = condition ? 'block' : 'none';
     }
 
+    const labelToWarningMap = {
+      labelHumidity: "warningHumidity",
+      labelTemp: "warningTemp",
+      labelChemical: "warningChemical",
+      labelEC: "warningEC",
+      labelPH: "warningPH",
+      labelLight: "warningLight"
+    };
+
+    Object.keys(labelToWarningMap).forEach(labelId => {
+      const label = document.getElementById(labelId);
+      if (label) {
+        label.addEventListener("click", () => {
+          const warningId = labelToWarningMap[labelId];
+          const warningEl = document.getElementById(warningId);
+          if (warningEl) warningEl.style.display = "none";
+        });
+      }
+    });
+
+    function dismissAndRedirect(key, url) {
+      if (!latestDocRef) return;
+
+      updateDoc(latestDocRef, {
+        [`dismissed.${key}`]: true
+      }).then(() => {
+        console.log(`✅ Dismissed "${key}" updated`);
+        location.href = url;
+      }).catch(err => {
+        console.error("❌ Update failed:", err);
+      });
+    }
+    window.dismissAndRedirect = dismissAndRedirect;
     window.onload = () => {
       ["switchImageLight", "switchImageChem"].forEach(resetImage);
     };
