@@ -32,7 +32,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
   authDomain: "seniorproject-684c1.firebaseapp.com",
   projectId: "seniorproject-684c1",
-  storageBucket: "seniorproject-684c1.appspot.com", // ✅ แก้ไขให้ถูกต้อง
+  storageBucket: "seniorproject-684c1.appspot.com", 
   messagingSenderId: "847138584376",
   appId: "1:847138584376:web:eface0926c96092daef3cd",
   measurementId: "G-N0CM5TQBM8"
