@@ -323,38 +323,50 @@
     document.addEventListener("DOMContentLoaded", () => {
       const lightButton = document.getElementById("lightButton");
 
-      let lightIsOn = false;
+      // Load saved state from localStorage
+      let lightIsOn = localStorage.getItem("lightIsOn") === "true";
 
-      if (lightButton) {
-        lightButton.addEventListener("click", async () => {
-          try {
-            if (!lightIsOn) {
-              // Turn light ON with max brightness & cool white temp (6500K)
-              const response = await fetch("http://localhost:8000/turn_on", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ colortemp: 6500, brightness: 100 })
-              });
-              if (!response.ok) throw new Error("Failed to turn on light");
-              const result = await response.json();
-              console.log(result.status);
-              lightButton.classList.add("on");
-              lightIsOn = true;
-            } else {
-              // Turn light OFF
-              const response = await fetch("http://localhost:8000/turn_off", { method: "POST" });
-              if (!response.ok) throw new Error("Failed to turn off light");
-              const result = await response.json();
-              console.log(result.status);
-              lightButton.classList.remove("on");
-              lightIsOn = false;
-            }
-          } catch (err) {
-            alert("Error controlling light: " + err.message);
-          }
-        });
+      // Set initial button class based on saved state
+      if (lightIsOn) {
+        lightButton.classList.add("on");
+      } else {
+        lightButton.classList.remove("on");
       }
+
+      lightButton.addEventListener("click", async () => {
+        try {
+          if (!lightIsOn) {
+            // Turn light ON with max brightness & cool white
+            const response = await fetch("http://localhost:8000/turn_on", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ colortemp: 6500, brightness: 100 }),
+            });
+            if (!response.ok) throw new Error("Failed to turn on light");
+            await response.json();
+
+            lightButton.classList.add("on");
+            lightIsOn = true;
+            localStorage.setItem("lightIsOn", "true"); // Save state
+
+          } else {
+            // Turn light OFF
+            const response = await fetch("http://localhost:8000/turn_off", {
+              method: "POST",
+            });
+            if (!response.ok) throw new Error("Failed to turn off light");
+            await response.json();
+
+            lightButton.classList.remove("on");
+            lightIsOn = false;
+            localStorage.setItem("lightIsOn", "false"); // Save state
+          }
+        } catch (err) {
+          alert("Error controlling light: " + err.message);
+        }
+      });
     });
+
 
 
 

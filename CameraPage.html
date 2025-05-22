@@ -109,8 +109,32 @@
       background: url('images/backButton2.png') no-repeat center center;
       background-size: cover;
     }
+
+    .live-container {
+      position: fixed;       /* Stay fixed on viewport */
+      top: 0;                /* Align top-left corner */
+      left: 0;
+      width: 100vw;          /* Full viewport width */
+      height: 100vh;         /* Full viewport height */
+      background: black;     /* Optional: black background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .live-container img {
+      width: 100%;           /* Fill container width */
+      height: 100%;          /* Fill container height */
+      object-fit: cover;     /* Crop/scale preserving aspect ratio */
+    }
+
+
+
+
   </style>
 </head>
+
 <body>
   <div class="button-container">
     <button class="back-button" onclick="location.href='HomePage.html'"></button>
@@ -122,12 +146,18 @@
     <div class="status-box temp" id="tempBox">Loading...</div>
   </div>
 
+  <!-- Live camera feed container -->
+  <div class="live-container">
+  <img id="liveStream" src="http://192.168.2.2:5000/video_feed" alt="Live Camera Stream" />
+  </div>
+
 
   <div>
     <button class="preSlide-button"></button>
     <button class="nextSlide-button"></button>
   </div>
 </body>
+
 <script>
   async function loadStatusFromMySQL() {
     try {
@@ -144,6 +174,21 @@
   }
 
   loadStatusFromMySQL();
+
+  const liveImg = document.getElementById('liveStream');
+
+    function reloadStream() {
+      liveImg.src = `http://192.168.2.2:5000/video_feed?timestamp=${Date.now()}`;
+    }
+
+    liveImg.addEventListener('error', () => {
+      console.warn('Stream disconnected, retrying...');
+      setTimeout(reloadStream, 3000);
+    });
+
+    // Optional: reload stream every 60 seconds to keep it fresh
+    setInterval(reloadStream, 30000);
+
 </script>
 
 </html>
