@@ -47,7 +47,10 @@
 
     .right-pane {
       text-align: center;
-      overflow: hidden;     /* ❌ ไม่ให้ scroll ฝั่งขวา */
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 100%;
+      padding-right: 10px;
     }
 
     .left-inner {
@@ -208,24 +211,78 @@
   </div>
 
   <!-- JavaScript -->
-  <script>
+    <script>
     const imageInput = document.getElementById("imageInput");
     const outputImage = document.getElementById("outputImage");
     const fileNameDisplay = document.getElementById("fileName");
+    const rightPane = document.querySelector(".right-pane");
 
-    imageInput.addEventListener("change", function () {
+    imageInput.addEventListener("change", async function () {
       const file = this.files[0];
       if (file) {
         fileNameDisplay.textContent = file.name;
 
+        // Show image preview
         const reader = new FileReader();
         reader.onload = function (e) {
           outputImage.src = e.target.result;
         };
         reader.readAsDataURL(file);
+
+        // Prepare form data for API call
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          // Call your backend API here, update URL if needed
+          const response = await fetch("http://localhost:5000/api/analyze-plant", {
+            method: "POST",
+            body: formData
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+
+        // Display prediction results dynamically
+        // Before sending image, clear old results and show loading
+        rightPane.innerHTML = `<h2>🧠 Processed Result</h2><p>Processing image, please wait...</p>`;
+
+        // After getting result from API:
+        if (result.gradcam) {
+          rightPane.innerHTML = `
+            <h2>🧠 Processed Result</h2>
+            <p><strong>Prediction:</strong> ${result.status}</p>
+            <p><strong>Confidence:</strong> ${(result.confidence * 100).toFixed(2)}%</p>
+            <p><strong>Advice:</strong> ${result.advice}</p>
+            <h3>🔍 Model Attention (Grad-CAM)</h3>
+            <img src="data:image/png;base64,${result.gradcam}" alt="Grad-CAM heatmap" style="max-width: 100%; border: 2px solid #333; margin-top: 10px;"/>
+          `;
+        } else {
+          rightPane.innerHTML = `
+            <h2>🧠 Processed Result</h2>
+            <p><strong>Prediction:</strong> ${result.status}</p>
+            <p><strong>Confidence:</strong> ${(result.confidence * 100).toFixed(2)}%</p>
+            <p><strong>Advice:</strong> ${result.advice}</p>
+            <p><em>No Grad-CAM visualization available.</em></p>
+          `;
+        }
+
+
+
+        } catch (error) {
+          rightPane.innerHTML = `
+            <h2>🧠 Processed Result</h2>
+            <p style="color: red;">Error: ${error.message}</p>
+          `;
+        }
       }
     });
   </script>
+
 
 </body>
 </html>
