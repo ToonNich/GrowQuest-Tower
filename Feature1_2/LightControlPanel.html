@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wiz Light Control</title>
+</head>
+<body>
+    <h2>Wiz Light Control</h2>
+
+    <label for="colorPicker">Pick color:</label>
+    <input type="color" id="colorPicker" value="#ffffff">
+    <br><br>
+
+    <label for="brightness">Brightness (1-100):</label>
+    <input type="number" id="brightness" min="1" max="100" value="100">
+    <br><br>
+
+    <button onclick="turnOnRGB()">Turn ON (RGB Color)</button>
+    <button onclick="turnOnCoolWhite()">Turn ON (Cool White 6500K)</button>
+    <button onclick="turnOff()">Turn OFF</button>
+
+    <script>
+    async function turnOnRGB() {
+        const colorHex = document.getElementById('colorPicker').value;
+        const brightness = parseInt(document.getElementById('brightness').value);
+
+        // Convert hex to RGB
+        const r = parseInt(colorHex.substr(1, 2), 16);
+        const g = parseInt(colorHex.substr(3, 2), 16);
+        const b = parseInt(colorHex.substr(5, 2), 16);
+
+        try {
+            const response = await fetch('http://localhost:8000/turn_on', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({r, g, b, brightness})
+            });
+            const data = await response.json();
+            alert(JSON.stringify(data));
+        } catch (err) {
+            alert('Error turning on light: ' + err);
+        }
+    }
+
+    async function turnOnCoolWhite() {
+        const brightness = parseInt(document.getElementById('brightness').value);
+        try {
+            const response = await fetch('http://localhost:8000/turn_on', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({colortemp: 6500, brightness})
+            });
+            const data = await response.json();
+            alert(JSON.stringify(data));
+        } catch (err) {
+            alert('Error turning on cool white: ' + err);
+        }
+    }
+
+    async function turnOff() {
+        try {
+            const response = await fetch('http://localhost:8000/turn_off', {method: 'POST'});
+            const data = await response.json();
+            alert(JSON.stringify(data));
+        } catch (err) {
+            alert('Error turning off light: ' + err);
+        }
+    }
+    </script>
+
+</body>
+</html>

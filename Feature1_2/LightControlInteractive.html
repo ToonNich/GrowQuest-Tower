@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wiz Light Interactive Control</title>
+</head>
+<body>
+    <h2>Wiz Light Interactive Control</h2>
+
+    <label for="colorPicker">Pick color:</label>
+    <input type="color" id="colorPicker" value="#ffffff">
+
+    <br><br>
+
+    <label for="brightnessRange">Brightness: <span id="brightnessValue">100</span>%</label>
+    <input type="range" id="brightnessRange" min="1" max="100" value="100">
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const brightnessRange = document.getElementById('brightnessRange');
+        const brightnessValue = document.getElementById('brightnessValue');
+
+        let timeoutId;
+
+        // Function to send color and brightness to backend
+        async function updateLight() {
+            const colorHex = colorPicker.value;
+            const brightness = parseInt(brightnessRange.value);
+            brightnessValue.textContent = brightness;
+
+            const r = parseInt(colorHex.substr(1, 2), 16);
+            const g = parseInt(colorHex.substr(3, 2), 16);
+            const b = parseInt(colorHex.substr(5, 2), 16);
+
+            try {
+                await fetch('http://localhost:8000/turn_on', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({r, g, b, brightness})
+                });
+            } catch (error) {
+                console.error('Failed to update light:', error);
+            }
+        }
+
+        // Debounce rapid input changes (wait 300ms after last change)
+        function debounceUpdate() {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(updateLight, 300);
+        }
+
+        // Add event listeners
+        colorPicker.addEventListener('input', debounceUpdate);
+        brightnessRange.addEventListener('input', debounceUpdate);
+    </script>
+</body>
+</html>

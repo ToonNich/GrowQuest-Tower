@@ -321,14 +321,42 @@
   <script>
 
     document.addEventListener("DOMContentLoaded", () => {
-    const lightButton = document.getElementById("lightButton");
+      const lightButton = document.getElementById("lightButton");
+
+      let lightIsOn = false;
 
       if (lightButton) {
-        lightButton.addEventListener("click", () => {
-          lightButton.classList.toggle("on");
+        lightButton.addEventListener("click", async () => {
+          try {
+            if (!lightIsOn) {
+              // Turn light ON with max brightness & cool white temp (6500K)
+              const response = await fetch("http://localhost:8000/turn_on", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ colortemp: 6500, brightness: 100 })
+              });
+              if (!response.ok) throw new Error("Failed to turn on light");
+              const result = await response.json();
+              console.log(result.status);
+              lightButton.classList.add("on");
+              lightIsOn = true;
+            } else {
+              // Turn light OFF
+              const response = await fetch("http://localhost:8000/turn_off", { method: "POST" });
+              if (!response.ok) throw new Error("Failed to turn off light");
+              const result = await response.json();
+              console.log(result.status);
+              lightButton.classList.remove("on");
+              lightIsOn = false;
+            }
+          } catch (err) {
+            alert("Error controlling light: " + err.message);
+          }
         });
       }
     });
+
+
 
     function updateDateTime() {
       const now = new Date();
