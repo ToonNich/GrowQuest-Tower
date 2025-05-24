@@ -26,7 +26,8 @@
       top: 9%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 26%;
+      /* width: 26%; */
+      width: 21%;
       height: 90px;
       background-color: #FFF2CB;
       border: 2px solid #FFBF00;
@@ -82,12 +83,12 @@
       z-index: 2;
     }
 
-    .notification-button:hover {
+    /* .notification-button:hover {
       background: url('images/Noti2.PNG') no-repeat center center;
       background-size: cover;
-    }
+    } */
 
-    .notificationAlert-button {
+    .notification-alert-button {
       width: 5%;
       height: 10%;
       background: url('images/NotiAlert1.PNG') no-repeat center center;
@@ -100,10 +101,31 @@
       z-index: 2;
     }
 
-    .notificationAlert-button:hover {
+    /* .notificationAlert-button:hover {
+      background: url('images/NotiAlert2.PNG') no-repeat center center;
+      background-size: cover;
+    } */
+
+    /* ไม่มีการแจ้งเตือน */
+    .notification-button {
+      background: url('images/Noti1.PNG') no-repeat center center;
+      background-size: cover;
+    }
+    .notification-button:hover {
+      background: url('images/Noti2.PNG') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* มีการแจ้งเตือน */
+    .notification-alert-button {
+      background: url('images/NotiAlert1.PNG') no-repeat center center;
+      background-size: cover;
+    }
+    .notification-alert-button:hover {
       background: url('images/NotiAlert2.PNG') no-repeat center center;
       background-size: cover;
     }
+
 
     .infomation-button {
       width: 5%;
@@ -298,7 +320,11 @@
 </head>
 <body>
   <button class="account-button" onclick="location.href='AccountPage.html'"></button>
-  <button class="notification-button" onclick="location.href='NotificationPage.html'"></button>
+  <!-- <button class="notification-button" onclick="location.href='NotificationPage.html'"></button> -->
+   <!-- ทั้ง 2 ปุ่ม -->
+<button id="notiNormal" class="notification-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
+<button id="notiAlert" class="notification-alert-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
+
   <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
   <!-- <button class="light-button"></button> -->
   <button class="light-button" id="lightButton"></button>
@@ -317,10 +343,65 @@
 
   <img id="character" src="images/Stage4Normal.gif" class="plant-image" />
   <p id="charName"></p>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function checkNotificationStatus() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "alerts"));
+        let hasUnread = false;
+
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.read === false) {
+            hasUnread = true;
+          }
+        });
+
+        // DEBUG
+        console.log("มีการแจ้งเตือนใหม่หรือไม่:", hasUnread);
+
+        document.getElementById("notiNormal").style.display = hasUnread ? "none" : "block";
+        document.getElementById("notiAlert").style.display = hasUnread ? "block" : "none";
+
+      } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการเช็คการแจ้งเตือน:", error);
+      }
+    }
+    document.addEventListener("DOMContentLoaded", async () => {
+      // เรียกฟังก์ชันเช็คแจ้งเตือน
+      await checkNotificationStatus();
+
+      // โหลดข้อมูลตัวละครจาก localStorage
+      const data = JSON.parse(localStorage.getItem("characterData"));
+      if (data) {
+        document.getElementById("character").src = data.image;
+        document.getElementById("charName").textContent = data.name;
+      }
+
+      updateDateTime();
+      updateDateTimeAndButton();
+    });
+  </script>
 
   <script>
-
-    document.addEventListener("DOMContentLoaded", () => {
+    // Pond Edit 
+    document.addEventListener("DOMContentLoaded",  () => {
       const lightButton = document.getElementById("lightButton");
 
       // Load saved state from localStorage
@@ -436,26 +517,6 @@
       }
     };
 
-    // document.addEventListener("DOMContentLoaded", () => {
-    //   const wateringBtn = document.querySelector(".wateringcan-button");
-    //   const wateringGif = document.getElementById("wateringGif");
-
-    //   // เมื่อกดเม้าค้างที่ปุ่ม
-    //   wateringBtn.addEventListener("mousedown", () => {
-    //     wateringGif.style.display = "block";
-    //   });
-
-    //   // เมื่อปล่อยเม้าท์
-    //   document.addEventListener("mouseup", () => {
-    //     wateringGif.style.display = "none";
-    //   });
-
-    //   // เคลื่อน gif ตาม mouse
-    //   document.addEventListener("mousemove", (e) => {
-    //     wateringGif.style.left = `${e.clientX}px`;
-    //     wateringGif.style.top = `${e.clientY}px`;
-    //   });
-    // });
 document.addEventListener("DOMContentLoaded", () => {
   const wateringBtn = document.querySelector(".wateringcan-button");
   const wateringGif = document.getElementById("wateringGif");
