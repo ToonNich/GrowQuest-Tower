@@ -6,7 +6,7 @@ from pywizlight import wizlight, PilotBuilder
 nest_asyncio.apply()
 
 # Your bulb IP
-bulb = wizlight("192.168.1.114")
+bulb = wizlight("192.168.1.125")
 
 async def main():
     print("🔌 Turning bulb ON (white)...")
@@ -14,7 +14,7 @@ async def main():
     await asyncio.sleep(2)
 
     print("🌸 Changing to Grow Light (pink)...")
-    await bulb.turn_on(PilotBuilder(rgb=(255, 0, 180), brightness=80))
+    await bulb.turn_on(PilotBuilder(rgb=(255, 0, 180), brightness=100))
     await asyncio.sleep(2)
 
     print("🔕 Turning bulb OFF...")

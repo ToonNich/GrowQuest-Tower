@@ -48,7 +48,7 @@
       width: 180px;
       height: auto;
       top: 12.5%;
-      left: 25%;
+      left: 26%;
       z-index: 2;
     }
 
@@ -113,21 +113,24 @@
     /* BOARD AND BUTTONS */
     .board-container {
       position: absolute;
-      top: 12%;
-      right: 22%;
+      top: 15%;
+      right: 28%;
       width: 600px;
       z-index: 4;
     }
+    
 
     .board-container .board-images {
-      width: 100%;
-      height: auto;
+      width: 110%;         /* Keep the width 100% of container */
+      height: 600px;       /* Set a specific height to make it taller */
+      object-fit: fill;    /* Stretch the image vertically */
+      right: 50%; /* ⬅️ CHANGE THIS */
     }
 
     .board-container .color-buttons {
       position: absolute;
-      top: 10%;
-      left: 50%;
+      top: 11%;
+      left: 55%;
       transform: translateX(-50%);
       display: flex;
       gap: 10px;
@@ -142,23 +145,21 @@
       font-size: 14px;
       cursor: pointer;
       border: none;
+      font-family: 'Pixelify Sans', sans-serif; /* ✅ Add this line */
     }
 
     .color-buttons .coolWhite {
       background-color: #00aaff;
     }
 
-    .color-buttons .warmWhite {
-      background-color: #ff9900;
+    .color-buttons .pinkTint {
+      background-color: #ff69b4; /* light pink/magenta for grow light */
     }
 
     .color-buttons .red {
       background-color: red;
     }
 
-    .color-buttons .blue {
-      background-color: blue;
-    }
 
     .tube-wrapper {
       position: absolute;
@@ -184,6 +185,19 @@
       z-index: 2; /* flask with reflection */
       pointer-events: none; /* click-through */
     }
+
+    .color-title {
+      position: absolute;
+      top: 3%;
+      left: 55%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: 'Pixelify Sans', sans-serif;
+      z-index: 5;
+    }
+
 
   </style>
 </head>
@@ -222,203 +236,154 @@
   <!-- ✅ BOARD & COLOR BUTTONS INSIDE -->
   <div class="board-container">
     <img src="images/Blackboard.PNG" class="board-images" alt="board" />
+    <p class="color-title">Color Preset</p>
     <div class="color-buttons">
       <button class="coolWhite" onclick="setLightColor('coolWhite')">Cool White</button>
-      <button class="warmWhite" onclick="setLightColor('warmWhite')">Warm White</button>
+      <button class="pinkTint" onclick="setLightColor('pinkTint')">Pink Tint</button>
       <button class="red" onclick="setLightColor('red')">Red</button>
-      <button class="blue" onclick="setLightColor('blue')">Blue</button>
     </div>
   </div>
 
-  <script>
+ <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
-   
-    function changeImage(id, src, mode = "") {
-      const img = document.getElementById(id);
-      if (!img) return;
-      if (mode) {
-        localStorage.setItem(id + "_mode", mode);
-      }
-      img.src = src;
-    }
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+    authDomain: "seniorproject-684c1.firebaseapp.com",
+    projectId: "seniorproject-684c1",
+    storageBucket: "seniorproject-684c1.appspot.com",
+    messagingSenderId: "847138584376",
+    appId: "1:847138584376:web:eface0926c96092daef3cd",
+    measurementId: "G-N0CM5TQBM8"
+  };
 
-    function resetImage(id) {
-      const img = document.getElementById(id);
-      const mode = localStorage.getItem(id + "_mode");
-      if (!mode) {
-        img.src = "images/SwitchAutoManual.PNG";
-      } else if (mode === "auto") {
-        img.src = "images/AutoButton.PNG";
-      } else if (mode === "manual") {
-        img.src = "images/MaunualButton.PNG";
-      }
-    }
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    window.onload = () => {
-      resetImage("switchImageLight");
-      loadLight();
-    };
+  function updateTube(id, value, max) {
+    const percent = Math.min(100, (value / max) * 100);
+    const el = document.getElementById(id);
+    if (el) el.style.height = `${percent}%`;
+  }
 
-    function setLightColor(color) {
-      let colortemp = 6500;
-      let brightness = 100;
-
-      switch (color) {
-        case 'coolWhite':
-          colortemp = 6500;
-          break;
-        case 'warmWhite':
-          colortemp = 3000;
-          break;
-        case 'red':
-          colortemp = 0;
-          break;
-        case 'blue':
-          colortemp = 10000;
-          break;
-      }
-
-      fetch("http://localhost:8000/turn_on", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ colortemp: colortemp, brightness: brightness })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Light turned on with preset:", color);
-      })
-      .catch(err => {
-        console.error("Error setting light color:", err);
-      });
-    }
-
-    async function loadLight() {
+  async function loadLight() {
+    try {
       const snapshot = await getDocs(collection(db, "alerts"));
       const docs = snapshot.docs.map(doc => doc.data());
-      if (docs.length === 0) return;
+
+      if (docs.length === 0) {
+        console.warn("No light data found. Using fallback.");
+        updateTube('lightBar', 80, 100);
+        return;
+      }
+
       const latest = docs[docs.length - 1];
       const values = latest.values;
-      updateTube('lightBar', values.light, 100);
-      console.log("Light from Firestore:", values.light);
+      const lightValue = values && values.light ? values.light : 80;
+
+      updateTube('lightBar', lightValue, 100);
+      console.log("Light from Firestore:", lightValue);
+    } catch (err) {
+      console.error("Error loading light data:", err);
+      updateTube('lightBar', 80, 100);
     }
+  }
 
-    function updateTube(id, value, max) {
-      const percent = Math.min(100, (value / max) * 100);
-      const el = document.getElementById(id);
-      if (el) el.style.height = `${percent}%`;
+  // Load on page
+  window.onload = () => {
+    resetImage("switchImageLight");
+    loadLight();
+  };
+
+  // Change switch image
+  window.changeImage = function (id, src, mode = "") {
+    const img = document.getElementById(id);
+    if (!img) return;
+    if (mode) {
+      localStorage.setItem(id + "_mode", mode);
     }
-  </script>
+    img.src = src;
+  };
 
-    <!-- Firebase (if needed) -->
-    <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-        authDomain: "seniorproject-684c1.firebaseapp.com",
-        projectId: "seniorproject-684c1",
-        storageBucket: "seniorproject-684c1.appspot.com",
-        messagingSenderId: "847138584376",
-        appId: "1:847138584376:web:eface0926c96092daef3cd",
-        measurementId: "G-N0CM5TQBM8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    function updateTube(id, value, max) {
-        const percent = Math.min(100, (value / max) * 100);
-        const el = document.getElementById(id);
-        if (el) el.style.height = `${percent}%`;
+  // Reset image state
+  window.resetImage = function (id) {
+    const img = document.getElementById(id);
+    const mode = localStorage.getItem(id + "_mode");
+    if (!mode) {
+      img.src = "images/SwitchAutoManual.PNG";
+    } else if (mode === "auto") {
+      img.src = "images/AutoButton.PNG";
+    } else if (mode === "manual") {
+      img.src = "images/MaunualButton.PNG";
     }
+  };
 
-    async function loadLight() {
-        try {
-        const snapshot = await getDocs(collection(db, "alerts"));
-        const docs = snapshot.docs.map(doc => doc.data());
+  // ✅ Correct RGB + colortemp-based function
+  window.setLightColor = function (color) {
+    const brightness = 100;
 
-        if (docs.length === 0) {
-            console.warn("No light data found. Using fallback.");
-            updateTube('lightBar', 80, 100);
-            return;
-        }
-
-        const latest = docs[docs.length - 1];
-        const values = latest.values;
-        const lightValue = values && values.light ? values.light : 80;
-
-        updateTube('lightBar', lightValue, 100);
-        console.log("Light from Firestore:", lightValue);
-        } catch (err) {
-        console.error("Error loading light data:", err);
-        updateTube('lightBar', 80, 100);
-        }
-    }
-
-    // 🔁 Light update when page loads
-    window.onload = () => {
-        resetImage("switchImageLight");
-        loadLight();
-    };
-
-    // 🔁 Reset switch image
-    function resetImage(id) {
-        const img = document.getElementById(id);
-        const mode = localStorage.getItem(id + "_mode");
-        if (!mode) {
-        img.src = "images/SwitchAutoManual.PNG";
-        } else if (mode === "auto") {
-        img.src = "images/AutoButton.PNG";
-        } else if (mode === "manual") {
-        img.src = "images/MaunualButton.PNG";
-        }
-    }
-
-    // 🔁 Change switch image
-    window.changeImage = function(id, src, mode = "") {
-        const img = document.getElementById(id);
-        if (!img) return;
-        if (mode) {
-        localStorage.setItem(id + "_mode", mode);
-        }
-        img.src = src;
-    };
-
-    // 🌈 Light preset function
-    window.setLightColor = function(color) {
-        let colortemp = 6500;
-        let brightness = 100;
-
-        switch (color) {
-        case 'coolWhite':
-            colortemp = 6500;
-            break;
-        case 'warmWhite':
-            colortemp = 3000;
-            break;
-        case 'red':
-            colortemp = 0;
-            break;
-        case 'blue':
-            colortemp = 10000;
-            break;
-        }
-
-        fetch("http://localhost:8000/turn_on", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ colortemp: colortemp, brightness: brightness })
+    switch (color) {
+      case 'coolWhite':
+        return fetch("http://localhost:8000/turn_on", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            colortemp: 6500,
+            brightness: brightness
+          })
         })
-        .then(response => response.json())
-        .then(data => {
-        console.log("Light turned on with preset:", color);
+          .then(res => res.json())
+          .then(data => console.log("Cool White applied"))
+          .catch(err => console.error("Cool White error:", err));
+
+      case 'pinkTint':
+        return fetch("http://localhost:8000/turn_on", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            r: 255,
+            g: 0,
+            b: 180,
+            brightness: 80
+          })
         })
-        .catch(err => {
-        console.error("Error setting light color:", err);
-        });
-    };
+          .then(res => res.json())
+          .then(data => console.log("Pink Tint applied"))
+          .catch(err => console.error("Pink Tint error:", err));
+
+      case 'red':
+        return fetch("http://localhost:8000/turn_on", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            r: 255,
+            g: 0,
+            b: 0,
+            brightness: brightness
+          })
+        })
+          .then(res => res.json())
+          .then(data => console.log("Red applied"))
+          .catch(err => console.error("Red error:", err));
+
+      default:
+        return fetch("http://localhost:8000/turn_on", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            colortemp: 6500,
+            brightness: brightness
+          })
+        })
+          .then(res => res.json())
+          .then(data => console.log("Default Cool White applied"))
+          .catch(err => console.error("Default error:", err));
+    }
+  };
+
 </script>
+
 
 </body>
 </html>
