@@ -148,7 +148,7 @@
         position: absolute;
         width: 70px; /* ปรับขนาดไอคอน */
         height: auto;
-        z-index: 2; 
+         z-index: 3; /* label always on top */
     }
 
     .back-button {
@@ -271,6 +271,7 @@
   background-color: transparent;
   position: absolute;
   overflow: hidden;
+  z-index: 1; /* tube base */
 }
 
 .tube-inner {
@@ -279,6 +280,7 @@
   position: absolute;
   bottom: 0;
   transition: height 0.5s ease-in-out;
+  z-index: 0; /* tube fill should be under outer */
 }
 
 .warning-icon {
@@ -309,7 +311,7 @@
          <button id="labelHumidity" class="icon-humidity" style="width: 160px; height: 90px;"
           onclick="dismissAndRedirect('humidity', 'WarningHumiPage.html')">
           </button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 18.5%;"/>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15.2%; left: 18.8%;"/>
         <div class="warning-icon" id="warningHumidity" style="top: 11%; left: 27%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
@@ -324,7 +326,7 @@
         <!-- <img src="images/Temperature.PNG" class="icon-temperature" alt="Temperature" /> -->
         <button id="labelTemp" class="icon-temperature" style="width: 180px; height: 110px;" 
         onclick="dismissAndRedirect('temp', 'WarningTempPage.html')"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; left: 47.4%;"/>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15.2%; left: 47.5%;"/>
         <div class="warning-icon" id="warningTemp" style="top: 11%; left: 57%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
@@ -338,7 +340,7 @@
     <div>
       <button id="labelChemical" class="icon-chemical" style="width: 180px; height: 90px;" 
       onclick="dismissAndRedirect('chemical', 'WarningChemPage.html')"></button>
-      <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15%; right: 19.5%;" />
+      <img src="images/label.PNG" class="icon-label" alt="label" style="top: 15.2%; right: 19.7%;" />
       <div class="warning-icon" id="warningChemical" style="top: 11%; right: 14%;"></div>
       <!-- หลอดสาร -->
         <div class="tube-container">
@@ -371,7 +373,7 @@
         <!-- <img src="images/ec.PNG" class="icon-ec" alt="EC" /> -->
         <button id="labelEC" class="icon-ec" style="width: 135px; height: 70px;" 
         onclick="dismissAndRedirect('ec', 'WarningEcPage.html')"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 18.5%;"/>
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.6%; left: 18.75%;"/>
         <div class="warning-icon" id="warningEC" style="top: 52.5%; left: 24%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
@@ -386,7 +388,7 @@
         <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
         <button id="labelPH" class="icon-ph" style="width: 130px; height: 70px;" 
         onclick="dismissAndRedirect('ph', 'WarningPhPage.html')"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; left: 47.4%;" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.6%; left: 47.5%;" />
         <div class="warning-icon" id="warningPH" style="top: 52.5%; left: 53%;"></div>
         <!-- หลอดสาร -->
         <div class="tube-container">
@@ -400,7 +402,7 @@
     <div>
         <!-- <img src="images/ph.PNG" class="icon-ph" alt="pH" /> -->
         <button class="icon-light" style="width: 155px; height: 95px;" onclick="location.href='WarningLightPage.html'"></button>
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.5%; right: 19.5%;" />
+        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 56.6%; right: 19.7%;" />
         <!-- หลอดสาร -->
         <div class="tube-container">
           <div class="tube-outer" style="top: 57%; right: 20.2%;">
@@ -428,6 +430,7 @@
     <button class="history-button" onclick="location.href='HistoryPage.html'"></button>
     <button class="infomation-label-button" onclick="location.href='InfomationLabelPage.html'"></button>
   </div>
+  
   <script>
   function changeImage(id, src, mode = "") {
     const img = document.getElementById(id);
