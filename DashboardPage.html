@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Information</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+
   <style>
     body {
       background: url('images/info.gif') no-repeat center center fixed;
@@ -293,6 +295,23 @@
   display: none; /* ซ่อนเริ่มต้น */
 }
 
+.value-label {
+  position: absolute;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Pixelify Sans', 'Press Start 2P', monospace;
+  color: #003366;
+  width: 100px;
+  text-align: center;
+  z-index: 10;
+}
+
+
+#humidityValue { top: 41.5%; left: 17.5%; }
+#temperatureValue { top: 41.5%; left: 47%; }
+#ecValue { top: 83.5%; left: 17.5%; }
+#phValue { top: 83.5%; left: 46.5%; }
+
 
   </style>
 </head>
@@ -318,7 +337,11 @@
           <div class="tube-outer" style="top: 15.5%; left: 19.2%">
             <div class="tube-inner" id="humidityBar" ></div>
           </div>
+
+          
         </div>
+        <div class="value-label" id="humidityValue">--</div>
+       
     </div>
 
      <!-- Temperature -->
@@ -333,7 +356,10 @@
           <div class="tube-outer" style="top: 15.5%; left: 48%;">
             <div class="tube-inner" id="temperatureBar" ></div>
           </div>
+          
         </div>
+        <div class="value-label" id="temperatureValue">--</div>
+
     </div>
 
      <!-- chemical -->
@@ -380,7 +406,9 @@
           <div class="tube-outer" style="top: 57%; left: 19.2%;">
             <div class="tube-inner" id="ecBar" ></div>
           </div>
+          
         </div>
+        <div class="value-label" id="ecValue">--</div>
     </div>
 
     <!-- pH -->
@@ -395,7 +423,9 @@
           <div class="tube-outer" style="top: 57%; left: 48%;">
             <div class="tube-inner" id="phBar" ></div>
           </div>
+          
         </div>
+        <div class="value-label" id="phValue">--</div>
     </div>
 
     <!-- Light -->
@@ -471,7 +501,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const latestQuery = query(collection(db, "alerts"), orderBy("timestamp", "desc"), limit(1));
+    const latestQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
     let latestDocRef = null; // 🔁 เก็บ docRef ล่าสุด
 
     onSnapshot(latestQuery, (snapshot) => {
@@ -481,7 +511,8 @@
       latestDocRef = docSnap.ref; // ✅ เก็บไว้ใช้อัปเดต
 
       const latest = snapshot.docs[0].data();
-      const values = latest.values;
+      const values = latest;  // direct access, since there's no 'values' key now
+
 
       updateTube('humidityBar', values.humidity, 100);
       updateTube('temperatureBar', values.temp, 50);
@@ -498,6 +529,13 @@
       showWarningIcon('warningChemical', !dismissed.chemical && (values.chemical > 50 || values.chemical < 5));
 
       console.log("📡 Real-time update:", values);
+
+      document.getElementById("humidityValue").innerText = values.humidity.toFixed(1) + "%";
+      document.getElementById("temperatureValue").innerText = values.temp.toFixed(1) + "°C";
+      document.getElementById("ecValue").innerText = values.ec.toFixed(2);
+      document.getElementById("phValue").innerText = values.ph.toFixed(2);
+
+      
     });
 
 

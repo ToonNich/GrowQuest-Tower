@@ -115,7 +115,7 @@
       }
 
       // const docRef = doc(db, "notifications", id);
-      const docRef = doc(db, "alerts", id);
+      const docRef = doc(db, "Main", id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {

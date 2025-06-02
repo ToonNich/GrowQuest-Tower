@@ -208,7 +208,7 @@
     let currentPage = 1;
 
     async function fetchNotifications() {
-      const snapshot = await getDocs(collection(db, "alerts"));
+      const snapshot = await getDocs(collection(db, "Main"));
       notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderNotifications();
       renderPagination();
@@ -228,7 +228,7 @@
         div.className = 'notification-item';
         div.addEventListener('click', async () => {
           // const docRef = doc(db, "notifications", noti.id);
-          const docRef = doc(db, "alerts", noti.id);
+          const docRef = doc(db, "Main", noti.id);
           await updateDoc(docRef, { read: true });
           noti.read = true;
           renderNotifications();
@@ -262,7 +262,7 @@
           const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
           if (!confirmed) return;
           // await deleteDoc(doc(db, "notifications", noti.id));
-          await deleteDoc(doc(db, "alerts", noti.id));
+          await deleteDoc(doc(db, "Main", noti.id));
           await fetchNotifications();
         });
 
@@ -281,7 +281,7 @@
       const newState = !currentState;
       // const docRef = doc(db, "notifications", docId);
       // await updateDoc(docRef, { starred: newState });
-      const docRef = doc(db, "alerts", docId);
+      const docRef = doc(db, "Main", docId);
       await updateDoc(docRef, { starred: newState });
 
       await fetchNotifications(); // โหลดใหม่เพื่ออัปเดต UI

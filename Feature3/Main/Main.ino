@@ -1,72 +1,104 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include <Stepper.h>
+#include <DHT.h>
 
 // ----------- Pins -----------
-#define ONE_WIRE_BUS 2    // DS18B20
-#define PH_PIN A0         // pH Sensor
-#define EC_PIN A1         // EC Sensor
+#define ONE_WIRE_BUS 2     // DS18B20
+#define PH_PIN A0          // pH Sensor
+#define EC_PIN A1          // EC Sensor
 
-#define IN1 8             // Pump control
-#define IN2 9
+#define IN3 3              // Pump control
+#define IN4 4
 
-// Stepper setup
-const int stepsPerRevolution = 2048;
-Stepper stepper(stepsPerRevolution, 4, 6, 5, 7);
+#define DHTPIN 10          // DHT22 data pin
+#define DHTTYPE DHT22
 
 // DS18B20 setup
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
+// DHT22 setup
+DHT dht(DHTPIN, DHTTYPE);
+
 void setup() {
   Serial.begin(9600);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
 
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
   sensors.begin();
-  stepper.setSpeed(10);
+  dht.begin();
 
-  Serial.println("GrowQuest Tower System Initialized");
+  Serial.println("GrowQuest Tower System Initialized (DS18B20 + DHT22 + IN3/IN4)");
 }
 
 void loop() {
-  // ---- Read DS18B20 Temperature ----
+  // ---- Serial Command Listener ----
+  if (Serial.available()) {
+    String command = Serial.readStringUntil('\n');
+    command.trim();
+
+    if (command == "DOSE") {
+      Serial.println("Command received: DOSE");
+      runPump(15000);  // Run for 15 seconds
+    }
+    else {
+      Serial.print("Unknown command: ");
+      Serial.println(command);
+    }
+  }
+
+  // ---- Read DS18B20 ----
   sensors.requestTemperatures();
-  float tempC = sensors.getTempCByIndex(0);
+  float tempC_DS18B20 = sensors.getTempCByIndex(0);
+
+  // ---- Read DHT22 ----
+  float tempC_DHT = dht.readTemperature();
+  float humidity = dht.readHumidity();
 
   // ---- Read pH ----
   int phRaw = analogRead(PH_PIN);
   float phVoltage = phRaw * (5.0 / 1023.0);
-  float pH = 7 + ((2.5 - phVoltage) * 3.0); // Rough estimate
+  float pH = 7 + ((2.5 - phVoltage) * 3.0);
 
   // ---- Read EC ----
   int ecRaw = analogRead(EC_PIN);
   float ecVoltage = ecRaw * (5.0 / 1023.0);
 
-  // ---- Log values ----
-  Serial.print("Temp: "); Serial.print(tempC); Serial.print(" °C | ");
+  // ---- Log all values ----
+  Serial.print("DS18B20 Temp: "); Serial.print(tempC_DS18B20); Serial.print(" °C | ");
+  Serial.print("DHT22 Temp: "); Serial.print(tempC_DHT); Serial.print(" °C | ");
+  Serial.print("Humidity: "); Serial.print(humidity); Serial.print(" % | ");
   Serial.print("pH: "); Serial.print(pH, 2); Serial.print(" | ");
   Serial.print("EC Raw: "); Serial.print(ecRaw);
   Serial.print(" | EC Voltage: "); Serial.print(ecVoltage, 2); Serial.println(" V");
+  
+  // ---- Send JSON data for Firebase ----
+  Serial.print("{\"temp\":");
+  Serial.print(tempC_DS18B20);  // DS18B20 only
+  Serial.print(",\"hum\":");
+  Serial.print(humidity);       // DHT22
+  Serial.print(",\"ph\":");
+  Serial.print(pH, 2);
+  Serial.print(",\"ec\":");
+  Serial.print(ecVoltage, 2);
+  Serial.println("}");
+
 
   // ---- Trigger Pump if EC low ----
   if (ecVoltage < 2.0) {
     Serial.println("🔁 Low EC: Pumping nutrients...");
-
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
-    delay(5000);  // Pump ON for 5s
-
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
-    Serial.println("✅ Pump OFF");
-
-    // ---- Rotate Stepper After Dosing ----
-    Serial.println("↻ Rotating stepper...");
-    stepper.step(stepsPerRevolution);    // Full turn
-    delay(1000);
-    stepper.step(-stepsPerRevolution);   // Return
+    runPump(15000);  // Run for 15 seconds
   }
 
-  delay(3000); // 3-second wait between readings
+  delay(3000); // 3 seconds between readings
+}
+
+// ---- Helper: Run Pump for specified ms ----
+void runPump(int duration_ms) {
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  delay(duration_ms);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  Serial.println("✅ Pump cycle complete");
 }
