@@ -130,6 +130,9 @@
         <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
           <div class="tube-inner" id="chemicalBar"></div>
         </div>
+
+        <div id="chemicalValue" style="position: absolute;top: 65%;left: 28.5%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
+
         <div class="switch-mode-container">
           <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" />
           <button class="auto-button"
@@ -149,6 +152,7 @@
     </div>
   </div>
 </body>
+
 <script>
   function changeImage(id, src, mode = "") {
     const img = document.getElementById(id);
@@ -172,9 +176,17 @@
   }
 
 </script>
+
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  import {
+    getFirestore,
+    collection,
+    query,
+    orderBy,
+    limit,
+    onSnapshot
+  } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -189,22 +201,28 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  async function loadChemical() {
-    const snapshot = await getDocs(collection(db, "alerts"));
-    const docs = snapshot.docs.map(doc => doc.data());
-    if (docs.length === 0) return;
-    const latest = docs[docs.length - 1];
-    const values = latest.values;
+  const chemicalQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
 
-    // อัปเดตหลอด
-    updateTube('chemicalBar', values.chemical, 100);
-    console.log("Chemical from Firestore:", values.chemical);
-  }
+  onSnapshot(chemicalQuery, (snapshot) => {
+    if (snapshot.empty) return;
+
+    const data = snapshot.docs[0].data();
+    const chemical = data.chemical !== undefined ? data.chemical : 50;
+
+    updateTube('chemicalBar', chemical, 100);
+    updateText('chemicalValue', chemical.toFixed(1) + " ppm");
+    console.log("🧪 Chemical Level:", chemical);
+  });
 
   function updateTube(id, value, max) {
     const percent = Math.min(100, (value / max) * 100);
     const el = document.getElementById(id);
     if (el) el.style.height = `${percent}%`;
+  }
+
+  function updateText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
   }
 
   const defaultImages = {
@@ -219,30 +237,30 @@
     switchImageChem: ""
   };
 
-  // function changeImage(id, src, mode = "") {
-  //   const img = document.getElementById(id);
-  //   if (!img) return;
-  //   if (mode) {
-  //     localStorage.setItem(id + "_mode", mode); // 🔁 Save
-  //   }
-  //   img.src = src;
-  // }
+  window.changeImage = function (id, src, mode = "") {
+    const img = document.getElementById(id);
+    if (!img) return;
+    if (mode) {
+      localStorage.setItem(id + "_mode", mode);
+    }
+    img.src = src;
+  };
 
-  // function resetImage(id) {
-  //   const img = document.getElementById(id);
-  //   const mode = localStorage.getItem(id + "_mode");
-  //   if (!mode) {
-  //     img.src = "images/SwitchAutoManual.PNG";
-  //   } else if (mode === "auto") {
-  //     img.src = "images/AutoButton.PNG";
-  //   } else if (mode === "manual") {
-  //     img.src = "images/MaunualButton.PNG";
-  //   }
-  // }
+  window.resetImage = function (id) {
+    const img = document.getElementById(id);
+    const mode = localStorage.getItem(id + "_mode");
+    if (!mode) {
+      img.src = "images/SwitchAutoManual.PNG";
+    } else if (mode === "auto") {
+      img.src = "images/AutoButton.PNG";
+    } else if (mode === "manual") {
+      img.src = "images/MaunualButton.PNG";
+    }
+  };
 
   window.onload = () => {
-    resetImage("switchImageChem"); // 🔁 Load
-    loadChemical();   
+    resetImage("switchImageChem");
   };
 </script>
+
 </html>

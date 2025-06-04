@@ -104,13 +104,14 @@
         <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
           <div class="tube-inner" id="phBar"></div>
         </div>
+        <div id="phValue" style="position: absolute;top: 65%;left: 28.8%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
     <div>
       <img src="images/Blackboard.PNG" class="board-images" alt="board" />
     </div>
   </div>
   <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-  import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -125,17 +126,18 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  async function loadPh() {
-    const snapshot = await getDocs(collection(db, "alerts"));
-    const docs = snapshot.docs.map(doc => doc.data());
-    if (docs.length === 0) return;
-    const latest = docs[docs.length - 1];
-    const values = latest.values;
+  const phQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
 
-    // อัปเดตหลอด
-    updateTube('phBar', values.ph, 14);
-    console.log("pH from Firestore:", values.ph);
-  }
+  onSnapshot(phQuery, (snapshot) => {
+    if (snapshot.empty) return;
+
+    const data = snapshot.docs[0].data();
+    const ph = data.ph;
+
+    updateTube('phBar', ph, 14); // pH scale max = 14
+    updateText('phValue', ph.toFixed(2));
+    console.log("🧪 pH:", ph);
+  });
 
   function updateTube(id, value, max) {
     const percent = Math.min(100, (value / max) * 100);
@@ -143,8 +145,12 @@
     if (el) el.style.height = `${percent}%`;
   }
 
-  window.onload = loadPh;
+  function updateText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
+  }
 </script>
+
 </body>
 
 </html>
