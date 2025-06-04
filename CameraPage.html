@@ -54,21 +54,23 @@
     .status-box.temp {
       background-color: #f1c40f;
       color: black;
-    }.preSlide-button, .nextSlide-button {
-      width: 26px;
-      height: 41px;
+    }
+
+    .preSlide-button, .nextSlide-button {
+      width: 125px;
+      height: 125px;
       background-size: cover;
       border: none;
       cursor: pointer;
       position: absolute;
-      top: 55%;
-      transform: translate(-50%, -50%);
+      top: 50%;
+      transform: translateY(-50%);
       z-index: 20;
     }
 
     .preSlide-button {
-      left: 3%;
-      background: url('images/PreSlide1.PNG') no-repeat center center;
+      left: 20px;
+      background: url('images/Left_arrow_vine.png') no-repeat center center;
     }
 
     .preSlide-button:hover {
@@ -76,15 +78,17 @@
     }
 
     .nextSlide-button {
-      right: 3%;
-      background: url('images/NextSlide1.PNG') no-repeat center center;
+      right: 20px;
+      background: url('images/Right_arrow_vine.png') no-repeat center center;
     }
 
     .nextSlide-button:hover {
       background: url('images/NextSlideTwo.PNG') no-repeat center center;
     }
 
-        /* Container สำหรับปุ่ม */
+
+
+    /* Container สำหรับปุ่ม */
     .button-container {
       position: relative;
       height: 100vh; /* ให้ container สูงเท่าหน้าจอ */
@@ -156,9 +160,13 @@
     <button class="preSlide-button"></button>
     <button class="nextSlide-button"></button>
   </div>
+  
 </body>
 
 <script>
+  const raspiIP = "http://192.168.2.2:5000";
+
+  // 🔁 Load EC, Humidity, Temp from PHP
   async function loadStatusFromMySQL() {
     try {
       const response = await fetch("php/getStatus.php");
@@ -167,7 +175,6 @@
       document.getElementById("ecBox").textContent = `EC ${data.EC}%`;
       document.getElementById("humidityBox").textContent = `Humidity ${data.Humidity}%`;
       document.getElementById("tempBox").textContent = `Temp ${data.Temperature}°C`;
-
     } catch (err) {
       console.error("Error loading status:", err);
     }
@@ -175,20 +182,45 @@
 
   loadStatusFromMySQL();
 
+  // 📷 Live stream reload logic
   const liveImg = document.getElementById('liveStream');
 
-    function reloadStream() {
-      liveImg.src = `http://192.168.2.2:5000/video_feed?timestamp=${Date.now()}`;
-    }
+  function reloadStream() {
+    liveImg.src = `${raspiIP}/video_feed?timestamp=${Date.now()}`;
+  }
 
-    liveImg.addEventListener('error', () => {
-      console.warn('Stream disconnected, retrying...');
-      setTimeout(reloadStream, 3000);
+  liveImg.addEventListener('error', () => {
+    console.warn('Stream disconnected, retrying...');
+    setTimeout(reloadStream, 3000);
+  });
+
+  setInterval(reloadStream, 30000);
+
+  // ⚙️ Motor Control Logic
+  function sendCommand(direction) {
+    fetch(`${raspiIP}/move`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction: direction })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(`✅ ${data.status || data.error}`);
+    })
+    .catch(err => {
+      console.error("❌ Motor control error:", err);
     });
+  }
 
-    // Optional: reload stream every 60 seconds to keep it fresh
-    setInterval(reloadStream, 30000);
+  // 🎮 Button Event Binding
+  document.querySelector('.preSlide-button').addEventListener('click', () => {
+    sendCommand('left');
+  });
 
+  document.querySelector('.nextSlide-button').addEventListener('click', () => {
+    sendCommand('right');
+  });
 </script>
+
 
 </html>

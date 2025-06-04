@@ -3,164 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notification</title>
+  <title>Rounded Status with Hover</title>
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
   <style>
     body {
-      background: url('images/info.gif') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Pixelify Sans', sans-serif;
+      background-color: #b3ecff;
       margin: 0;
-      padding: 0;
+      font-family: 'Pixelify Sans', monospace;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(255, 255, 255, 0.322);
-      z-index: 0;
-    }
-    .middle-image {
+
+    .status-bar {
       position: absolute;
-      top: 3%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%;
-      z-index: 1;
-    }
-    .notification-list {
-      position: absolute;
-      top: 12%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 55%;
-      z-index: 2;
-      margin-bottom: 140px;
-    }
-    .notification-item {
-      background-color: rgba(255, 255, 255, 0.2);
-      margin-bottom: 12px;
-      padding: 10px 20px;
-      border-radius: 12px;
+      top: 40px;   /* เพิ่มระยะห่างจากด้านบน */
+      right: 40px; /* เพิ่มระยะห่างจากด้านขวา */
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .notification-item:hover {
-      background-color: rgba(255, 255, 255, 0.35);
-    }
-    .notification-left {
-      display: flex;
-      align-items: center;
-    }
-    .notification-icon {
-      width: 60px;
-      height: 60px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-    .notification-title {
-      font-size: 20px;
-      margin-left: 20px;
-      color: #000;
-    }
-    .notification-actions {
-      display: flex;
-      align-items: center;
-    }
-    .bin-button {
-      width: 36px;
-      height: 36px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      border: none;
-      cursor: pointer;
-      margin-left: 10px;
-      background-color: transparent;
-    }
-    .bin-button {
-      background-image: url('images/bin1.PNG');
-    }
-    .star-button {
-      width: 36px;
-      height: 36px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      border: none;
-      cursor: pointer;
-      margin-left: 10px;
-      background-color: transparent;
+      gap: 10px;
+      z-index: 10;
     }
 
-    .starred {
-      background-image: url('images/star1.PNG');
-    }
-
-    .starred:hover {
-      background-image: url('images/star2.PNG');
-    }
-
-    .unstarred {
-      background-image: url('images/star3.PNG');
-    }
-
-    /* .star-button {
-      background-image: url('images/star3.PNG');
-    } */
-    
-    .divider {
-      width: 100%;
-      height: 0.5px;
-      background-color: #000000;
-      opacity: 0.4;
-      margin: 8px 0;
-    }
-    .pagination {
-      margin-top: 20px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      position: absolute;
-      bottom: 11%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 3;
-    }
-    .pagination button {
+    .status-box {
       padding: 10px 16px;
-      font-size: 18px;
-      font-family: 'Pixelify Sans', sans-serif;
-      background-color: #ffd700;
-      border: 4px solid #000;
-      box-shadow: 4px 4px 0px #333;
-      border-radius: 8px;
+      font-size: 16px;
+      color: white;
+      background-color: #ff6f61;
+      border: 3px solid black;
+      border-radius: 16px;
+      box-shadow:
+        inset -2px -2px 0 rgba(255, 255, 255, 0.3),
+        inset 2px 2px 0 rgba(0, 0, 0, 0.2),
+        3px 3px 0 #000;
+      user-select: none;
+      cursor: default;
+      text-align: center;
+      min-width: 110px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .status-box:hover {
+      transform: scale(1.06);
+      box-shadow:
+        inset -2px -2px 0 rgba(255, 255, 255, 0.4),
+        inset 2px 2px 0 rgba(0, 0, 0, 0.2),
+        0 0 8px #000;
+    }
+
+    .status-box.humidity {
+      background-color: #27ae60;
+    }
+
+    .status-box.temp {
+      background-color: #f1c40f;
+      color: black;
+    }
+
+    .preSlide-button, .nextSlide-button {
+      width: 125px;
+      height: 125px;
+      background-size: cover;
+      border: none;
       cursor: pointer;
-      color: #000;
-      transition: all 0.1s;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
     }
-    .pagination button:hover {
-      background-color: #ffa500;
-      transform: translateY(2px);
-      box-shadow: 2px 2px 0px #333;
+
+    .preSlide-button {
+      left: 20px;
+      background: url('images/Left_arrow_vine.png') no-repeat center center;
     }
-    .pagination button.active {
-      background-color: #ff8c00;
-      transform: none;
-      box-shadow: none;
+
+    .preSlide-button:hover {
+      background: url('images/PreSlideTwo.PNG') no-repeat center center;
     }
-    .pagination button.disabled {
-      background-color: #ccc;
-      color: #666;
-      cursor: not-allowed;
-      box-shadow: none;
+
+    .nextSlide-button {
+      right: 20px;
+      background: url('images/Right_arrow_vine.png') no-repeat center center;
     }
+
+    .nextSlide-button:hover {
+      background: url('images/NextSlideTwo.PNG') no-repeat center center;
+    }
+
+
+
+    /* Container สำหรับปุ่ม */
+    .button-container {
+      position: relative;
+      height: 100vh; /* ให้ container สูงเท่าหน้าจอ */
+      z-index: 2;
+    }
+
+    /* ปุ่ม back */
     .back-button {
       width: 60px;
       height: 44px;
@@ -169,221 +104,123 @@
       border: none;
       cursor: pointer;
       position: absolute;
-      top: 6%;
-      left: 4%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
+      top: 4%;
+      left: 2%;
+      z-index: 3; /* ให้อยู่หน้าสุด */
     }
+
     .back-button:hover {
       background: url('images/backButton2.png') no-repeat center center;
       background-size: cover;
     }
+
+    .live-container {
+      position: fixed;       /* Stay fixed on viewport */
+      top: 0;                /* Align top-left corner */
+      left: 0;
+      width: 100vw;          /* Full viewport width */
+      height: 100vh;         /* Full viewport height */
+      background: black;     /* Optional: black background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .live-container img {
+      width: 100%;           /* Fill container width */
+      height: 100%;          /* Fill container height */
+      object-fit: cover;     /* Crop/scale preserving aspect ratio */
+    }
+
+
+
+
   </style>
 </head>
+
 <body>
-  <button class="back-button" onclick="location.href='HomePage.html'"></button>
-  <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-  <div class="notification-list" id="notificationList"></div>
-  <div class="pagination" id="pagination"></div>
+  <div class="button-container">
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  </div>
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore, collection, getDocs, updateDoc, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  <div class="status-bar">
+    <div class="status-box" id="ecBox">Loading...</div>
+    <div class="status-box humidity" id="humidityBox">Loading...</div>
+    <div class="status-box temp" id="tempBox">Loading...</div>
+  </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-      authDomain: "seniorproject-684c1.firebaseapp.com",
-      projectId: "seniorproject-684c1",
-      storageBucket: "seniorproject-684c1.appspot.com",
-      messagingSenderId: "847138584376",
-      appId: "1:847138584376:web:eface0926c96092daef3cd",
-      measurementId: "G-N0CM5TQBM8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let notifications = [];
-    const perPage = 6;
-    let currentPage = 1;
-
-    async function fetchNotifications() {
-      const snapshot = await getDocs(collection(db, "Main"));
-      notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderNotifications();
-      renderPagination();
-    }
-
-    function renderNotifications() {
-      const list = document.getElementById('notificationList');
-      list.innerHTML = '';
-      const start = (currentPage - 1) * perPage;
-      const pageItems = notifications.slice(start, start + perPage);
-
-      pageItems.forEach((noti, index) => {
-        const isStarred = noti.starred;
-        const starClass = isStarred ? 'starred' : 'unstarred';
-
-        const div = document.createElement('div');
-        div.className = 'notification-item';
-        div.addEventListener('click', async () => {
-          // const docRef = doc(db, "notifications", noti.id);
-          const docRef = doc(db, "Main", noti.id);
-          await updateDoc(docRef, { read: true });
-          noti.read = true;
-          renderNotifications();
-          renderPagination();
-          setTimeout(() => {
-            window.location.href = `NotificationDetail.html?id=${noti.id}`;
-
-          }, 150);
-        });
-
-        div.innerHTML = `
-          <div class="notification-left">
-            <div class="notification-icon" style="background-image: url('images/${noti.read ? 'bell2.PNG' : 'bell1.PNG'}')"></div>
-            <div class="notification-title">${noti.title}</div>
-          </div>
-          <div class="notification-actions">
-            <button class="star-button ${starClass}" onclick="toggleStar(event, '${noti.id}', ${isStarred})"></button>
-            <button class="bin-button"></button>
-          </div>
-        `;
-
-        const starBtn = div.querySelector('.star-button');
-        const binBtn = div.querySelector('.bin-button');
-
-        starBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-
-        binBtn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
-          if (!confirmed) return;
-          // await deleteDoc(doc(db, "notifications", noti.id));
-          await deleteDoc(doc(db, "Main", noti.id));
-          await fetchNotifications();
-        });
-
-        list.appendChild(div);
-
-        if (index < pageItems.length - 1) {
-          const divider = document.createElement('div');
-          divider.className = 'divider';
-          list.appendChild(divider);
-        }
-      });
-    }
-
-    window.toggleStar = async function(event, docId, currentState) {
-      event.stopPropagation();
-      const newState = !currentState;
-      // const docRef = doc(db, "notifications", docId);
-      // await updateDoc(docRef, { starred: newState });
-      const docRef = doc(db, "Main", docId);
-      await updateDoc(docRef, { starred: newState });
-
-      await fetchNotifications(); // โหลดใหม่เพื่ออัปเดต UI
-    }
+  <!-- Live camera feed container -->
+  <div class="live-container">
+  <img id="liveStream" src="http://192.168.2.2:5000/video_feed" alt="Live Camera Stream" />
+  </div>
 
 
-    function renderPagination() {
-      const container = document.getElementById('pagination');
-      container.innerHTML = '';
-      const totalPages = Math.ceil(notifications.length / perPage);
-
-      const prevBtn = document.createElement('button');
-      prevBtn.textContent = 'Prev';
-      prevBtn.disabled = currentPage === 1;
-      if (prevBtn.disabled) prevBtn.classList.add('disabled');
-      prevBtn.onclick = () => {
-        if (currentPage > 1) {
-          currentPage--;
-          renderNotifications();
-          renderPagination();
-        }
-      };
-      container.appendChild(prevBtn);
-
-      const maxVisiblePages = 5;
-      let startPage = Math.max(1, currentPage - 2);
-      let endPage = Math.min(totalPages, currentPage + 2);
-
-      if (currentPage <= 3) {
-        endPage = Math.min(5, totalPages);
-      }
-      if (currentPage >= totalPages - 2) {
-        startPage = Math.max(totalPages - 4, 1);
-      }
-
-      // Add start ellipsis if needed
-      if (startPage > 1) {
-        const first = document.createElement('button');
-        first.textContent = '1';
-        first.onclick = () => {
-          currentPage = 1;
-          renderNotifications();
-          renderPagination();
-        };
-        container.appendChild(first);
-
-        if (startPage > 2) {
-          const dots = document.createElement('span');
-          dots.textContent = '...';
-          dots.style.margin = '0 5px';
-          container.appendChild(dots);
-        }
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        if (i === currentPage) btn.classList.add('active');
-        btn.onclick = () => {
-          currentPage = i;
-          renderNotifications();
-          renderPagination();
-        };
-        container.appendChild(btn);
-      }
-
-      // Add end ellipsis if needed
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          const dots = document.createElement('span');
-          dots.textContent = '...';
-          dots.style.margin = '0 5px';
-          container.appendChild(dots);
-        }
-
-        const last = document.createElement('button');
-        last.textContent = totalPages;
-        last.onclick = () => {
-          currentPage = totalPages;
-          renderNotifications();
-          renderPagination();
-        };
-        container.appendChild(last);
-      }
-
-
-      const nextBtn = document.createElement('button');
-      nextBtn.textContent = 'Next';
-      nextBtn.disabled = currentPage === totalPages;
-      if (nextBtn.disabled) nextBtn.classList.add('disabled');
-      nextBtn.onclick = () => {
-        if (currentPage < totalPages) {
-          currentPage++;
-          renderNotifications();
-          renderPagination();
-        }
-      };
-      container.appendChild(nextBtn);
-    }
-
-    fetchNotifications();
-  </script>
+  <div>
+    <button class="preSlide-button"></button>
+    <button class="nextSlide-button"></button>
+  </div>
+  
 </body>
-</html>
 
+<script>
+  const raspiIP = "http://192.168.2.2:5000";
+
+  // 🔁 Load EC, Humidity, Temp from PHP
+  async function loadStatusFromMySQL() {
+    try {
+      const response = await fetch("php/getStatus.php");
+      const data = await response.json();
+
+      document.getElementById("ecBox").textContent = `EC ${data.EC}%`;
+      document.getElementById("humidityBox").textContent = `Humidity ${data.Humidity}%`;
+      document.getElementById("tempBox").textContent = `Temp ${data.Temperature}°C`;
+    } catch (err) {
+      console.error("Error loading status:", err);
+    }
+  }
+
+  loadStatusFromMySQL();
+
+  // 📷 Live stream reload logic
+  const liveImg = document.getElementById('liveStream');
+
+  function reloadStream() {
+    liveImg.src = `${raspiIP}/video_feed?timestamp=${Date.now()}`;
+  }
+
+  liveImg.addEventListener('error', () => {
+    console.warn('Stream disconnected, retrying...');
+    setTimeout(reloadStream, 3000);
+  });
+
+  setInterval(reloadStream, 30000);
+
+  // ⚙️ Motor Control Logic
+  function sendCommand(direction) {
+    fetch(`${raspiIP}/move`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction: direction })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(`✅ ${data.status || data.error}`);
+    })
+    .catch(err => {
+      console.error("❌ Motor control error:", err);
+    });
+  }
+
+  // 🎮 Button Event Binding
+  document.querySelector('.preSlide-button').addEventListener('click', () => {
+    sendCommand('left');
+  });
+
+  document.querySelector('.nextSlide-button').addEventListener('click', () => {
+    sendCommand('right');
+  });
+</script>
+
+
+</html>
