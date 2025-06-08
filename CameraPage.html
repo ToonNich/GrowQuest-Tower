@@ -152,7 +152,7 @@
 
   <!-- Live camera feed container -->
   <div class="live-container">
-  <img id="liveStream" src="http://192.168.2.2:5000/video_feed" alt="Live Camera Stream" />
+  <img id="liveStream" src="http://192.168.1.120:5000/video_feed" alt="Live Camera Stream" />
   </div>
 
 
@@ -164,7 +164,7 @@
 </body>
 
 <script>
-  const raspiIP = "http://192.168.2.2:5000";
+  const raspiIP = "http://192.168.1.120:5000";
 
   // 🔁 Load EC, Humidity, Temp from PHP
   async function loadStatusFromMySQL() {

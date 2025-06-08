@@ -307,10 +307,12 @@
 }
 
 
-#humidityValue { top: 41.5%; left: 17.5%; }
-#temperatureValue { top: 41.5%; left: 47%; }
-#ecValue { top: 83.5%; left: 17.5%; }
+#humidityValue { top: 41.5%; left: 17.7%; }
+#temperatureValue { top: 41.5%; left: 46.5%; }
+#ecValue { top: 83.5%; left: 17.7%; }
 #phValue { top: 83.5%; left: 46.5%; }
+#lightValue { top: 83.5%; left: 73.9%; }
+
 
 
   </style>
@@ -439,6 +441,9 @@
             <div class="tube-inner" id="lightBar" ></div>
           </div>
         </div>
+
+        <div class="value-label" id="lightValue">--</div>
+
         <!-- 🔁 ปุ่มควบคุมไฟ -->
         <div class="switch-mode-container">
           <img id="switchImageLight" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 71.5%; right: 15%;" />
@@ -534,6 +539,8 @@
       document.getElementById("temperatureValue").innerText = values.temp.toFixed(1) + "°C";
       document.getElementById("ecValue").innerText = values.ec.toFixed(2);
       document.getElementById("phValue").innerText = values.ph.toFixed(2);
+      document.getElementById("lightValue").innerText = values.light.toFixed(0) + " lux";
+
 
       
     });
