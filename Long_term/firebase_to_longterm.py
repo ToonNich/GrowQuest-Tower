@@ -6,7 +6,7 @@ import statistics
 from pytz import timezone
 
 # --- Firebase Setup ---
-cred = credentials.Certificate("C:/xampp/htdocs/GrowQuest-Tower/src/seniorproject-684c1-firebase-adminsdk-fbsvc-5dfc882149.json")
+cred = credentials.Certificate("D:/Senior_WorkTable/KEYAPI/seniorproject-684c1-firebase-adminsdk-fbsvc-5dfc882149.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
