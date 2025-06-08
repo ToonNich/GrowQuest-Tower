@@ -189,7 +189,7 @@
 
             this.allData = data.map((item, index) => ({
               label: `Record ${index + 1}`,
-              data: [item.EC, item.Humidity, item.Temperature, item.Ph]
+              data: [item.EC, item.Humidity, item.Temperature, item.Ph, item.Light]
             }));
 
             this.totalPages = Math.ceil(this.allData.length / this.limit);
@@ -212,7 +212,7 @@
               const chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                  labels: ['EC', 'Humidity', 'Temperature', 'PH'],
+                  labels: ['EC', 'Humidity', 'Temperature', 'PH', 'Light'],
                   datasets: [{
                     label: item.label,
                     data: item.data,

@@ -9,8 +9,8 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-// ปรับคำสั่ง SQL ให้ดึงข้อมูลแค่ 168 ข้อมูลล่าสุด
-$sql = "SELECT EC, Humidity, Temperature, Ph FROM value_test ORDER BY value_test_ID DESC LIMIT 168";
+// ✅ Pull latest 168 records from long_term table
+$sql = "SELECT EC, Humidity, Temperature, Ph, Light FROM long_term ORDER BY id DESC LIMIT 168";
 $result = $conn->query($sql);
 
 $data = [];
