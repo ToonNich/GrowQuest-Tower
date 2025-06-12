@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <title>Daily Quest</title>
+    <style>
+        body {
+            background: url('images/info.gif') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Pixelify Sans', sans-serif;
+            margin: 0;
+            color: #4a3f35; /* Dark, cozy brown text */
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.4);
+            z-index: 0;
+        }
+
+        .scroll-image {
+            position: absolute;
+            top: 3%; left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            z-index: 1;
+        }
+
+        .content-container {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 80%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .back-button {
+            width: 60px;
+            height: 44px;
+            background: url('images/backButton1.png') no-repeat center center;
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 4%; left: 2%;
+            z-index: 3;
+        }
+
+        .back-button:hover {
+            background: url('images/backButton2.png') no-repeat center center;
+            background-size: cover;
+        }
+        
+        /* --- 8-Bit Calendar Styling --- */
+        .calendar-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fdf6e3; /* Cozy cream background */
+            border: 4px solid #937b63; /* 8-bit brown border */
+            padding: 15px;
+            box-shadow: 8px 8px 0px #937b63; /* 8-bit shadow effect */
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #6e5b4b;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day-name, .calendar-day {
+            text-align: center;
+            font-size: 1.2em;
+            padding: 5px;
+        }
+
+        .calendar-day-name {
+            font-weight: bold;
+            color: #856f5a;
+        }
+
+        .calendar-day {
+            min-height: 80px;
+            border: 2px solid #dcd3c4; /* Light border for cells */
+            position: relative;
+        }
+
+        .calendar-day .day-number {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 1em;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.4;
+        }
+
+        .calendar-day.today {
+            background-color: #f5e9d3; /* Highlight today */
+            border: 2px solid #b18454;
+        }
+
+        /* --- Daily Task Icons --- */
+        .task-icons {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+        }
+
+        .task-icon {
+            width: 15px;
+            height: 15px;
+            border: 2px solid #937b63;
+        }
+
+        .task-icon.incomplete {
+            background-color: #dcd3c4; /* Greyed out for incomplete */
+        }
+
+        .task-icon.complete {
+            background-color: #8eff7a; /* Green for complete */
+        }
+
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+    
+    <img src="images/Scroll Long.PNG" alt="Background" class="scroll-image">
+
+    <div class="content-container">
+        <div class="calendar-container">
+            <div id="calendar-header" class="calendar-header"></div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy function for getting quest data ---
+        // We will create the real version of this in HomePage.html later.
+        // For now, this lets us test the calendar display.
+        function getDailyQuestData() {
+            let questData = localStorage.getItem('growQuestDailyQuest');
+            if (!questData) {
+                return { light: false, water: true, touch: false, lastUpdate: new Date().toISOString().slice(0, 10) };
+            }
+            return JSON.parse(questData);
+        }
+
+        // --- Calendar Generation Logic ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const now = new Date();
+            generateCalendar(now.getFullYear(), now.getMonth());
+        });
+
+        function generateCalendar(year, month) {
+            const grid = document.getElementById('calendar-grid');
+            const header = document.getElementById('calendar-header');
+            grid.innerHTML = ''; // Clear previous calendar
+
+            const monthName = new Date(year, month).toLocaleString('en-US', { month: 'long' });
+            header.textContent = `${monthName} ${year}`;
+
+            // Add day names (Sun, Mon, etc.)
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(name => {
+                const dayNameCell = document.createElement('div');
+                dayNameCell.className = 'calendar-day-name';
+                dayNameCell.textContent = name;
+                grid.appendChild(dayNameCell);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Create blank cells for days before the 1st
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const blankCell = document.createElement('div');
+                blankCell.className = 'calendar-day other-month';
+                grid.appendChild(blankCell);
+            }
+
+            // Create cells for each day of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                
+                const dayNumber = document.createElement('span');
+                dayNumber.className = 'day-number';
+                dayNumber.textContent = day;
+                dayCell.appendChild(dayNumber);
+
+                // Check if this day is today
+                const today = new Date();
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayCell.classList.add('today');
+
+                    // --- Add task icons only for today ---
+                    const questData = getDailyQuestData();
+                    if(questData.lastUpdate === today.toISOString().slice(0, 10)) {
+                        const iconsContainer = document.createElement('div');
+                        iconsContainer.className = 'task-icons';
+
+                        // Light Task Icon
+                        const lightIcon = document.createElement('div');
+                        lightIcon.className = 'task-icon ' + (questData.light ? 'complete' : 'incomplete');
+                        lightIcon.title = 'Turn on the Light';
+                        iconsContainer.appendChild(lightIcon);
+
+                        // Water Task Icon
+                        const waterIcon = document.createElement('div');
+                        waterIcon.className = 'task-icon ' + (questData.water ? 'complete' : 'incomplete');
+                        waterIcon.title = 'Water the Plant';
+                        iconsContainer.appendChild(waterIcon);
+
+                        // Touch Task Icon
+                        const touchIcon = document.createElement('div');
+                        touchIcon.className = 'task-icon ' + (questData.touch ? 'complete' : 'incomplete');
+                        touchIcon.title = 'Interact with the Plant';
+                        iconsContainer.appendChild(touchIcon);
+                        
+                        dayCell.appendChild(iconsContainer);
+                    }
+                }
+                grid.appendChild(dayCell);
+            }
+        }
+    </script>
+
+</body>
+</html>
