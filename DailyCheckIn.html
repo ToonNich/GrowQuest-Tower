@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <title>Daily Quest</title>
+    <style>
+        body {
+            background: url('images/info.gif') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Pixelify Sans', sans-serif;
+            margin: 0;
+            color: #4a3f35;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.4);
+            z-index: 0;
+        }
+        .scroll-image {
+            position: absolute;
+            top: 3%; left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            z-index: 1;
+        }
+        .content-container {
+            position: absolute;
+            top: 12%; left: 50%;
+            transform: translateX(-50%);
+            width: 60%; height: 80%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .back-button {
+            width: 60px; height: 44px;
+            background: url('images/backButton1.png') no-repeat center center;
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 4%; left: 2%;
+            z-index: 3;
+        }
+        .back-button:hover { background: url('images/backButton2.png') no-repeat center center; background-size: cover; }
+        .calendar-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fdf6e3;
+            border: 4px solid #937b63;
+            padding: 20px;
+            box-shadow: 8px 8px 0px #937b63;
+            box-sizing: border-box;
+        }
+        .calendar-header { text-align: center; font-size: 2.5em; margin-bottom: 20px; color: #6e5b4b; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .calendar-day-name, .calendar-day { display: flex; justify-content: center; align-items: center; font-size: 1.2em; padding: 5px; }
+        .calendar-day-name { font-weight: bold; }
+        .calendar-day { min-height: 60px; border: 2px solid #dcd3c4; position: relative; font-size: 1.5em; }
+        .calendar-day.other-month { opacity: 0.4; }
+        .calendar-day.today { background-color: #f5e9d3; border: 3px solid #b18454; }
+        .calendar-day.claimed::after { content: '✔'; color: #6aaa5e; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; }
+        #claim-button { font-family: 'Pixelify Sans', sans-serif; font-size: 1.5em; margin-top: 20px; padding: 10px 30px; color: #fdf6e3; background-color: #856f5a; border: 4px solid #6e5b4b; cursor: pointer; box-shadow: 4px 4px 0px #6e5b4b; }
+        #claim-button:hover:not(:disabled) { background-color: #9e8571; }
+        #claim-button:disabled { background-color: #b5a89d; box-shadow: 4px 4px 0px #937b63; cursor: not-allowed; color: #856f5a; }
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+    
+    <img src="images/Scroll Long.PNG" alt="Background" class="scroll-image">
+
+    <div class="content-container">
+        <div class="calendar-container">
+            <h2 id="task-description" style="text-align:center; color: #856f5a;"></h2>
+            <div id="calendar-header" class="calendar-header"></div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+            <button id="claim-button">Claim Reward</button>
+        </div>
+    </div>
+
+    <script>
+        function getDailyCheckInData() {
+            let dailyData = localStorage.getItem('growQuestDailyData');
+            if (!dailyData) {
+                return {}; 
+            }
+            return JSON.parse(dailyData);
+        }
+
+        function saveDailyCheckInData(dailyData) {
+            localStorage.setItem('growQuestDailyData', JSON.stringify(dailyData));
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const now = new Date();
+            
+            // Set the task description text
+            const taskDescription = document.getElementById('task-description');
+            taskDescription.textContent = "Today's Task: Water the plant!";
+
+            generateCalendar(now.getFullYear(), now.getMonth());
+            updateClaimButtonState();
+
+            const claimButton = document.getElementById('claim-button');
+            claimButton.addEventListener('click', claimTodaysReward);
+        });
+
+        function generateCalendar(year, month) {
+            const grid = document.getElementById('calendar-grid');
+            const header = document.getElementById('calendar-header');
+            const dailyData = getDailyCheckInData();
+            grid.innerHTML = '';
+
+            const monthName = new Date(year, month).toLocaleString('en-US', { month: 'long' });
+            header.textContent = `${monthName} ${year}`;
+
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(name => {
+                const dayNameCell = document.createElement('div');
+                dayNameCell.className = 'calendar-day-name';
+                dayNameCell.textContent = name;
+                grid.appendChild(dayNameCell);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                dayCell.textContent = day;
+                dayCell.id = `day-${day}`;
+
+                const today = new Date();
+                const currentDateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                const dayData = dailyData[currentDateString];
+
+                // Updated check for the new data structure
+                if (dayData && dayData.rewardClaimed) {
+                    dayCell.classList.add('claimed');
+                }
+
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function updateClaimButtonState() {
+            const todayString = new Date().toISOString().slice(0, 10);
+            const dailyData = getDailyCheckInData();
+            const todaysData = dailyData[todayString] || { taskComplete: false, rewardClaimed: false };
+            const claimButton = document.getElementById('claim-button');
+
+            if (todaysData.rewardClaimed) {
+                claimButton.disabled = true;
+                claimButton.textContent = "Reward Claimed!";
+            } else if (todaysData.taskComplete) {
+                claimButton.disabled = false;
+                claimButton.textContent = "Claim Reward";
+            } else {
+                claimButton.disabled = true;
+                claimButton.textContent = "Complete Your Task!";
+            }
+        }
+
+        function claimTodaysReward() {
+            const today = new Date();
+            const todayString = today.toISOString().slice(0, 10);
+            const dailyData = getDailyCheckInData();
+            const todaysData = dailyData[todayString];
+
+            // Check that the task is complete AND the reward hasn't been claimed
+            if (todaysData && todaysData.taskComplete && !todaysData.rewardClaimed) {
+                todaysData.rewardClaimed = true;
+                saveDailyCheckInData(dailyData);
+
+                alert("Reward Claimed!");
+
+                updateClaimButtonState();
+                const todayCell = document.getElementById(`day-${today.getDate()}`);
+                if (todayCell) {
+                    todayCell.classList.add('claimed');
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
