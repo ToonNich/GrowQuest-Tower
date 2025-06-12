@@ -76,5 +76,39 @@
 
   <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image">
   <p class="head-text" style="top: 15%; left: 25%;">Infomationnnnnnnnnnnnnnnnnnnnnnnnnnnn</p>
+
+  <script>
+  // --- Achievement System Helper Functions ---
+  function getAchievements() {
+    const achievements = localStorage.getItem('growQuestAchievements');
+    if (!achievements) {
+      console.error("Achievement data not found. Please visit the Home Page first.");
+      return null;
+    }
+    return JSON.parse(achievements);
+  }
+
+  function saveAchievements(achievements) {
+    localStorage.setItem('growQuestAchievements', JSON.stringify(achievements));
+  }
+
+  function notifyAchievement(achievementName) {
+    alert(`Achievement Unlocked: ${achievementName}!`);
+  }
+  
+  // --- Unlock Logic for 'Curious Gardner' ---
+
+  // We are replacing 'DOMContentLoaded' with 'pageshow' for better reliability
+  window.addEventListener("pageshow", function(event) {
+    const achievements = getAchievements();
+
+    // Check if achievements data exists and if this achievement is not already unlocked
+    if (achievements && achievements.curiousGardner.unlocked === false) {
+      achievements.curiousGardner.unlocked = true; // Unlock it!
+      saveAchievements(achievements); // Save the progress
+      notifyAchievement("Curious Gardner"); // Show the pop-up
+    }
+  });
+</script>
 </body>
 </html>

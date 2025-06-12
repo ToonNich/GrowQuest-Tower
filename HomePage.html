@@ -316,6 +316,24 @@
       width: 20%;
       z-index: 1;
     }
+
+    .achievements-button {
+      width: 236px;
+      height: 56px;
+      background: url('images/Achievement_Page.png') no-repeat center center; /* You will need to create this image */
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 82%; /* Positioned above the dashboard button */
+      right: 1.5%;
+      z-index: 2;
+    }
+
+    .achievements-button:hover {
+      background: url('images/Achievement_Page_1.png') no-repeat center center; /* You will need to create this image */
+      background-size: cover;
+    }
   </style>
 </head>
 <body>
@@ -332,6 +350,7 @@
   <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
   <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
   <button class="checkPlant-button" onclick="location.href='PlantAnalysis.html'"></button>
+  <button class="achievements-button" onclick="location.href='AchievementsPage.html'"></button>
   <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
   <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
   <img src="images/HP1.PNG" alt="Hp" class="hp-image">
@@ -343,6 +362,7 @@
 
   <img id="character" src="images/Stage4Normal.gif" class="plant-image" />
   <p id="charName"></p>
+
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
     import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
@@ -400,8 +420,10 @@
   </script>
 
   <script>
-    // Pond Edit 
+
+    // Pond Edit (UPDATED FOR ACHIEVEMENTS)
     document.addEventListener("DOMContentLoaded",  () => {
+      checkDailyReset();
       const lightButton = document.getElementById("lightButton");
 
       // Load saved state from localStorage
@@ -430,6 +452,27 @@
             lightIsOn = true;
             localStorage.setItem("lightIsOn", "true"); // Save state
 
+            // --- ACHIEVEMENT UNLOCK LOGIC ---
+            const achievements = getAchievements(); // Get current achievement data
+            if (achievements.firstLight.unlocked === false) { // Check if not already unlocked
+                achievements.firstLight.unlocked = true; // Unlock it!
+                saveAchievements(achievements); // Save the new progress
+                notifyAchievement("First Light"); // Show the pop-up
+            }
+            // --- END OF ACHIEVEMENT LOGIC ---
+
+            // --- ACHIEVEMENT UNLOCK LOGIC for 'First Light' ---
+            if (achievements.firstLight.unlocked === false) { 
+                achievements.firstLight.unlocked = true;
+                notifyAchievement("First Light"); // We only notify here
+            }
+            
+            // --- PROGRESS TRACKING for 'Daily Routine' ---
+            achievements.dailyRoutine.progress.light = true;
+            saveAchievements(achievements); // Save progress
+            checkForDailyRoutineCompletion(); // Check if all tasks are now complete
+            // --- END OF PROGRESS TRACKING ---
+
           } else {
             // Turn light OFF
             const response = await fetch("http://localhost:8000/turn_off", {
@@ -449,109 +492,291 @@
     });
 
 
+      function updateDateTime() {
+        const now = new Date();
+        const options = {
+          weekday: 'short', // ✅ short day name
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        };
+        const dateStr = now.toLocaleDateString('en-US', options);
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const timeStr = `${hours}:${minutes}`;
+        document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
+      }
 
+      function updateDateTimeAndButton() {
+        const now = new Date();
+        const options = {
+          weekday: 'short', // ✅ short day name
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        };
+        const dateStr = now.toLocaleDateString('en-US', options);
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const timeStr = `${hours}:${minutes}`;
+        document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
 
-    function updateDateTime() {
-      const now = new Date();
-      const options = {
-        weekday: 'short', // ✅ short day name
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      };
-      const dateStr = now.toLocaleDateString('en-US', options);
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const timeStr = `${hours}:${minutes}`;
-      document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
-    }
+        const hour = now.getHours();
+        const button = document.getElementById("time-button");
 
-    function updateDateTimeAndButton() {
-      const now = new Date();
-      const options = {
-        weekday: 'short', // ✅ short day name
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      };
-      const dateStr = now.toLocaleDateString('en-US', options);
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const timeStr = `${hours}:${minutes}`;
-      document.getElementById("datetime-box").textContent = `${dateStr} at ${timeStr}`;
+        let imageUrl = '';
+        if (hour >= 5 && hour < 8) imageUrl = 'images/Morning.PNG';
+        else if (hour >= 8 && hour < 11) imageUrl = 'images/LateMorning.PNG';
+        else if (hour >= 11 && hour < 15) imageUrl = 'images/Afternoon.PNG';
+        else if (hour >= 15 && hour < 18) imageUrl = 'images/Evening.PNG';
+        else if (hour >= 18 && hour < 21) imageUrl = 'images/Night.PNG';
+        else if (hour >= 21 && hour < 24) imageUrl = 'images/LateNight.PNG';
+        else imageUrl = 'images/Midnight.PNG';
 
-      const hour = now.getHours();
-      const button = document.getElementById("time-button");
+        button.style.backgroundImage = `url('${imageUrl}')`;
+      }
 
-      let imageUrl = '';
-      if (hour >= 5 && hour < 8) imageUrl = 'images/Morning.PNG';
-      else if (hour >= 8 && hour < 11) imageUrl = 'images/LateMorning.PNG';
-      else if (hour >= 11 && hour < 15) imageUrl = 'images/Afternoon.PNG';
-      else if (hour >= 15 && hour < 18) imageUrl = 'images/Evening.PNG';
-      else if (hour >= 18 && hour < 21) imageUrl = 'images/Night.PNG';
-      else if (hour >= 21 && hour < 24) imageUrl = 'images/LateNight.PNG';
-      else imageUrl = 'images/Midnight.PNG';
+      setInterval(() => {
+        updateDateTime();
+        updateDateTimeAndButton();
+      }, 1000);
 
-      button.style.backgroundImage = `url('${imageUrl}')`;
-    }
-
-    setInterval(() => {
       updateDateTime();
       updateDateTimeAndButton();
-    }, 1000);
 
-    updateDateTime();
-    updateDateTimeAndButton();
+      const characters = ["images/plant.png", "images/plan2.PNG"];
+      let currentIndex = 0;
 
-    const characters = ["images/plant.png", "images/plan2.PNG"];
-    let currentIndex = 0;
+      const characterImage = document.getElementById("character");
 
-    const characterImage = document.getElementById("character");
+    
+      window.onload = () => {
+        const data = JSON.parse(localStorage.getItem("characterData"));
+        if (data) {
+          document.getElementById("character").src = data.image;
+          document.getElementById("charName").textContent = data.name;
+        }
+      };
 
-   
-    window.onload = () => {
-      const data = JSON.parse(localStorage.getItem("characterData"));
-      if (data) {
-        document.getElementById("character").src = data.image;
-        document.getElementById("charName").textContent = data.name;
-      }
-    };
+      document.addEventListener("DOMContentLoaded", () => {
+      const wateringBtn = document.querySelector(".wateringcan-button");
+      const wateringGif = document.getElementById("wateringGif");
+      const plantImage = document.getElementById("character");
 
-document.addEventListener("DOMContentLoaded", () => {
-  const wateringBtn = document.querySelector(".wateringcan-button");
-  const wateringGif = document.getElementById("wateringGif");
-  const plantImage = document.getElementById("character");
+      wateringBtn.addEventListener("mousedown", () => {
+          wateringGif.style.display = "block";
+          plantImage.src = "images/Stage4Warerting.gif";
+      });
 
-  wateringBtn.addEventListener("mousedown", () => {
-    wateringGif.style.display = "block";
-    plantImage.src = "images/Stage4Warerting.gif"; // แสดงอนิเมชันพืชถูกรดน้ำ
+      document.addEventListener("mouseup", (e) => {
+          // Only do something if the watering can is active
+          if (wateringGif.style.display === 'block') {
+              // Hide the GIF and reset the plant image first
+              wateringGif.style.display = "none";
+              plantImage.src = "images/Stage4Normal.gif";
+
+              const plantRect = plantImage.getBoundingClientRect();
+
+              // Check if the drop happened on the plant
+              if (
+                  plantRect.width > 0 && // Safety check
+                  e.clientX >= plantRect.left &&
+                  e.clientX <= plantRect.right &&
+                  e.clientY >= plantRect.top &&
+                  e.clientY <= plantRect.bottom
+              ) {
+                  // --- ALL ACHIEVEMENT LOGIC NOW SAFELY INSIDE THIS BLOCK ---
+                  const achievements = getAchievements();
+
+                  // 1. Logic for "Green Thumb"
+                  if (achievements.greenThumb.unlocked === false) {
+                      achievements.greenThumb.unlocked = true;
+                      notifyAchievement("Green Thumb");
+                  }
+
+                  // 2. Logic for "Daily Routine"
+                  achievements.dailyRoutine.progress.water = true;
+
+                  // 3. Save everything and check for completion
+                  saveAchievements(achievements);
+                  checkForDailyRoutineCompletion();
+              }
+          }
+      });
+
+      document.addEventListener("mousemove", (e) => {
+          if (wateringGif.style.display === 'block') {
+              wateringGif.style.left = `${e.clientX}px`;
+              wateringGif.style.top = `${e.clientY}px`;
+          }
+      });
   });
-
-  document.addEventListener("mouseup", () => {
-    wateringGif.style.display = "none";
-    plantImage.src = "images/Stage4Normal.gif"; // กลับเป็นพืชปกติเมื่อปล่อยเมาส์
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    wateringGif.style.left = `${e.clientX}px`;
-    wateringGif.style.top = `${e.clientY}px`;
-  });
-});
-;
 
   const character = document.getElementById("character");
 
-// เมื่อคลิกหรือกดค้างที่พืช
-character.addEventListener("mousedown", () => {
-  character.src = "images/Stage4Touch.gif"; // แสดงอนิเมชั่นเมื่อคลิก
+  // เมื่อคลิกหรือกดค้างที่พืช
+  character.addEventListener("mousedown", () => {
+    character.src = "images/Stage4Touch.gif"; // Show the touch animation
+
+    // --- COMBINED ACHIEVEMENT LOGIC ---
+    const achievements = getAchievements();
+
+    // Check if "A Gentle Touch" is not yet unlocked
+    if (achievements.aGentleTouch.unlocked === false) {
+        achievements.aGentleTouch.unlocked = true; // Unlock it
+        notifyAchievement("A Gentle Touch");     // Notify the player
+    }
+
+    // Always track progress for "Daily Routine"
+    achievements.dailyRoutine.progress.touch = true;
+
+    // Now, save all changes at once and check for daily completion
+    saveAchievements(achievements);
+    checkForDailyRoutineCompletion();
 });
 
-// เมื่อปล่อยเม้าส์
-document.addEventListener("mouseup", () => {
-  character.src = "images/Stage4Normal.gif"; // กลับไปเป็นภาพเดิม
+  // เมื่อปล่อยเม้าส์
+  // This part is modified from the watering logic. We need to make sure
+  // it doesn't conflict. Let's make sure it only resets the image
+  // if the watering gif isn't active.
+  document.addEventListener("mouseup", (e) => {
+    const wateringGif = document.getElementById("wateringGif");
+    const plantImage = document.getElementById("character");
+
+    // This section handles the watering can drop
+    if (wateringGif.style.display === 'block') {
+        wateringGif.style.display = 'none'; // Hide the watering can
+        const plantRect = plantImage.getBoundingClientRect();
+
+        // Check for a valid drop on the plant
+        if (
+            plantRect.width > 0 &&
+            e.clientX >= plantRect.left && e.clientX <= plantRect.right &&
+            e.clientY >= plantRect.top && e.clientY <= plantRect.bottom
+        ) {
+            // This is the watering achievement logic
+            const achievements = getAchievements();
+            if (achievements.greenThumb.unlocked === false) {
+                achievements.greenThumb.unlocked = true;
+                notifyAchievement("Green Thumb");
+            }
+            achievements.dailyRoutine.progress.water = true;
+            saveAchievements(achievements);
+            checkForDailyRoutineCompletion();
+        }
+    }
+
+    // This line safely resets the plant image to normal after any mouse up action
+    plantImage.src = "images/Stage4Normal.gif";
 });
 
+  // --- Achievement System ---
 
-  </script>
+  // Function to get the current achievement status from localStorage
+  function getAchievements() {
+    const achievements = localStorage.getItem('growQuestAchievements');
+    if (!achievements) {
+      // If no achievements are saved yet, create a default object
+      // THIS IS THE CORRECT, DETAILED STRUCTURE
+      const defaultAchievements = {
+        firstLight: {
+          unlocked: false,
+          name: "First Light",
+          description: "Turn on the grow light for the first time.",
+          icon: "images/circle-1.png"
+        },
+        greenThumb: {
+          unlocked: false,
+          name: "Green Thumb",
+          description: "Water your plant for the first time.",
+          icon: "images/circle-2.png"
+        },
+        aGentleTouch: {
+          unlocked: false,
+          name: "A Gentle Touch",
+          description: "Interact with (click on) your plant.",
+          icon: "images/number-3.png"
+        },
+        curiousGardner: {
+          unlocked: false,
+          name: "Curious Gardner",
+          description: "Visit the 'Information' page.",
+          icon: "images/number-4.png"
+        },
+        dailyRoutine: {
+          unlocked: false,
+          name: "Daily Routine",
+          description: "Perform all three main care actions in a single day.",
+          icon: "images/number-5.png",
+          progress: {
+            light: false,
+            water: false,
+            touch: false,
+            lastUpdate: null
+          }
+        }
+      };
+      // Save the default object to localStorage
+      localStorage.setItem('growQuestAchievements', JSON.stringify(defaultAchievements));
+      return defaultAchievements;
+    }
+    return JSON.parse(achievements);
+  }
+
+  // Function to save the updated achievements object
+  function saveAchievements(achievements) {
+    localStorage.setItem('growQuestAchievements', JSON.stringify(achievements));
+  }
+
+  // Function to notify the player of an unlocked achievement
+  function notifyAchievement(achievementName) {
+    // We'll use a simple alert for now. We can make this fancier later.
+    alert(`Achievement Unlocked: ${achievementName}!`);
+  }
+
+  // Call this once when the page loads to ensure defaults are set
+  document.addEventListener("DOMContentLoaded", () => {
+    getAchievements(); 
+  });
+
+  // NEW FUNCTION to check if the day has changed
+  function checkDailyReset() {
+    const achievements = getAchievements();
+    const today = new Date().toISOString().slice(0, 10); // Gets date as "YYYY-MM-DD"
+
+    // If the last update was not today, reset the progress
+    if (achievements.dailyRoutine.progress.lastUpdate !== today) {
+      achievements.dailyRoutine.progress.light = false;
+      achievements.dailyRoutine.progress.water = false;
+      achievements.dailyRoutine.progress.touch = false;
+      achievements.dailyRoutine.progress.lastUpdate = today;
+      saveAchievements(achievements);
+    }
+  }
+
+  // NEW FUNCTION to check if all daily tasks are done
+  function checkForDailyRoutineCompletion() {
+    const achievements = getAchievements();
+
+    // Check if the main achievement is still locked
+    if (achievements.dailyRoutine.unlocked === false) {
+      // Check if all three progress flags are true
+      if (
+        achievements.dailyRoutine.progress.light &&
+        achievements.dailyRoutine.progress.water &&
+        achievements.dailyRoutine.progress.touch
+      ) {
+        achievements.dailyRoutine.unlocked = true; // Unlock the main achievement
+        saveAchievements(achievements);
+        notifyAchievement("Daily Routine");
+      }
+    }
+  }
+
+</script>
+
+
+
+
 </body>
 </html>

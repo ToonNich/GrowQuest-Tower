@@ -6,7 +6,7 @@ from pywizlight import wizlight, PilotBuilder
 nest_asyncio.apply()
 
 # Your bulb IP
-bulb = wizlight("192.168.1.125")
+bulb = wizlight("192.168.1.153")
 
 async def main():
     print("🔌 Turning bulb ON (white)...")

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <title>Achievements</title>
+  <style>
+    body {
+      /* Using the background from InfomationPage.html */
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+      margin: 0;
+      color: #3b2e20; /* Dark brown text color for readability on the scroll */
+    }
+
+    body::before {
+      /* Using the overlay from InfomationPage.html */
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
+      z-index: 0;
+    }
+
+    /* The scroll image that acts as our content frame */
+    .scroll-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 1;
+    }
+
+    /* Container for all content that sits on the scroll */
+    .content-container {
+        position: absolute;
+        top: 15%; /* Adjust this to position content vertically */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%; /* Make it narrower than the scroll image */
+        height: 75%;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #5a3d25;
+    }
+
+    /* The list containing all the achievement items */
+    .achievement-list {
+      width: 100%;
+      height: 80%; /* Allow the list to take up most of the space */
+      overflow-y: auto; /* Add a scrollbar if content overflows */
+      padding-right: 20px; /* Space for the scrollbar */
+    }
+
+    .achievement-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: rgba(139, 69, 19, 0.1); /* Faint brown background */
+      border: 2px solid transparent;
+    }
+    
+    .achievement-item.unlocked {
+      border: 2px solid #b18454;
+      background-color: rgba(255, 242, 203, 0.3);
+    }
+    
+    .achievement-item.locked {
+      opacity: 0.6;
+    }
+
+    .achievement-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: 20px;
+    }
+
+    .achievement-details h3 {
+      margin: 0 0 5px 0;
+      font-size: 1.5em;
+      color: #8B4513; /* SaddleBrown color for title */
+    }
+
+    .achievement-details p {
+      margin: 0;
+      font-size: 1em;
+    }
+
+    /* Back button styled like in InfomationPage.html */
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      z-index: 3;
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+
+  </style>
+</head>
+<body>
+
+  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  
+  <img src="images/Scroll Long.PNG" alt="Achievements Background" class="scroll-image">
+
+  <div class="content-container">
+    <h1>Achievements</h1>
+    <div class="achievement-list">
+        <div id="ach-first-light" class="achievement-item locked">
+            <img src="images/circle-1.png" class="achievement-icon">
+            <div class="achievement-details">
+                <h3>First Light</h3>
+                <p>Turn on the grow light for the first time.</p>
+            </div>
+        </div>
+
+        <div id="ach-green-thumb" class="achievement-item locked">
+            <img src="images/circle-2.png" class="achievement-icon">
+            <div class="achievement-details">
+                <h3>Green Thumb</h3>
+                <p>Water your plant for the first time.</p>
+            </div>
+        </div>
+        
+        <div id="ach-gentle-touch" class="achievement-item locked">
+            <img src="images/number-3.png" class="achievement-icon">
+            <div class="achievement-details">
+                <h3>A Gentle Touch</h3>
+                <p>Interact with (click on) your plant.</p>
+            </div>
+        </div>
+
+        <div id="ach-curious-gardner" class="achievement-item locked">
+            <img src="images/number-4.png" class="achievement-icon">
+            <div class="achievement-details">
+                <h3>Curious Gardner</h3>
+                <p>Visit the "Information" page to learn more.</p>
+            </div>
+        </div>
+
+        <div id="ach-daily-routine" class="achievement-item locked">
+            <img src="images/number-5.png" class="achievement-icon">
+            <div class="achievement-details">
+                <h3>Daily Routine</h3>
+                <p>Perform all three main care actions (light, water, touch) in a single day.</p>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    function getSavedAchievements() {
+        const achievements = localStorage.getItem('growQuestAchievements');
+        return achievements ? JSON.parse(achievements) : null;
+    }
+
+    function updateAchievementView(id, isUnlocked) {
+        const element = document.getElementById(id);
+        if (element) {
+            if (isUnlocked) {
+                element.classList.remove('locked');
+                element.classList.add('unlocked');
+            } else {
+                element.classList.remove('unlocked');
+                element.classList.add('locked');
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const achievements = getSavedAchievements();
+        if (achievements) {
+            updateAchievementView('ach-first-light', achievements.firstLight.unlocked);
+            updateAchievementView('ach-green-thumb', achievements.greenThumb.unlocked);
+            updateAchievementView('ach-gentle-touch', achievements.aGentleTouch.unlocked);
+            updateAchievementView('ach-curious-gardner', achievements.curiousGardner.unlocked);
+            updateAchievementView('ach-daily-routine', achievements.dailyRoutine.unlocked);
+        }
+    });
+  </script>
+</body>
+</html>
