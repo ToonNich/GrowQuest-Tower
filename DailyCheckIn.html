@@ -77,8 +77,6 @@
 
     <button class="back-button" onclick="location.href='HomePage.html'"></button>
     
-    <img src="images/Scroll Long.PNG" alt="Background" class="scroll-image">
-
     <div class="content-container">
         <div class="calendar-container">
             <h2 id="task-description" style="text-align:center; color: #856f5a;"></h2>
@@ -89,6 +87,15 @@
     </div>
 
     <script>
+        /** --- NEW: Helper function to get the local date as a YYYY-MM-DD string --- */
+        function getTodayLocalString() {
+            const localDate = new Date();
+            const year = localDate.getFullYear();
+            const month = String(localDate.getMonth() + 1).padStart(2, '0');
+            const day = String(localDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         function getDailyCheckInData() {
             let dailyData = localStorage.getItem('growQuestDailyData');
             if (!dailyData) {
@@ -104,7 +111,6 @@
         document.addEventListener("DOMContentLoaded", () => {
             const now = new Date();
             
-            // Set the task description text
             const taskDescription = document.getElementById('task-description');
             taskDescription.textContent = "Today's Task: Water the plant!";
 
@@ -146,10 +152,9 @@
                 dayCell.id = `day-${day}`;
 
                 const today = new Date();
-                const currentDateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                const currentDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const dayData = dailyData[currentDateString];
 
-                // Updated check for the new data structure
                 if (dayData && dayData.rewardClaimed) {
                     dayCell.classList.add('claimed');
                 }
@@ -162,7 +167,8 @@
         }
 
         function updateClaimButtonState() {
-            const todayString = new Date().toISOString().slice(0, 10);
+            // --- FIX: Use the new helper function ---
+            const todayString = getTodayLocalString(); 
             const dailyData = getDailyCheckInData();
             const todaysData = dailyData[todayString] || { taskComplete: false, rewardClaimed: false };
             const claimButton = document.getElementById('claim-button');
@@ -181,11 +187,11 @@
 
         function claimTodaysReward() {
             const today = new Date();
-            const todayString = today.toISOString().slice(0, 10);
+            // --- FIX: Use the new helper function ---
+            const todayString = getTodayLocalString();
             const dailyData = getDailyCheckInData();
             const todaysData = dailyData[todayString];
 
-            // Check that the task is complete AND the reward hasn't been claimed
             if (todaysData && todaysData.taskComplete && !todaysData.rewardClaimed) {
                 todaysData.rewardClaimed = true;
                 saveDailyCheckInData(dailyData);

@@ -93,8 +93,11 @@
 <body>
 
   <button class="account-button" onclick="location.href='AccountPage.html'"></button>
+  
+  <!-- --- CORRECTED: The onclick attribute simply navigates to the page --- -->
   <button id="notiNormal" class="notification-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
   <button id="notiAlert" class="notification-alert-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
+  
   <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
   <button class="light-button" id="lightButton"></button>
   <button class="wateringcan-button"></button>
@@ -108,6 +111,7 @@
   <img src="images/HP1.PNG" alt="Hp" class="hp-image">
   <img id="character" src="images/Stage4Normal.gif" class="plant-image" />
   <p id="charName"></p>
+
   <div class="box">
     <button id="time-button" class="midnight-images"></button>
     <div id="datetime-box"></div> 
@@ -115,8 +119,10 @@
   </div>
 
   <script type="module">
+    // --- CORRECTED: Removed updateDoc import as it's no longer needed here ---
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    
     const firebaseConfig = {
       apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
       authDomain: "seniorproject-684c1.firebaseapp.com",
@@ -126,19 +132,26 @@
       appId: "1:847138584376:web:eface0926c96092daef3cd",
       measurementId: "G-N0CM5TQBM8"
     };
+    
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // --- This function now ONLY checks for unread messages ---
     async function checkNotificationStatus() {
       try {
-        const querySnapshot = await getDocs(collection(db, "alerts"));
-        let hasUnread = false;
-        querySnapshot.forEach(doc => { if (doc.data().read === false) hasUnread = true; });
+        const q = query(collection(db, "Main"), where("read", "==", false));
+        const querySnapshot = await getDocs(q);
+        
+        const hasUnread = !querySnapshot.empty;
+
         document.getElementById("notiNormal").style.display = hasUnread ? "none" : "block";
         document.getElementById("notiAlert").style.display = hasUnread ? "block" : "none";
       } catch (error) {
         console.error("Error checking notifications:", error);
       }
     }
+    
+    // Run the check when the page loads
     checkNotificationStatus();
   </script>
 
@@ -155,7 +168,6 @@
       const hour = now.getHours();
       const button = document.getElementById("time-button");
       let imageUrl = '';
-
       if (hour >= 5 && hour < 8) {
         imageUrl = 'images/Morning.PNG';
       } else if (hour >= 8 && hour < 11) {
@@ -166,12 +178,11 @@
         imageUrl = 'images/Evening.PNG';
       } else if (hour >= 18 && hour < 21) {
         imageUrl = 'images/Night.PNG';
-      } else if (hour >= 21 && hour < 24) { // <-- THIS IS THE LINE I ACCIDENTALLY DELETED
+      } else if (hour >= 21 && hour < 24) {
         imageUrl = 'images/LateNight.PNG';
       } else {
         imageUrl = 'images/Midnight.PNG';
       }
-      
       button.style.backgroundImage = `url('${imageUrl}')`;
     }
 
@@ -181,7 +192,7 @@
       if (!achievements) {
         const defaultAchievements = {
           firstLight: { unlocked: false, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
-          greenThumb: { unlocked: false, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/circle-2.png" },
+          greenThumb: { unlocked: false, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
           aGentleTouch: { unlocked: false, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
           curiousGardner: { unlocked: false, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" }
         };
@@ -214,7 +225,7 @@
       updateDateTimeAndButton();
       setInterval(updateDateTimeAndButton, 1000);
       
-      // Initialize Achievements and Daily Quest systems
+      // Initialize Achievements
       getAchievements();
       
       // Light Button Logic
@@ -232,6 +243,7 @@
             });
             if (!response.ok) throw new Error("Failed to turn on light");
             lightIsOn = true;
+            // First Light Achievement Logic
             const achievements = getAchievements();
             if (!achievements.firstLight.unlocked) {
                 achievements.firstLight.unlocked = true;
@@ -244,7 +256,7 @@
             lightIsOn = false;
           }
           lightButton.classList.toggle("on", lightIsOn);
-          localStorage.setItem("lightIsOn", String(lightIsOn));
+localStorage.setItem("lightIson", String(lightIsOn));
         } catch (err) {
           alert("Error controlling light: " + err.message);
         }
@@ -276,7 +288,7 @@
       });
     });
 
-    // --- SINGLE MOUSEUP LISTENER ---
+    // --- SINGLE MOUSEUP LISTENER (Corrected and Unified) ---
     document.addEventListener("mouseup", (e) => {
       const wateringGif = document.getElementById("wateringGif");
       const plantImage = document.getElementById("character");
@@ -285,7 +297,7 @@
         const plantRect = plantImage.getBoundingClientRect();
         if (plantRect.width > 0 && e.clientX >= plantRect.left && e.clientX <= plantRect.right && e.clientY >= plantRect.top && e.clientY <= plantRect.bottom) {
           
-          // --- Green Thumb Achievement Logic ---
+          // Handle "Green Thumb" Achievement
           const achievements = getAchievements();
           if (!achievements.greenThumb.unlocked) {
               achievements.greenThumb.unlocked = true;
@@ -293,8 +305,13 @@
               saveAchievements(achievements);
           }
 
-          // --- Daily Task Completion Logic ---
-          const today = new Date().toISOString().slice(0, 10);
+          // --- FIX: Handle "Daily Task" Completion using LOCAL DATE ---
+          const localDate = new Date();
+          const year = localDate.getFullYear();
+          const month = String(localDate.getMonth() + 1).padStart(2, '0'); // Add 1 because getMonth() is 0-indexed
+          const day = String(localDate.getDate()).padStart(2, '0');
+          const today = `${year}-${month}-${day}`; // Creates a 'YYYY-MM-DD' string based on local time
+
           const dailyData = getDailyCheckInData();
           if (!dailyData[today]) {
               dailyData[today] = { taskComplete: false, rewardClaimed: false };
