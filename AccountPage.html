@@ -16,36 +16,51 @@
         position: absolute;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background-color: rgba(255, 255, 255, 0.322); /* สีขาวจางลงครึ่งหนึ่ง */
+        background-color: rgba(255, 255, 255, 0.322);
         z-index: 0;
     }
-     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
      .back-button {
-      width: 60px; /* กำหนดขนาดของปุ่ม */
-      height: 44px; /* กำหนดความสูงของปุ่ม */
+      width: 60px;
+      height: 44px;
       background: url('images/backButton1.png') no-repeat center center;
-      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      background-size: cover;
       border: none;
-      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      cursor: pointer;
       position: absolute;
-      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      top: 6%;
       left: 4%;
-      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+      transform: translate(-50%, -50%);
+      z-index: 2;
     }
-    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
     .back-button:hover {
-      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
     }
-    /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
+    /* --- NEW: Logout Button Style --- */
+    .logout-button {
+      position: absolute;
+      top: 6%;
+      right: 1%;
+      z-index: 2;
+      padding: 10px 20px;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 18px;
+      background-color: #ff6b6b;
+      color: white;
+      border: 3px solid #c94a4a;
+      cursor: pointer;
+      box-shadow: 4px 4px 0px #c94a4a;
+    }
+    .logout-button:hover {
+        background-color: #ff4747;
+    }
     .middle-image {
       position: absolute;
       top: 3%;
       left: 50%;
       transform: translateX(-50%);
-      width: 70%; /* ปรับขนาดตามต้องการ */
-      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+      width: 70%;
+      z-index: 1;
     }
     .head-text {
       position: absolute;
@@ -53,44 +68,40 @@
       padding: 10px;
       margin-top: 20px;
       margin-bottom: 20px;
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+      z-index: 2;
     }
-
-    /* ปุ่ม Register ที่ใช้รูปภาพเป็นพื้นหลัง */
     .save-button {
-      width: 156px; /* กำหนดขนาดของปุ่ม */
-      height: 54px; /* กำหนดความสูงของปุ่ม */
+      width: 156px;
+      height: 54px;
       background: url('images/Save1.PNG') no-repeat center center;
-      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      background-size: cover;
       border: none;
-      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      cursor: pointer;
       position: absolute;
-      top: 83%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      top: 83%;
       left: 50%;
-      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+      transform: translate(-50%, -50%);
+      z-index: 2;
     }
-
-    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
     .save-button:hover {
-      background: url('images/Save2.PNG') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+      background: url('images/Save2.PNG') no-repeat center center;
+      background-size: cover;
     }
     .board-image {
         position: absolute;
         top: 3%;
         left: 50%;
         transform: translateX(-50%);
-        width: 45%; /* ปรับขนาดตามต้องการ */
-        z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        width: 45%;
+        z-index: 1;
     }
     .Profile-image {
         position: absolute;
         top: 12%;
         left: 27%;
         transform: translateX(-50%);
-        width: 6.5%; /* ปรับขนาดตามต้องการ */
-        z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+        width: 6.5%;
+        z-index: 1;
     }
     .input-wrapper {
         position: absolute;
@@ -104,7 +115,7 @@
         width: 87%;
         height: 50%;
         left: 5%;
-        background-color: rgba(255, 255, 255, 0); /* ความโปร่งใส 50% */
+        background-color: rgba(255, 255, 255, 0);
         border: none;
         padding: 8px;
         font-size: 24px;
@@ -113,47 +124,146 @@
         outline: none;
         border-radius: 6px;
     }
+     .input-overlay:disabled {
+        color: #888;
+        cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
   <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  <!-- --- NEW: Logout Button --- -->
+  <button class="logout-button" id="logoutButton">Logout</button>
+
   <div>
-    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-    <!-- <form action="php/DbForRegister.php" method="post" onsubmit="return validateForm();"> -->
     <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
-    <p class="head-text" style="top: 14%; left: 32%;">Name</p>    
-      <form id="registerForm">
+    <p class="head-text" style="top: 14%; left: 32%;" id="profileName">Loading...</p>    
+    
+    <div id="accountForm">
         <div>
             <p class="head-text" style="top: 25%; left: 25%;">Username:</p>
-            <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
             <img src="images/board.PNG" class="board-image"style="top: 33%; left: 50%;">
             <div class="input-wrapper" style="top: 39%; left: 50%;">
-                <input type="text" class="input-overlay" required>
+                <input type="text" id="usernameInput" class="input-overlay" placeholder="Enter new username...">
             </div>
         </div>
         <div>
             <p class="head-text" style="top: 40%; left: 25%;">Email:</p>
-            <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
             <img src="images/board.PNG" class="board-image"style="top: 48%; left: 50%;">
             <div class="input-wrapper" style="top: 54%; left: 50%;" >
-                <input type="password" class="input-overlay" required>
+                <input type="email" id="emailInput" class="input-overlay" disabled>
             </div>
         </div>
         <div>
-            <p class="head-text" style="top: 55%; left: 25%;">Password:</p>
-            <!-- <input type="text" class="input-box " style="top: 20%; left: 49%;"> -->
+            <p class="head-text" style="top: 55%; left: 25%;">New Password:</p>
             <img src="images/board.PNG" class="board-image"style="top: 63%; left: 50%;">
             <div class="input-wrapper" style="top: 69%; left: 50%;">
-                <input type="password" class="input-overlay" required>
+                <input type="password" id="passwordInput" class="input-overlay" placeholder="Leave blank to keep current password">
             </div>
         </div>
-        <!-- ข้อความแสดงข้อผิดพลาด -->
-        <p id="error-msg" style="color: red; font-size: 12px;"></p>
-
-        <!-- ปุ่ม Register ที่ใช้ไฟล์ .png เป็นพื้นหลัง -->
-        <button type="submit" class="save-button"></button>
-    </form>
+        <p id="feedback-msg" style="color: green; font-weight: bold; font-size: 16px; position:absolute; top: 75%; left: 50%; transform: translateX(-50%); z-index: 3; text-align: center;"></p>
+        <button class="save-button" id="saveButton"></button>
+    </div>
   </div>
+
+<script type="module">
+    // --- NEW: Added signOut to imports ---
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged, updateProfile, updatePassword, signOut } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const usernameInput = document.getElementById('usernameInput');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const saveButton = document.getElementById('saveButton');
+    const logoutButton = document.getElementById('logoutButton'); // --- NEW ---
+    const feedbackMsg = document.getElementById('feedback-msg');
+    const profileName = document.getElementById('profileName');
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            if (user.displayName) {
+                profileName.textContent = user.displayName;
+                usernameInput.value = user.displayName;
+            } else {
+                profileName.textContent = user.email;
+                usernameInput.value = '';
+            }
+            emailInput.value = user.email;
+
+            saveButton.addEventListener('click', async () => {
+                feedbackMsg.textContent = "Saving...";
+                feedbackMsg.style.color = "blue";
+                
+                const promises = [];
+                
+                if (usernameInput.value !== user.displayName) {
+                    promises.push(updateProfile(user, { displayName: usernameInput.value }));
+                }
+
+                if (passwordInput.value) {
+                    if (passwordInput.value.length < 6) {
+                        feedbackMsg.textContent = "❌ Password must be at least 6 characters long.";
+                        feedbackMsg.style.color = "red";
+                        return;
+                    }
+                    promises.push(updatePassword(user, passwordInput.value));
+                }
+
+                if (promises.length === 0) {
+                    feedbackMsg.textContent = "No changes to save.";
+                    feedbackMsg.style.color = "black";
+                    return;
+                }
+
+                try {
+                    await Promise.all(promises);
+                    feedbackMsg.textContent = "✅ Profile updated successfully!";
+                    feedbackMsg.style.color = "green";
+                    
+                    if(usernameInput.value) {
+                       profileName.textContent = usernameInput.value;
+                    }
+                    
+                    passwordInput.value = ""; 
+                } catch (error) {
+                    feedbackMsg.textContent = "❌ Error updating profile: " + error.message;
+                    feedbackMsg.style.color = "red";
+                }
+            });
+
+            // --- Logout Button Logic ---
+            logoutButton.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    // Sign-out successful.
+                    alert("You have been logged out.");
+                    window.location.href = 'LoginPage.html';
+                }).catch((error) => {
+                    // An error happened.
+                    console.error("Logout Error:", error);
+                    alert("Error logging out.");
+                });
+            });
+
+        } else {
+            // --- UPDATED: Removed the alert from here to prevent the double-alert issue ---
+            window.location.href = 'LoginPage.html';
+        }
+    });
+
+</script>
 </body>
 </html>
