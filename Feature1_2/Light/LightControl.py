@@ -24,7 +24,7 @@ app.add_middleware(
 )
 
 # Replace with your actual bulb IP address
-bulb = wizlight("192.168.1.153")
+bulb = wizlight("192.168.1.124")
 
 class ColorCommand(BaseModel):
     r: Optional[int] = None

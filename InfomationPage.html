@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -109,6 +109,156 @@
       notifyAchievement("Curious Gardner"); // Show the pop-up
     }
   });
+</script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <title>Information</title>
+  <style>
+    body {
+      background: url('images/info.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
+      margin: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
+      z-index: 0;
+    }
+
+    .button-container {
+      position: relative;
+      height: 100vh;
+      z-index: 2;
+    }
+
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      z-index: 3;
+    }
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
+    }
+
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 1;
+    }
+
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  </div>
+
+  <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image">
+  <p class="head-text" style="top: 15%; left: 25%;">How to use GrowQuest Tower!</p>
+    <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // --- HELPER FUNCTIONS ---
+
+    async function getAchievements(user) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data();
+        } else {
+            console.log("Creating default achievement doc for user.");
+             const defaultAchievements = {
+                firstLight: { unlocked: false, unlockedAt: null, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
+                greenThumb: { unlocked: false, unlockedAt: null, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
+                aGentleTouch: { unlocked: false, unlockedAt: null, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
+                curiousGardner: { unlocked: false, unlockedAt: null, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" },
+                dailyRoutine: { unlocked: false, unlockedAt: null, name: "Daily Routine", description: "Perform all three main care actions in a single day.", icon: "images/number-5.png" }
+            };
+            await setDoc(docRef, defaultAchievements);
+            return defaultAchievements;
+        }
+    }
+
+    async function saveAchievements(user, achievements) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        await updateDoc(docRef, achievements);
+    }
+
+    function notifyAchievement(achievementName) {
+        alert(`Achievement Unlocked: ${achievementName}!`);
+    }
+  
+    // --- UNLOCK LOGIC (Using DOMContentLoaded) ---
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const achievements = await getAchievements(user);
+
+                if (achievements && achievements.curiousGardner.unlocked === false) {
+                    achievements.curiousGardner.unlocked = true;
+                    achievements.curiousGardner.unlockedAt = new Date().toISOString();
+                    
+                    await saveAchievements(user, achievements);
+                    
+                    notifyAchievement("Curious Gardner");
+                }
+            } else {
+                console.log("No user logged in, cannot grant achievement.");
+            }
+        });
+    });
 </script>
 </body>
 </html>

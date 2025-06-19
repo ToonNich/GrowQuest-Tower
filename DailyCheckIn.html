@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -205,6 +205,253 @@
                 }
             }
         }
+    </script>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <title>Daily Quest</title>
+    <style>
+        body {
+            background: url('images/info.gif') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Pixelify Sans', sans-serif;
+            margin: 0;
+            color: #4a3f35;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.4);
+            z-index: 0;
+        }
+        .scroll-image {
+            position: absolute;
+            top: 3%; left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            z-index: 1;
+        }
+        .content-container {
+            position: absolute;
+            top: 12%; left: 50%;
+            transform: translateX(-50%);
+            width: 60%; height: 80%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .back-button {
+            width: 60px; height: 44px;
+            background: url('images/backButton1.png') no-repeat center center;
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 4%; left: 2%;
+            z-index: 3;
+        }
+        .back-button:hover { background: url('images/backButton2.png') no-repeat center center; background-size: cover; }
+        .calendar-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fdf6e3;
+            border: 4px solid #937b63;
+            padding: 20px;
+            box-shadow: 8px 8px 0px #937b63;
+            box-sizing: border-box;
+        }
+        .calendar-header { text-align: center; font-size: 2.5em; margin-bottom: 20px; color: #6e5b4b; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .calendar-day-name, .calendar-day { display: flex; justify-content: center; align-items: center; font-size: 1.2em; padding: 5px; }
+        .calendar-day-name { font-weight: bold; }
+        .calendar-day { min-height: 60px; border: 2px solid #dcd3c4; position: relative; font-size: 1.5em; }
+        .calendar-day.other-month { opacity: 0.4; }
+        .calendar-day.today { background-color: #f5e9d3; border: 3px solid #b18454; }
+        .calendar-day.claimed::after { content: '✔'; color: #6aaa5e; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; }
+        #claim-button { font-family: 'Pixelify Sans', sans-serif; font-size: 1.5em; margin-top: 20px; padding: 10px 30px; color: #fdf6e3; background-color: #856f5a; border: 4px solid #6e5b4b; cursor: pointer; box-shadow: 4px 4px 0px #6e5b4b; }
+        #claim-button:hover:not(:disabled) { background-color: #9e8571; }
+        #claim-button:disabled { background-color: #b5a89d; box-shadow: 4px 4px 0px #937b63; cursor: not-allowed; color: #856f5a; }
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="location.href='HomePage.html'"></button>
+    
+    <div class="content-container">
+        <div class="calendar-container">
+            <h2 id="task-description" style="text-align:center; color: #856f5a;"></h2>
+            <div id="calendar-header" class="calendar-header"></div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+            <button id="claim-button">Claim Reward</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+            authDomain: "seniorproject-684c1.firebaseapp.com",
+            projectId: "seniorproject-684c1",
+            storageBucket: "seniorproject-684c1.appspot.com",
+            messagingSenderId: "847138584376",
+            appId: "1:847138584376:web:eface0926c96092daef3cd",
+            measurementId: "G-N0CM5TQBM8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- HELPER AND STORAGE FUNCTIONS ---
+        function getTodayLocalString() {
+            const localDate = new Date();
+            const year = localDate.getFullYear();
+            const month = String(localDate.getMonth() + 1).padStart(2, '0');
+            const day = String(localDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        async function getDailyCheckInData(user) {
+            const docRef = doc(db, "userDailyData", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                return docSnap.data();
+            } else {
+                const defaultData = { checkIns: {} };
+                await setDoc(docRef, defaultData);
+                return defaultData;
+            }
+        }
+
+        async function saveDailyCheckInData(user, dailyData) {
+            const docRef = doc(db, "userDailyData", user.uid);
+            await updateDoc(docRef, dailyData);
+        }
+
+        // --- UI AND LOGIC FUNCTIONS ---
+        function generateCalendar(year, month, dailyData) {
+            const grid = document.getElementById('calendar-grid');
+            const header = document.getElementById('calendar-header');
+            grid.innerHTML = '';
+
+            const monthName = new Date(year, month).toLocaleString('en-US', { month: 'long' });
+            header.textContent = `${monthName} ${year}`;
+
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(name => {
+                const dayNameCell = document.createElement('div');
+                dayNameCell.className = 'calendar-day-name';
+                dayNameCell.textContent = name;
+                grid.appendChild(dayNameCell);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                dayCell.textContent = day;
+                dayCell.id = `day-${day}`;
+
+                const today = new Date();
+                const currentDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Use the passed dailyData object
+                const dayData = dailyData.checkIns[currentDateString];
+
+                if (dayData && dayData.rewardClaimed) {
+                    dayCell.classList.add('claimed');
+                }
+
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function updateClaimButtonState(dailyData) {
+            const todayString = getTodayLocalString();
+            const todaysData = dailyData.checkIns[todayString] || { taskComplete: false, rewardClaimed: false };
+            const claimButton = document.getElementById('claim-button');
+
+            if (todaysData.rewardClaimed) {
+                claimButton.disabled = true;
+                claimButton.textContent = "Reward Claimed!";
+            } else if (todaysData.taskComplete) {
+                claimButton.disabled = false;
+                claimButton.textContent = "Claim Reward";
+            } else {
+                claimButton.disabled = true;
+                claimButton.textContent = "Complete Your Task!";
+            }
+        }
+        
+        // --- NEW: This function is now async and requires user/dailyData objects ---
+        async function claimTodaysReward(user, dailyData) {
+            const todayString = getTodayLocalString();
+            const todaysData = dailyData.checkIns[todayString];
+
+            if (todaysData && todaysData.taskComplete && !todaysData.rewardClaimed) {
+                todaysData.rewardClaimed = true;
+                // Save the updated data back to Firestore
+                await saveDailyCheckInData(user, dailyData);
+
+                alert("Reward Claimed!");
+
+                updateClaimButtonState(dailyData);
+                const todayCell = document.getElementById(`day-${new Date().getDate()}`);
+                if (todayCell) {
+                    todayCell.classList.add('claimed');
+                }
+            }
+        }
+        
+        // --- NEW: Main logic now checks for a logged-in user first ---
+        document.addEventListener("DOMContentLoaded", () => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    // User is signed in, proceed
+                    const now = new Date();
+                    const taskDescription = document.getElementById('task-description');
+                    taskDescription.textContent = "Today's Task: Water the plant!";
+
+                    const dailyData = await getDailyCheckInData(user);
+                    
+                    generateCalendar(now.getFullYear(), now.getMonth(), dailyData);
+                    updateClaimButtonState(dailyData);
+
+                    const claimButton = document.getElementById('claim-button');
+                    claimButton.addEventListener('click', () => claimTodaysReward(user, dailyData));
+
+                } else {
+                    // No user is signed in, redirect to login
+                    console.log("No user is logged in. Redirecting...");
+                    window.location.href = 'LoginPage.html';
+                }
+            });
+        });
     </script>
 
 </body>
