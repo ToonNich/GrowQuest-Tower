@@ -24,7 +24,8 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes and origins
 
 # Load your trained model once when the app starts
-model = load_model("C:/xampp/htdocs/GrowQuest-Tower/Feature_1/Processing/final_plant_model_resnet50_V2.h5")
+model = load_model("C:/xampp/htdocs/Senior_Project/GrowQuest-Tower/Feature_1/Processing/final_plant_model_resnet50_V2.h5")
+
 
 # Class labels in the order your model outputs them
 class_labels = ['Anthracnose', 'Healthy_Leaf', 'Pest_Damage']

@@ -11,34 +11,30 @@
       background-size: cover;
       font-family: 'Pixelify Sans', sans-serif;
     }
-     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
-     .back-button {
-      width: 60px; /* กำหนดขนาดของปุ่ม */
-      height: 44px; /* กำหนดความสูงของปุ่ม */
+    .back-button {
+      width: 60px;
+      height: 44px;
       background: url('images/backButton1.png') no-repeat center center;
-      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
+      background-size: cover;
       border: none;
-      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+      cursor: pointer;
       position: absolute;
-      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
+      top: 6%;
       left: 4%;
-      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+      transform: translate(-50%, -50%);
+      z-index: 2;
     }
-    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
     .back-button:hover {
-      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
     }
-
-    /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
     .middle-image {
       position: absolute;
       top: 3%;
       left: 50%;
       transform: translateX(-50%);
-      width: 70%; /* ปรับขนาดตามต้องการ */
-      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+      width: 70%;
+      z-index: 1;
     }
     .head-text {
       position: absolute;
@@ -46,49 +42,65 @@
       padding: 10px;
       margin-top: 20px;
       margin-bottom: 20px;
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+      z-index: 2;
     }
     .icon-ec {
       background-size: cover;
       border: none;
       cursor: pointer;
       position: absolute;
-      width: 180px; /* ปรับขนาดไอคอน */
+      width: 180px;
       height: auto;
       top: 13.5%; 
       left: 25%; 
       z-index: 2;
-    } 
+    }
     .icon-label {
       position: absolute;
-      width: 70px; /* ปรับขนาดไอคอน */
+      width: 70px;
       height: auto;
-      z-index: 2; 
+      z-index: 2;
     }
-
-   .board-images {
-    position: absolute;
-    top: 12%;
-    right: 22%;
-    width: 600px;
-    height: auto;
-    z-index: 4;
-   }
-   .tube-outer {
+    .board-images {
+      position: absolute;
+      top: 12%;
+      right: 22%;
+      width: 600px;
+      height: auto;
+      z-index: 4;
+    }
+    .tube-outer {
       width: 45px;
       height: 315px;
       border: 6px solid white;
       background-color: transparent;
       overflow: hidden;
-      position: absolute; /* ต้องมี */
+      position: absolute;
     }
-
     .tube-inner {
       width: 100%;
       background-color: #00ffff;
       position: absolute;
       bottom: 0;
       transition: height 0.5s ease-in-out;
+    }
+    .blackboard-tip {
+      position: absolute;
+      top: 170px;
+      right: 27.5%;
+      width: 400px;
+      min-height: 100px;
+      color: #fffbe0;
+      font-family: 'Pixelify Sans', monospace;
+      font-size: 19px;
+      text-shadow: 1px 2px 2px #222, 0 0 10px #0a2e12;
+      padding: 24px 18px 10px 18px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 10px;
+      box-sizing: border-box;
+      z-index: 6;
+      pointer-events: none;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -105,10 +117,10 @@
           <div class="tube-inner" id="ecBar"></div>
         </div>
         <div id="ecValue" style="position: absolute;top: 65%;left: 28.8%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
-
     </div>
     <div>
       <img src="images/Blackboard.PNG" class="board-images" alt="board" />
+      <div class="blackboard-tip"></div>
     </div>
   </div>
   <script type="module">
@@ -130,6 +142,27 @@
 
   const ecQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
 
+  // ---------- EC TIPS ----------
+  const tipsHigh = [
+    "Nutrient overload! Your hydroponic roots are swimming in strong solution. Flush the system with clean water until EC drops, and mix a lighter batch next time.",
+    "Whoa—salty water warning! Algae and tip burn can show up if EC is too high. Dilute your solution and give your tower a break from nutrients for a day.",
+    "If plants look burned or stunted, high EC might be to blame. Rinse the media and check your EC meter for calibration."
+  ];
+  const tipsLow = [
+    "Hungry roots detected! Gradually add more nutrient solution to your reservoir, but don’t go overboard.",
+    "Low EC makes for slow growth. Stir your solution well and check that your pump is circulating nutrients to all levels of the tower.",
+    "If your plants are pale or tiny, your EC could be too low. Mix a fresh batch to the recommended strength."
+  ];
+  function pickTip(ec) {
+    if (ec >= 3.0) {
+      return tipsHigh[Math.floor(Math.random() * tipsHigh.length)];
+    } else if (ec <= 0.2) {
+      return tipsLow[Math.floor(Math.random() * tipsLow.length)];
+    } else {
+      return "EC is in the healthy range! Keep up the great hydroponic care.";
+    }
+  }
+
   onSnapshot(ecQuery, (snapshot) => {
     if (snapshot.empty) return;
 
@@ -139,6 +172,12 @@
     updateTube('ecBar', ec, 5); // Assuming EC range max = 5
     updateText('ecValue', ec.toFixed(2));
     console.log("⚡ EC:", ec);
+
+    // ------ SHOW TIP LOGIC ------
+    const tipDiv = document.querySelector('.blackboard-tip');
+    if (tipDiv) {
+      tipDiv.textContent = pickTip(ec);
+    }
   });
 
   function updateTube(id, value, max) {
@@ -151,7 +190,6 @@
     const el = document.getElementById(id);
     if (el) el.innerText = text;
   }
-</script>
-
+  </script>
 </body>
 </html>

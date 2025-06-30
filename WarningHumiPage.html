@@ -68,10 +68,10 @@
 
    .board-images {
     position: absolute;
-    top: 12%;
-    right: 22%;
-    width: 600px;
-    height: auto;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 4;
    }
 
@@ -93,69 +93,126 @@
   transition: height 0.5s ease-in-out;
 }
 
+.blackboard-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fffbe0;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 20px;
+  text-shadow: 1px 2px 2px #222, 0 0 10px #0a2e12;
+  padding: 15% 12%; /* Adjusted padding */
+  box-sizing: border-box;
+  z-index: 5; /* Ensure text is on top of blackboard */
+  pointer-events: none;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+
   </style>
 </head>
+
+
 <body>
   <button class="back-button" onclick="location.href='DashboardPage.html'"></button>
   <div>
-    <!-- 🔽 รูปกลางที่อยู่ระหว่าง bg และ sprite -->
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
     <div>
         <img src="images/Huminity.PNG" class="icon-huminity" alt="huminity" />
         <img src="images/label.PNG" class="icon-label" alt="label" style="top: 27%; left: 28%;" />
-        <!-- ✅ หลอดสาร -->
         <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
           <div class="tube-inner" id="humidityBar"></div>
         </div>
         <div id="humidityValue" style="position: absolute;top: 65%;left: 28.8%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
 
     </div>
-    <div>
+
+    <div style="position: absolute; top: 18%; left: 35%; width: 38%; height: 60%; z-index: 3;">
       <img src="images/Blackboard.PNG" class="board-images" alt="board" />
+      <div class="blackboard-tip"></div>
     </div>
+    
   </div>
- <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-  import {getFirestore,collection,query,orderBy,limit,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-    authDomain: "seniorproject-684c1.firebaseapp.com",
-    projectId: "seniorproject-684c1",
-    storageBucket: "seniorproject-684c1.appspot.com",
-    messagingSenderId: "847138584376",
-    appId: "1:847138584376:web:eface0926c96092daef3cd",
-    measurementId: "G-N0CM5TQBM8"
-  };
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import {getFirestore,collection,query,orderBy,limit,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
 
-  const humidityQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  onSnapshot(humidityQuery, (snapshot) => {
-    if (snapshot.empty) return;
+    const humidityQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
 
-    const data = snapshot.docs[0].data();
-    const humidity = data.humidity;
+    onSnapshot(humidityQuery, (snapshot) => {
+      if (snapshot.empty) return;
 
-    updateTube('humidityBar', humidity, 100);
-    updateText('humidityValue', humidity.toFixed(1) + "%");
-    console.log("💧 Humidity:", humidity);
-  });
+      const data = snapshot.docs[0].data();
+      const humidity = data.humidity;
 
-  function updateTube(id, value, max) {
-    const percent = Math.min(100, (value / max) * 100);
-    const el = document.getElementById(id);
-    if (el) el.style.height = `${percent}%`;
+      updateTube('humidityBar', humidity, 100);
+      updateText('humidityValue', humidity.toFixed(1) + "%");
+      console.log("💧 Humidity:", humidity);
+
+      const tipDiv = document.querySelector('.blackboard-tip');
+      if (tipDiv) {
+        tipDiv.textContent = pickTip(humidity); // pickTip comes from above script
+      }     
+
+    });
+
+    function updateTube(id, value, max) {
+      const percent = Math.min(100, (value / max) * 100);
+      const el = document.getElementById(id);
+      if (el) el.style.height = `${percent}%`;
+    }
+
+    function updateText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = text;
+    }
+  </script>
+  
+  <script>
+
+    const tipsHigh = [
+      "Whoa! The air around your hydroponic tower is thick with moisture. If this keeps up, your greens could get moldy or droopy! Boost airflow with a fan or crack open a window in the grow room. Check for pooled water around your system and dry it up. Hold off on misting until humidity drops!",
+      "Your tower farm feels like a tropical swamp! Not all plants want to live in a rainforest—too much humidity can cause algae and fungal issues. Try a dehumidifier or run your ventilation system longer.",
+      "Warning: High humidity detected! Check if the nutrient solution is evaporating too fast and if condensation is building up on your pipes. Good airflow is key to happy, crisp greens."
+    ];
+
+    const tipsLow = [
+      "Dry air alert in the hydroponic zone! Your leaves might get crispy at the edges. Add a shallow tray of water under your tower, mist gently (but don’t overdo it), or use a humidifier for a boost.",
+      "It’s like a desert around your tower farm! Plants in hydroponics love steady moisture, so group them closer together or block drafts from AC or heaters.",
+      "Low humidity can stress even water-loving plants. Try covering the top of your tower with a loose dome for a while to keep humidity up—just remember to vent for fresh air, too."
+    ];
+
+  function pickTip(humidity) {
+    if (humidity >= 90) {
+      return tipsHigh[Math.floor(Math.random() * tipsHigh.length)];
+    } else if (humidity <= 20) {
+      return tipsLow[Math.floor(Math.random() * tipsLow.length)];
+    } else {
+      return "Humidity is in the safe zone! Keep an eye out for any changes.";
+    }
   }
+  </script>
 
-  function updateText(id, text) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = text;
-  }
-</script>
-
-
+  
 </body>
 </html>

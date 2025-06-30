@@ -107,15 +107,32 @@
       border: 6px solid white;
       background-color: transparent;
       overflow: hidden;
-      position: absolute; /* ต้องมี */
+      position: absolute;
     }
-
     .tube-inner {
       width: 100%;
       background-color: #00ffff;
       position: absolute;
       bottom: 0;
       transition: height 0.5s ease-in-out;
+    }
+    .blackboard-tip {
+      position: absolute;
+      top: 170px;
+      right: 27.5%;
+      width: 400px;
+      min-height: 100px;
+      color: #fffbe0;
+      font-family: 'Pixelify Sans', monospace;
+      font-size: 19px;
+      text-shadow: 1px 2px 2px #222, 0 0 10px #0a2e12;
+      padding: 24px 18px 10px 18px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 10px;
+      box-sizing: border-box;
+      z-index: 6;
+      pointer-events: none;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -124,41 +141,39 @@
   <div>
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
     <div>
-        <img src="images/Chemical.PNG" class="icon-chemical" alt="Chemical" />
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 27%; left: 28%;" />
-        <!-- ✅ หลอดสาร -->
-        <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
-          <div class="tube-inner" id="chemicalBar"></div>
-        </div>
-
-        <div id="chemicalValue" style="position: absolute;top: 65%;left: 28.5%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
-
-        <div class="switch-mode-container">
-          <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" />
-          <button class="auto-button"
-            onmouseover="changeImage('switchImageChem', 'images/AutoButton.PNG')"
-            onmouseout="resetImage('switchImageChem')"
-            onclick="changeImage('switchImageChem', 'images/AutoButton.PNG', 'auto')"
-          ></button>
-          <button class="manual-button"
-            onmouseover="changeImage('switchImageChem', 'images/MaunualButton.PNG')"
-            onmouseout="resetImage('switchImageChem')"
-            onclick="changeImage('switchImageChem', 'images/MaunualButton.PNG', 'manual')"
-          ></button>
-        </div>
+      <img src="images/Chemical.PNG" class="icon-chemical" alt="Chemical" />
+      <img src="images/label.PNG" class="icon-label" alt="label" style="top: 27%; left: 28%;" />
+      <!-- ✅ หลอดสาร -->
+      <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
+        <div class="tube-inner" id="chemicalBar"></div>
+      </div>
+      <div id="chemicalValue" style="position: absolute;top: 65%;left: 28.5%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
+      <div class="switch-mode-container">
+        <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" />
+        <button class="auto-button"
+          onmouseover="changeImage('switchImageChem', 'images/AutoButton.PNG')"
+          onmouseout="resetImage('switchImageChem')"
+          onclick="changeImage('switchImageChem', 'images/AutoButton.PNG', 'auto')"
+        ></button>
+        <button class="manual-button"
+          onmouseover="changeImage('switchImageChem', 'images/MaunualButton.PNG')"
+          onmouseout="resetImage('switchImageChem')"
+          onclick="changeImage('switchImageChem', 'images/MaunualButton.PNG', 'manual')"
+        ></button>
+      </div>
     </div>
     <div>
       <img src="images/Blackboard.PNG" class="board-images" alt="board" />
+      <div class="blackboard-tip"></div>
     </div>
   </div>
-</body>
 
 <script>
   function changeImage(id, src, mode = "") {
     const img = document.getElementById(id);
     if (!img) return;
     if (mode) {
-      localStorage.setItem(id + "_mode", mode); // 🔁 Save
+      localStorage.setItem(id + "_mode", mode);
     }
     img.src = src;
   }
@@ -174,7 +189,6 @@
       img.src = "images/MaunualButton.PNG";
     }
   }
-
 </script>
 
 <script type="module">
@@ -203,6 +217,21 @@
 
   const chemicalQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
 
+  // --------- TIP ARRAYS ---------
+  const tipsLow = [
+    "Running low on nutrients! Top up your reservoir with a balanced hydroponic formula.",
+    "Look out for leaks or fast evaporation—hydro towers lose water quickly in hot rooms. Patch any leaks and cover exposed water surfaces if possible.",
+    "Yellow leaves or weak growth? Time to double-check your nutrient recipe and make sure all tower sections are getting fed."
+  ];
+  // Optionally, add more tip arrays for chemical too high or normal if needed.
+  function pickTip(chemical) {
+    if (chemical < 30) {
+      return tipsLow[Math.floor(Math.random() * tipsLow.length)];
+    } else {
+      return "Nutrient levels are looking good! Keep monitoring your tower for any changes.";
+    }
+  }
+
   onSnapshot(chemicalQuery, (snapshot) => {
     if (snapshot.empty) return;
 
@@ -212,6 +241,12 @@
     updateTube('chemicalBar', chemical, 100);
     updateText('chemicalValue', chemical.toFixed(1) + " ppm");
     console.log("🧪 Chemical Level:", chemical);
+
+    // ------- SHOW TIP LOGIC -------
+    const tipDiv = document.querySelector('.blackboard-tip');
+    if (tipDiv) {
+      tipDiv.textContent = pickTip(chemical);
+    }
   });
 
   function updateTube(id, value, max) {
@@ -224,18 +259,6 @@
     const el = document.getElementById(id);
     if (el) el.innerText = text;
   }
-
-  const defaultImages = {
-    switchImageChem: "images/SwitchAutoManual.PNG"
-  };
-
-  const clickedStates = {
-    switchImageChem: false
-  };
-
-  const currentModes = {
-    switchImageChem: ""
-  };
 
   window.changeImage = function (id, src, mode = "") {
     const img = document.getElementById(id);
