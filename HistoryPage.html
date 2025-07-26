@@ -2,11 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>History</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>History (8-bit Style)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    window.db = getFirestore(app);
+  </script>
+
   <style>
     body {
       font-family: 'Pixelify Sans', sans-serif;
@@ -15,7 +34,6 @@
       margin: 0;
       padding: 0;
     }
-
     .back-button {
       position: absolute;
       top: 4%;
@@ -28,32 +46,13 @@
       cursor: pointer;
       z-index: 3;
     }
-
     .back-button:hover {
       background: url('images/backButton2.png') no-repeat center center;
       background-size: cover;
     }
-
-    .middle-image {
-      position: absolute;
-      top: 3%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%;
-      z-index: 1;
-    }
-
-    .head-text {
-      position: absolute;
-      top: 12%;
-      left: 25%;
-      font-size: 30px;
-      z-index: 2;
-    }
-
     .chart-container {
       position: absolute;
-      top: 12%; /* ✅ reduced top gap */
+      top: 12%;
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
@@ -64,16 +63,16 @@
       align-items: center;
       padding-bottom: 60px;
     }
-
     canvas {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 10px;
-      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 6px solid #000;
+      image-rendering: pixelated;
+      border-radius: 0px;
+      padding: 12px;
       width: 100%;
       max-width: 900px;
       height: 600px !important;
     }
-
     .pagination {
       margin-top: 20px;
       display: flex;
@@ -81,177 +80,168 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-
     .pagination button {
       padding: 10px 16px;
       font-size: 18px;
       font-family: 'Pixelify Sans', sans-serif;
-      background-color: #ffd700;
+      background-color: #ffcc00;
       border: 4px solid #000;
-      box-shadow: 4px 4px 0px #333;
-      border-radius: 8px; /* ✅ softer rounded corners */
+      box-shadow: 3px 3px #000;
+      border-radius: 0px;
       cursor: pointer;
       color: #000;
       transition: all 0.1s;
     }
-
     .pagination button:hover {
-      background-color: #ffa500;
+      background-color: #ff9900;
       transform: translateY(2px);
-      box-shadow: 2px 2px 0px #333;
     }
-
     .pagination button.disabled {
-      background-color: #ccc;
-      color: #666;
+      background-color: #999;
+      color: #333;
       cursor: not-allowed;
       box-shadow: none;
-      transform: none;
     }
   </style>
 </head>
+
 <body>
   <div id="app">
     <button @click="goBack" class="back-button"></button>
     <div class="chart-container">
-      <canvas
-        v-for="(item, index) in currentData"
-        :key="index"
-        :ref="'chart-' + index"
-      ></canvas>
+      <canvas v-for="(item, index) in currentData" :key="index" :ref="'chart-' + index"></canvas>
 
       <div class="pagination">
-        <button 
-          :disabled="currentPage === 1" 
-          @click="changePage(currentPage - 1)">
-          Previous
-        </button>
-
-        <button 
-          v-for="page in visiblePages" 
-          :key="page" 
-          :class="{ 'disabled': currentPage === page }" 
-          @click="changePage(page)">
+        <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Previous</button>
+        <button v-for="page in visiblePages" :key="page" :class="{ 'disabled': currentPage === page }" @click="changePage(page)">
           {{ page }}
         </button>
-
-        <button 
-          :disabled="currentPage === totalPages" 
-          @click="changePage(currentPage + 1)">
-          Next
-        </button>
+        <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Next</button>
       </div>
     </div>
   </div>
 
   <script>
-    new Vue({
-      el: '#app',
-      data: {
-        allData: [],
-        currentPage: 1,
-        limit: 7,
-        totalPages: 0,
-        maxVisiblePages: 10,
-        chartInstances: []
-      },
-      computed: {
-        currentData() {
-          const start = (this.currentPage - 1) * this.limit;
-          const end = start + this.limit;
-          return this.allData.slice(start, end);
+    document.addEventListener("DOMContentLoaded", function () {
+      new Vue({
+        el: '#app',
+        data: {
+          allData: [],
+          currentPage: 1,
+          limit: 5,
+          totalPages: 0,
+          maxVisiblePages: 10,
+          chartInstances: []
         },
-        visiblePages() {
-          const pages = [];
-          let start = Math.max(1, this.currentPage - Math.floor(this.maxVisiblePages / 2));
-          let end = start + this.maxVisiblePages - 1;
-
-          if (end > this.totalPages) {
-            end = this.totalPages;
-            start = Math.max(1, end - this.maxVisiblePages + 1);
+        computed: {
+          currentData() {
+            const start = (this.currentPage - 1) * this.limit;
+            return this.allData.slice(start, start + this.limit);
+          },
+          visiblePages() {
+            const pages = [];
+            let start = Math.max(1, this.currentPage - 2);
+            let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
+            for (let i = start; i <= end; i++) pages.push(i);
+            return pages;
           }
-
-          for (let i = start; i <= end; i++) {
-            pages.push(i);
-          }
-
-          return pages;
-        }
-      },
-      methods: {
-        goBack() {
-          window.location.href = 'DashboardPage.html';
         },
-        async fetchData() {
-          try {
-            const response = await fetch('php/get_data.php');
-            const data = await response.json();
+        methods: {
+          goBack() {
+            window.location.href = 'DashboardPage.html';
+          },
+          async fetchData() {
+            const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js');
+            const q = query(collection(window.db, "tube"), orderBy("timestamp"));
+            const snapshot = await getDocs(q);
 
-            this.allData = data.map((item, index) => ({
-              label: `Record ${index + 1}`,
-              data: [item.EC, item.Humidity, item.Temperature, item.Ph, item.Light]
-            }));
-
+            this.allData = snapshot.docs.map((doc, i) => {
+              const d = doc.data();
+              return {
+                label: `Record ${i + 1}`,
+                data: [d.ec, d.humidity, d.temp, d.ph]
+              };
+            });
             this.totalPages = Math.ceil(this.allData.length / this.limit);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        },
-        changePage(page) {
-          if (page < 1 || page > this.totalPages) return;
-          this.currentPage = page;
-        },
-        renderCharts() {
-          this.chartInstances.forEach(chart => chart.destroy());
-          this.chartInstances = [];
+          },
+          changePage(p) {
+            if (p < 1 || p > this.totalPages) return;
+            this.currentPage = p;
+          },
+          renderCharts() {
+            this.chartInstances.forEach(c => c.destroy());
+            this.chartInstances = [];
 
-          this.$nextTick(() => {
-            this.currentData.forEach((item, index) => {
-              const ctx = this.$refs['chart-' + index][0].getContext('2d');
+            this.$nextTick(() => {
+              this.currentData.forEach((item, index) => {
+                const canvasRef = this.$refs['chart-' + index];
+                const ctx = (Array.isArray(canvasRef) ? canvasRef[0] : canvasRef).getContext('2d');
 
-              const chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                  labels: ['EC', 'Humidity', 'Temperature', 'PH', 'Light'],
-                  datasets: [{
-                    label: item.label,
-                    data: item.data,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    fill: false,
-                    tension: 0.1
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      display: true
-                    }
+                const chart = new Chart(ctx, {
+                  type: 'bar', // เปลี่ยนเป็นกราฟแท่ง
+                  data: {
+                    labels: ['EC', 'Humidity', 'Temperature', 'pH'],
+                    datasets: [{
+                      label: item.label,
+                      data: item.data,
+                      backgroundColor: ['#990000', '#0066CC', '#FFCC00', '#CC0099'],
+                      borderColor: '#000000',
+                      borderWidth: 3,
+                      barThickness: 60,
+                      hoverBackgroundColor: '#ffffff'
+                    }]
                   },
-                  scales: {
-                    y: {
-                      beginAtZero: true
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        labels: {
+                          font: {
+                            family: 'Pixelify Sans',
+                            size: 18
+                          }
+                        }
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                          stepSize: 10,
+                          font: {
+                            family: 'Pixelify Sans'
+                          }
+                        }
+                      },
+                      x: {
+                        ticks: {
+                          font: {
+                            family: 'Pixelify Sans'
+                          }
+                        },
+                        grid: {
+                          display: false
+                        }
+                      }
                     }
                   }
-                }
-              });
+                });
 
-              this.chartInstances.push(chart);
+                this.chartInstances.push(chart);
+              });
             });
-          });
+          }
+        },
+        watch: {
+          currentPage() {
+            this.renderCharts();
+          }
+        },
+        mounted() {
+          this.fetchData().then(() => this.renderCharts());
         }
-      },
-      watch: {
-        currentPage() {
-          this.renderCharts();
-        }
-      },
-      mounted() {
-        this.fetchData().then(() => {
-          this.renderCharts();
-        });
-      }
+      });
     });
   </script>
 </body>
