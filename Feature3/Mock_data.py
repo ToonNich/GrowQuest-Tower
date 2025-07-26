@@ -50,7 +50,7 @@ while True:
 
         # --- Upload to "tube" collection for dashboard ---
         db.collection("tube").add(mock_data)
-        print(f"✅ Mock data uploaded: {mock_data}")
+        print(f"✅ Data uploaded: {mock_data}")
 
         # --- Conditional Notification Upload to "Main" with debounce ---
         current_time = time.time()

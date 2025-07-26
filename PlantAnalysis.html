@@ -175,6 +175,58 @@
       background: url('images/backButton2.png') no-repeat center center;
       background-size: cover;
     }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-box {
+      background-color: #fff8dc;
+      color: #333;
+      border: 3px solid black;
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Pixelify Sans', monospace;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 8px 8px 0 #333;
+    }
+
+    .modal-box h3 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .modal-box p {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .continue-btn {
+      background-color: #ffcc00;
+      border: 3px solid black;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #333;
+      font-family: 'Pixelify Sans', monospace;
+    }
+
+    .continue-btn:hover {
+      background-color: #ffe066;
+      box-shadow: 2px 2px 0 #333;
+    }
+
   </style>
 </head>
 <body>
@@ -281,8 +333,33 @@
         }
       }
     });
+
+    function closeModal() {
+      const modal = document.getElementById("warningModal");
+      modal.style.display = "none";
+    }
+
+    // Optional: prevent scroll while modal is open
+    window.onload = function () {
+      document.body.style.overflow = "hidden";
+      const btn = document.querySelector('.continue-btn');
+      btn.addEventListener('click', () => {
+        document.body.style.overflow = "auto";
+      });
+    };
+    
   </script>
 
+ 
+
+
+  <div id="warningModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>⚠️ Important Notice</h3>
+      <p>This plant analysis feature helps you detect possible plant issues, but <strong>do NOT fully rely on its prediction</strong>. Always consult a professional if in doubt.</p>
+      <button class="continue-btn" onclick="closeModal()">Continue</button>
+    </div>
+  </div>
 
 </body>
 </html>
