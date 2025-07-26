@@ -1,138 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <title>Information</title>
   <style>
     body {
-      background: url('images/Farm_BG.png') no-repeat center center fixed;
+      background: url('images/info.gif') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Pixelify Sans', sans-serif;
+      margin: 0;
     }
+
     body::before {
       content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(255, 255, 255, 0.155);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
       z-index: 0;
     }
-    .box {
-      position: absolute;
-      top: 9%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 28%; 
-      height: 90px;
-      background-color: #FFF2CB;
-      border: 2px solid #FFBF00;
-      display: flex;
-      justify-content: space-between; 
-      align-items: center;
-      border-radius: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      z-index: 10;
-      padding: 0 10px;
-      box-sizing: border-box;
+
+    .button-container {
+      position: relative;
+      height: 100vh;
+      z-index: 2;
     }
-    #datetime-box {
-      font-size: 22px;
-      text-align: center;
-      flex-grow: 1; 
-    }
-    .midnight-images {
-      width: 100px;
-      height: 85px;
-      background: url('images/Midnight.PNG') no-repeat center center;
+
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
       background-size: cover;
       border: none;
       cursor: pointer;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      z-index: 3;
     }
-    .daily-check-in-button {
-      width: 70px;
-      height: 70px;
-      background: url('images/Calendar1.PNG') no-repeat center center;
-      background-size: contain;
-      border: none;
-      cursor: pointer;
-      margin-left: 15px;
+
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
     }
-    .daily-check-in-button:hover {
-      background-image: url('images/Calendar2.PNG');
+
+    .middle-image {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 1;
     }
-    
-    .account-button { width: 5%; height: 10%; background: url('images/Account1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 3%; right: 1.5%; z-index: 2; }
-    .account-button:hover { background: url('images/Account2.PNG') no-repeat center center; background-size: cover; }
-    .notification-button { width: 5%; height: 10%; background: url('images/Noti1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 17%; right: 1.5%; z-index: 2; }
-    .notification-button:hover { background: url('images/Noti2.PNG') no-repeat center center; background-size: cover; }
-    .notification-alert-button { width: 5%; height: 10%; background: url('images/NotiAlert1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 17%; right: 1.5%; z-index: 2; }
-    .notification-alert-button:hover { background: url('images/NotiAlert2.PNG') no-repeat center center; background-size: cover; }
-    .infomation-button { width: 5%; height: 10%; background: url('images/info1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 31%; right: 1.5%; z-index: 2; }
-    .infomation-button:hover { background: url('images/info2.PNG') no-repeat center center; background-size: cover; }
-    .light-button { width: 5%; height: 10%; background: url('images/CloseLight.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 45%; right: 1.5%; z-index: 2; transition: background-image 0.2s ease; }
-    .light-button:hover:not(.on) { background: url('images/OpenLight.PNG') no-repeat center center; background-size: cover; }
-    .light-button.on { background: url('images/OpenLight.PNG') no-repeat center center; background-size: cover; }
-    .light-button.on:hover { background: url('images/OpenLight.PNG') no-repeat center center; background-size: cover; }
-    .wateringcan-button { width: 5%; height: 10%; background: url('images/WateringCan1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 17%; left: 2%; z-index: 2; }
-    .wateringcan-button:hover { background: url('images/WateringCan2.PNG') no-repeat center center; background-size: cover; }
-    .watering-gif { position: absolute; top: 0; left: 0; width: 20%; pointer-events: none; display: none; z-index: 99; }
-    .camera-button { width: 4.5%; height: 9.5%; background: url('images/Camera1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 30%; left: 2.25%; z-index: 2; }
-    .camera-button:hover { background: url('images/Camera2.PNG') no-repeat center center; background-size: cover; }
-    .checkPlant-button { width: 5%; height: 10%; background: url('images/CheckPlantBut2.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 43%; left: 2%; z-index: 2; }
-    .checkPlant-button:hover { background: url('images/CheckPlantBut1.PNG') no-repeat center center; background-size: cover; }
-    .achievements-button { width: 243px; height: 56px; background: url('images/Achievement1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 90%; right: 1.5%; z-index: 2; }
-    .achievements-button:hover { background: url('images/Achievement2.PNG') no-repeat center center; background-size: cover; }
-    .dashboard-button { width: 236px; height: 56px; background: url('images/Dashboard1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 82%; right: 1.5%; z-index: 2; }
-    .dashboard-button:hover { background: url('images/Dashboard2.PNG') no-repeat center center; background-size: cover; }
-    .plant-image { position: absolute; top: 12%; left: 50%; transform: translateX(-50%); width: 35%; z-index: 1; }
-    .Profile-image { position: absolute; top: 2%; left: 4.5%; transform: translateX(-50%); width: 6.5%; z-index: 1; }
-    #towerName { 
-        position: absolute; 
-        top: 2.5%; 
-        left: 8%; 
-        font-size: 24px; 
-        color: #3a2d21;
-        font-weight: bold;
-        z-index: 2;
+
+    .head-text {
+      position: absolute;
+      font-size: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      z-index: 2;
     }
-    .hp-image { position: absolute; top: 8%; left: 18%; transform: translateX(-50%); width: 20%; z-index: 1; }
+
+    /* Chrome, Safari, Edge (WebKit) */
+    .info-box::-webkit-scrollbar {
+      display: none;
+    }
+
   </style>
 </head>
 <body>
 
-  <button class="account-button" onclick="location.href='AccountPage.html'"></button>
-  
-  <button id="notiNormal" class="notification-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
-  <button id="notiAlert" class="notification-alert-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
-  
-  <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
-  <button class="light-button" id="lightButton"></button>
-  <button class="wateringcan-button"></button>
-  <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
-  <button class="checkPlant-button" onclick="location.href='PlantAnalysis.html'"></button>
-  <button class="achievements-button" onclick="location.href='AchievementsPage.html'"></button>
-  <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
-  
-  <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
-  <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
-  <p id="towerName">Loading Tower...</p>
-  <img src="images/HP1.PNG" alt="Hp" class="hp-image">
-  <img id="character" src="images/Stage4Normal.gif" class="plant-image" />
-  
-  <div class="box">
-    <button id="time-button" class="midnight-images"></button>
-    <div id="datetime-box"></div> 
-    <button class="daily-check-in-button" onclick="location.href='DailyCheckIn.html'"></button>
-  </div>
+  <div class="button-container">
+      <button class="back-button" onclick="location.href='HomePage.html'"></button>
+    </div>
+
+    <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image">
+    <p class="head-text" style="top: 15%; left: 25%;">How to use GrowQuest Tower!</p>
+
+    <div class="info-box" style="
+      position: absolute;top: 24%;left: 25%;width: 45%;background-color: rgba(255, 255, 255, 0.2);backdrop-filter: blur(6px);border: 4px solid #333;border-radius: 16px;
+      padding: 30px;font-size: 18px;font-family: 'Pixelify Sans', monospace;color: #222;line-height: 1.8;box-shadow: 6px 6px 0px #000;z-index: 3;text-align: left;
+      max-height: 100%;overflow-y: auto;scrollbar-width: none;-ms-overflow-style: none;
+    ">
+
+    GrowQuest Tower is a pixel-style hydroponic tower simulation game where you raise, monitor, and care for a living digital plant. Below is a full guide on how to play, grow, and interact with your tower plant effectively.
+    <br><br>
+
+    <strong>🧑‍🌾 1. Begin Your Journey</strong><br>
+    After logging in, you’ll land on the <em>Home Page</em>. Before interacting, go to the <strong>Character Page</strong> to pick your plant and give your tower a name. Each plant has a unique sprite and behavior!
+    <br><br>
+
+    <strong>🌤 2. Daily Plant Care</strong><br>
+    Caring for your plant is the heart of GrowQuest. Visit your Home page daily and:
+    <ul style="margin-left: 20px;">
+      <li>💡 Turn on/off the Grow Light to support photosynthesis</li>
+      <li>💧 Water the plant to keep it hydrated</li>
+      <li>🖐 Click/tap the plant to interact with it — this builds connection!</li>
+    </ul>
+    These simple actions affect how your plant feels and unlock achievements!
+    <br><br>
+
+    <strong>📆 3. Daily Check-in System</strong><br>
+    Use the <strong>Daily Check-In</strong> page to complete care-based missions like watering or using the light. Completing these missions unlocks rewards, progress stamps, and keeps your streak alive.
+    <br><br>
+
+    <strong>📷 4. Analyze and Monitor Your Plant</strong><br>
+    Want to go deeper? These tools will help you:
+    <ul style="margin-left: 20px;">
+      <li><strong>Dashboard</strong> – Real-time display of EC, pH, temp, humidity, and light</li>
+      <li><strong>Camera Page</strong> – See live feed from your hydroponic tower camera</li>
+      <li><strong>Plant Analysis</strong> – Upload plant images to detect diseases or nutrient issues (⚠️ This is a helper only — not 100% accurate)</li>
+      <li><strong>History Page</strong> – Scroll through weekly environmental data</li>
+    </ul>
+    <br>
+
+    <strong>🏆 5. Earn Achievements</strong><br>
+    Your actions (watering, lighting, visiting pages) are tracked to unlock fun achievement badges. For example:
+    <ul style="margin-left: 20px;">
+      <li>“First Light” – When you toggle the light for the first time</li>
+      <li>“Green Thumb” – Your first watering</li>
+      <li>“Curious Gardner” – Visiting this Info Page</li>
+    </ul>
+    Achievements make growing more fun and track your progress.
+    <br><br>
+
+    <strong>🔔 6. Read Notifications</strong><br>
+    Important reminders, tips, or challenges appear in the <strong>Notification Page</strong>. Tap them to view full content — it might include environmental warnings or care suggestions!
+    <br><br>
+
+    <strong>🧪 7. Be Consistent</strong><br>
+    Hydroponic plants grow based on care over time. If you neglect them, they’ll look sad (animations will reflect this). The more love you show, the more your plant will flourish!
+    <br><br>
+
+    <strong>📎 Quick Tips</strong><br>
+    <ul style="margin-left: 20px;">
+      <li>Try changing the light color on the Dashboard (LED presets)</li>
+      <li>If EC or pH is off, check the tips written on the warning blackboards</li>
+      <li>Come back every day to keep your tower thriving</li>
+    </ul>
+    <br>
+
+    🌟 That’s it! You're ready to grow. Go water your first plant and start your hydroponic adventure now!
+
+    </div>
 
   <script type="module">
-    // --- UPDATED: Imported all necessary functions ---
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
-    import { getFirestore, getDocs, collection, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-    
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
       authDomain: "seniorproject-684c1.firebaseapp.com",
@@ -142,177 +163,64 @@
       appId: "1:847138584376:web:eface0926c96092daef3cd",
       measurementId: "G-N0CM5TQBM8"
     };
-    
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // --- Main entry point for the page logic ---
-    document.addEventListener("DOMContentLoaded", () => {
-        // This outer listener ensures all HTML is loaded before scripts run.
+    // --- HELPER FUNCTIONS ---
 
-        // This inner listener waits for Firebase to confirm login status.
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // User is logged in, now fetch their data
-                await checkNotificationStatus();
-                await loadUserPlantData(user);
-                setupPageEventListeners(user); // Set up other buttons
-            } else {
-                // No user is logged in, redirect to login page
-                console.log("No user logged in, redirecting...");
-                window.location.href = 'LoginPage.html';
-            }
-        });
-
-        // Initialize Time and run it every second
-        updateDateTimeAndButton();
-        setInterval(updateDateTimeAndButton, 1000);
-    });
-
-    async function checkNotificationStatus() {
-      try {
-        const q = query(collection(db, "Main"), where("read", "==", false));
-        const querySnapshot = await getDocs(q);
-        const hasUnread = !querySnapshot.empty;
-
-        document.getElementById("notiNormal").style.display = hasUnread ? "none" : "block";
-        document.getElementById("notiAlert").style.display = hasUnread ? "block" : "none";
-      } catch (error) {
-        console.error("Error checking notifications:", error);
-      }
-    }
-    
-    // --- NEW: Function to load user's specific plant data ---
-    async function loadUserPlantData(user) {
-        const towerNameElement = document.getElementById("towerName");
-        const characterElement = document.getElementById("character");
-
-        const plantDocRef = doc(db, "userPlants", user.uid);
-        const docSnap = await getDoc(plantDocRef);
+    async function getAchievements(user) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            const plantData = docSnap.data();
-            towerNameElement.textContent = plantData.plantName || "My Tower";
-            characterElement.src = plantData.plantImage || "images/Stage4Normal.gif";
+            return docSnap.data();
         } else {
-            // If no plant data is found, prompt them to create one
-            towerNameElement.textContent = "Setup Your Plant!";
-            characterElement.src = "images/Stage4Normal.gif"; // Default image
+            console.log("Creating default achievement doc for user.");
+             const defaultAchievements = {
+                firstLight: { unlocked: false, unlockedAt: null, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
+                greenThumb: { unlocked: false, unlockedAt: null, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
+                aGentleTouch: { unlocked: false, unlockedAt: null, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
+                curiousGardner: { unlocked: false, unlockedAt: null, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" },
+                dailyRoutine: { unlocked: false, unlockedAt: null, name: "Daily Routine", description: "Perform all three main care actions in a single day.", icon: "images/number-5.png" }
+            };
+            await setDoc(docRef, defaultAchievements);
+            return defaultAchievements;
         }
     }
+
+    async function saveAchievements(user, achievements) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        await updateDoc(docRef, achievements);
+    }
+
+    function notifyAchievement(achievementName) {
+        alert(`Achievement Unlocked: ${achievementName}!`);
+    }
+  
+    // --- UNLOCK LOGIC (Using DOMContentLoaded) ---
     
-    // --- NEW: Function to set up all other interactive elements ---
-    function setupPageEventListeners(user) {
-        // Your existing logic from the second script block can go here.
-        // For example, the light button, watering can, etc.
-        const lightButton = document.getElementById("lightButton");
-        let lightIsOn = localStorage.getItem("lightIsOn") === "true";
-        if (lightIsOn) lightButton.classList.add("on");
+    document.addEventListener("DOMContentLoaded", function() {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const achievements = await getAchievements(user);
 
-        lightButton.addEventListener("click", async () => {
-          // Light button logic...
-        });
-
-        const wateringBtn = document.querySelector(".wateringcan-button");
-        const wateringGif = document.getElementById("wateringGif");
-        wateringBtn.addEventListener("mousedown", () => {
-          wateringGif.style.display = "block";
-          document.getElementById("character").src = "images/Stage4Warerting.gif";
-        });
-        
-        document.addEventListener("mousemove", (e) => {
-          if (wateringGif.style.display === 'block') {
-            wateringGif.style.left = `${e.clientX}px`;
-            wateringGif.style.top = `${e.clientY}px`;
-          }
-        });
-        
-        document.getElementById("character").addEventListener("mousedown", () => {
-            document.getElementById("character").src = "images/Stage4Touch.gif";
-            const achievements = getAchievements();
-            if (!achievements.aGentleTouch.unlocked) {
-                achievements.aGentleTouch.unlocked = true;
-                notifyAchievement("A Gentle Touch");
-                saveAchievements(achievements);
+                if (achievements && achievements.curiousGardner.unlocked === false) {
+                    achievements.curiousGardner.unlocked = true;
+                    achievements.curiousGardner.unlockedAt = new Date().toISOString();
+                    
+                    await saveAchievements(user, achievements);
+                    
+                    notifyAchievement("Curious Gardner");
+                }
+            } else {
+                console.log("No user logged in, cannot grant achievement.");
             }
         });
-        
-        document.addEventListener("mouseup", (e) => {
-          const plantRect = character.getBoundingClientRect();
-          if (wateringGif.style.display === 'block') {
-            if (plantRect.width > 0 && e.clientX >= plantRect.left && e.clientX <= plantRect.right && e.clientY >= plantRect.top && e.clientY <= plantRect.bottom) {
-              const achievements = getAchievements();
-              if (!achievements.greenThumb.unlocked) {
-                  achievements.greenThumb.unlocked = true;
-                  notifyAchievement("Green Thumb");
-                  saveAchievements(achievements);
-              }
-              const localDate = new Date();
-              const year = localDate.getFullYear();
-              const month = String(localDate.getMonth() + 1).padStart(2, '0');
-              const day = String(localDate.getDate()).padStart(2, '0');
-              const today = `${year}-${month}-${day}`;
-              const dailyData = getDailyCheckInData();
-              if (!dailyData[today]) {
-                  dailyData[today] = { taskComplete: false, rewardClaimed: false };
-              }
-              if (dailyData[today].taskComplete === false) {
-                  dailyData[today].taskComplete = true;
-                  saveDailyCheckInData(dailyData);
-                  alert("Daily Task Complete: Water the plant!");
-              }
-            }
-          }
-          wateringGif.style.display = 'none';
-          character.src = "images/Stage4Normal.gif";
-        });
-    }
-
-    // --- You can keep your helper functions outside the main listeners ---
-    function updateDateTimeAndButton() {
-      const now = new Date();
-      const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
-      const dateStr = now.toLocaleDateString('en-US', options);
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      document.getElementById("datetime-box").textContent = `${dateStr} at ${hours}:${minutes}`;
-
-      const hour = now.getHours();
-      const button = document.getElementById("time-button");
-      let imageUrl = '';
-      if (hour >= 5 && hour < 8) { imageUrl = 'images/Morning.PNG'; } 
-      else if (hour >= 8 && hour < 11) { imageUrl = 'images/LateMorning.PNG'; } 
-      else if (hour >= 11 && hour < 15) { imageUrl = 'images/Afternoon.PNG'; } 
-      else if (hour >= 15 && hour < 18) { imageUrl = 'images/Evening.PNG'; } 
-      else if (hour >= 18 && hour < 21) { imageUrl = 'images/Night.PNG'; } 
-      else if (hour >= 21 && hour < 24) { imageUrl = 'images/LateNight.PNG'; } 
-      else { imageUrl = 'images/Midnight.PNG'; }
-      button.style.backgroundImage = `url('${imageUrl}')`;
-    }
-    
-    function getAchievements() {
-      const achievements = localStorage.getItem('growQuestAchievements');
-      if (!achievements) {
-        const defaultAchievements = {
-          firstLight: { unlocked: false, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
-          greenThumb: { unlocked: false, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
-          aGentleTouch: { unlocked: false, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
-          curiousGardner: { unlocked: false, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" }
-        };
-        localStorage.setItem('growQuestAchievements', JSON.stringify(defaultAchievements));
-        return defaultAchievements;
-      }
-      return JSON.parse(achievements);
-    }
-    function saveAchievements(achievements) { localStorage.setItem('growQuestAchievements', JSON.stringify(achievements)); }
-    function notifyAchievement(achievementName) { alert(`Achievement Unlocked: ${achievementName}!`); }
-    function getDailyCheckInData() {
-      let dailyData = localStorage.getItem('growQuestDailyData');
-      if (!dailyData) { return {}; }
-      return JSON.parse(dailyData);
-    }
-    function saveDailyCheckInData(dailyData) { localStorage.setItem('growQuestDailyData', JSON.stringify(dailyData)); }
+    });
   </script>
+
+
 </body>
 </html>
