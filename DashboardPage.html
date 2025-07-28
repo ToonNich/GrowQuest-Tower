@@ -452,6 +452,8 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
     import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
     import {getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -465,41 +467,55 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const latestQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
-    let latestDocRef = null;
+    const auth = getAuth(app);
 
-    onSnapshot(latestQuery, (snapshot) => {
-      if (snapshot.empty) return;
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        console.log("🔒 User not signed in.");
+        return;
+      }
 
-      const docSnap = snapshot.docs[0];
-      latestDocRef = docSnap.ref;
+      const latestQuery = query(
+        collection(db, "tubeData", user.uid, "readings"),
+        orderBy("timestamp", "desc"),
+        limit(1)
+      );
 
-      const latest = snapshot.docs[0].data();
-      const values = latest;
+      let latestDocRef = null;
 
-      updateTube('humidityBar', values.humidity, 100);
-      updateTube('temperatureBar', values.temp, 50);
-      updateTube('chemicalBar', parseFloat(values.chemical), 100);
-      updateTube('ecBar', values.ec, 5);
-      updateTube('phBar', values.ph, 14);
-      updateTube('lightBar', values.light, 100000); // Updated max light value
+      onSnapshot(latestQuery, (snapshot) => {
+        if (snapshot.empty) return;
 
-      const dismissed = latest.dismissed || {};
-      showWarningIcon('warningHumidity', !dismissed.humidity && (values.humidity > 90 || values.humidity < 20));
-      showWarningIcon('warningTemp', !dismissed.temp && (values.temp > 40 || values.temp < 10));
-      showWarningIcon('warningPH', !dismissed.ph && (values.ph > 8 || values.ph < 5.5));
-      showWarningIcon('warningEC', !dismissed.ec && (values.ec > 3 || values.ec < 0.2));
-      showWarningIcon('warningChemical', !dismissed.chemical && (values.chemical < 10));
+        const docSnap = snapshot.docs[0];
+        latestDocRef = docSnap.ref;
 
-      console.log("📡 Real-time update:", values);
+        const values = docSnap.data();
 
-      document.getElementById("humidityValue").innerText = values.humidity.toFixed(1) + "%";
-      document.getElementById("temperatureValue").innerText = values.temp.toFixed(1) + "°C";
-      document.getElementById("chemicalValue").innerText = values.chemical.toFixed(0) + "%"; // --- NEW ---
-      document.getElementById("ecValue").innerText = values.ec.toFixed(2);
-      document.getElementById("phValue").innerText = values.ph.toFixed(2);
-      document.getElementById("lightValue").innerText = values.light.toFixed(0) + " lux";
+        updateTube('humidityBar', values.hum, 100);
+        updateTube('temperatureBar', values.temp, 50);
+        updateTube('chemicalBar', values.chemical, 100);
+        updateTube('ecBar', values.ec, 5);
+        updateTube('phBar', values.ph, 14);
+        updateTube('lightBar', values.light, 100000);
+
+        const dismissed = values.dismissed || {};
+        showWarningIcon('warningHumidity', !dismissed.humidity && (values.hum > 90 || values.hum < 20));
+        showWarningIcon('warningTemp', !dismissed.temp && (values.temp > 40 || values.temp < 10));
+        showWarningIcon('warningPH', !dismissed.ph && (values.ph > 8 || values.ph < 5.5));
+        showWarningIcon('warningEC', !dismissed.ec && (values.ec > 3 || values.ec < 0.2));
+        showWarningIcon('warningChemical', !dismissed.chemical && (values.chemical < 10));
+
+        document.getElementById("humidityValue").innerText = values.hum.toFixed(1) + "%";
+        document.getElementById("temperatureValue").innerText = values.temp.toFixed(1) + "°C";
+        document.getElementById("chemicalValue").innerText = values.chemical.toFixed(0) + "%";
+        document.getElementById("ecValue").innerText = values.ec.toFixed(2);
+        document.getElementById("phValue").innerText = values.ph.toFixed(2);
+        document.getElementById("lightValue").innerText = values.light.toFixed(0) + " lux";
+
+        console.log("📡 Real-time update:", values);
+      });
     });
+
 
 
     function updateTube(id, value, max) {

@@ -134,39 +134,47 @@
 
   const loginButton = document.getElementById('loginButton');
 
-  loginButton.addEventListener('click', () => {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    if (!email || !password) {
-        alert("Please enter both email and password.");
-        return;
-    }
+        loginButton.addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert("Please enter both email and password.");
+                return;
+            }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        // Signed in successfully
-        const user = userCredential.user;
-        console.log("Login successful for:", user.email);
+            signInWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                console.log("Login successful for:", user.email);
 
-        // --- NEW: Check if the user has set up a plant ---
-        const plantDocRef = doc(db, "userPlants", user.uid);
-        const docSnap = await getDoc(plantDocRef);
+                // 🔗 Auto-link RasPi to user
+                const raspiID = "raspi_01";
+                try {
+                await setDoc(doc(db, "sensorLinks", raspiID), {
+                    uid: user.uid
+                });
+                console.log(`✅ Linked ${raspiID} to UID: ${user.uid}`);
+                } catch (e) {
+                console.error("🔥 Failed to link RasPi ID:", e);
+                }
 
-        if (docSnap.exists()) {
-          // If they have plant data, go straight to the home page
-          console.log("Existing user. Redirecting to HomePage.");
-          window.location.href = "HomePage.html";
-        } else {
-          // If they are a new user, send them to set up their plant
-          console.log("New user. Redirecting to CharacterPage.");
-          window.location.href = "CharacterPage.html"; 
-        }
-      })
-      .catch((error) => {
-        alert("Login failed: " + error.message);
-      });
-  });
+                // 🌱 Redirect based on plant setup
+                const plantDocRef = doc(db, "userPlants", user.uid);
+                const docSnap = await getDoc(plantDocRef);
+
+                if (docSnap.exists()) {
+                window.location.href = "HomePage.html";
+                } else {
+                window.location.href = "CharacterPage.html"; 
+                }
+            })
+            .catch((error) => {
+                alert("Login failed: " + error.message);
+            });
+
+        });
+
 </script>
 </body>
 </html>

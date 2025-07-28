@@ -127,214 +127,6 @@
     <button class="daily-check-in-button" onclick="location.href='DailyCheckIn.html'"></button>
   </div>
 
-  <!-- <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
-    import { getFirestore, getDocs, collection, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-      authDomain: "seniorproject-684c1.firebaseapp.com",
-      projectId: "seniorproject-684c1",
-      storageBucket: "seniorproject-684c1.appspot.com",
-      messagingSenderId: "847138584376",
-      appId: "1:847138584376:web:eface0926c96092daef3cd",
-      measurementId: "G-N0CM5TQBM8"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    document.addEventListener("DOMContentLoaded", () => {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                await checkNotificationStatus();
-                await loadUserPlantData(user);
-                setupPageEventListeners(user);
-            } else {
-                console.log("No user logged in, redirecting...");
-                window.location.href = 'LoginPage.html';
-            }
-        });
-
-        updateDateTimeAndButton();
-        setInterval(updateDateTimeAndButton, 1000);
-    });
-
-    async function checkNotificationStatus() {
-      try {
-        const q = query(collection(db, "Main"), where("read", "==", false));
-        const querySnapshot = await getDocs(q);
-        const hasUnread = !querySnapshot.empty;
-
-        document.getElementById("notiNormal").style.display = hasUnread ? "none" : "block";
-        document.getElementById("notiAlert").style.display = hasUnread ? "block" : "none";
-      } catch (error) {
-        console.error("Error checking notifications:", error);
-      }
-    }
-    
-    // --- UPDATED to include console.log ---
-    async function loadUserPlantData(user) {
-        const towerNameElement = document.getElementById("towerName");
-        const characterElement = document.getElementById("character");
-
-        const plantDocRef = doc(db, "userPlants", user.uid);
-        const docSnap = await getDoc(plantDocRef);
-
-        if (docSnap.exists()) {
-            const plantData = docSnap.data();
-            // --- NEW: This will print the data to your browser's console ---
-            console.log("Loaded plant data:", plantData); 
-
-            towerNameElement.textContent = plantData.plantName || "My Tower";
-            characterElement.src = plantData.plantImage || "images/Stage4Normal.gif";
-        } else {
-            console.log("No plant data document found for this user.");
-            towerNameElement.textContent = "Setup Your Plant!";
-            characterElement.src = "images/Stage4Normal.gif"; 
-        }
-    }
-    
-    function setupPageEventListeners(user) {
-        const lightButton = document.getElementById("lightButton");
-        let lightIsOn = localStorage.getItem("lightIsOn") === "true";
-        if (lightIsOn) lightButton.classList.add("on");
-
-        lightButton.addEventListener("click", async () => {
-          try {
-            if (!lightIsOn) {
-              const response = await fetch("http://localhost:8000/turn_on", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ colortemp: 6500, brightness: 100 }),
-              });
-              if (!response.ok) throw new Error("Failed to turn on light");
-              lightIsOn = true;
-              const achievements = getAchievements();
-              if (!achievements.firstLight.unlocked) {
-                  achievements.firstLight.unlocked = true;
-                  notifyAchievement("First Light");
-                  saveAchievements(achievements);
-              }
-            } else {
-              const response = await fetch("http://localhost:8000/turn_off", { method: "POST" });
-              if (!response.ok) throw new Error("Failed to turn off light");
-              lightIsOn = false;
-            }
-            lightButton.classList.toggle("on", lightIsOn);
-            localStorage.setItem("lightIsOn", String(lightIsOn));
-          } catch (err) {
-            alert("Error controlling light: " + err.message);
-          }
-        });
-
-        const wateringBtn = document.querySelector(".wateringcan-button");
-        const wateringGif = document.getElementById("wateringGif");
-        wateringBtn.addEventListener("mousedown", () => {
-          wateringGif.style.display = "block";
-          document.getElementById("character").src = "images/Stage4Warerting.gif";
-        });
-        
-        document.addEventListener("mousemove", (e) => {
-          if (wateringGif.style.display === 'block') {
-            wateringGif.style.left = `${e.clientX}px`;
-            wateringGif.style.top = `${e.clientY}px`;
-          }
-        });
-
-        document.getElementById("character").addEventListener("mousedown", () => {
-            document.getElementById("character").src = "images/Stage4Touch.gif";
-            const achievements = getAchievements();
-            if (!achievements.aGentleTouch.unlocked) {
-                achievements.aGentleTouch.unlocked = true;
-                notifyAchievement("A Gentle Touch");
-                saveAchievements(achievements);
-            }
-        });
-
-        document.addEventListener("mouseup", (e) => {
-          const plantImage = document.getElementById("character");
-          const plantRect = plantImage.getBoundingClientRect();
-
-          if (wateringGif.style.display === 'block') {
-            if (plantRect.width > 0 && e.clientX >= plantRect.left && e.clientX <= plantRect.right && e.clientY >= plantRect.top && e.clientY <= plantRect.bottom) {
-              
-              const achievements = getAchievements();
-              if (!achievements.greenThumb.unlocked) {
-                  achievements.greenThumb.unlocked = true;
-                  notifyAchievement("Green Thumb");
-                  saveAchievements(achievements);
-              }
-
-              const localDate = new Date();
-              const year = localDate.getFullYear();
-              const month = String(localDate.getMonth() + 1).padStart(2, '0');
-              const day = String(localDate.getDate()).padStart(2, '0');
-              const today = `${year}-${month}-${day}`;
-              const dailyData = getDailyCheckInData();
-              if (!dailyData[today]) {
-                  dailyData[today] = { taskComplete: false, rewardClaimed: false };
-              }
-              if (dailyData[today].taskComplete === false) {
-                  dailyData[today].taskComplete = true;
-                  saveDailyCheckInData(dailyData);
-                  alert("Daily Task Complete: Water the plant!");
-              }
-            }
-          }
-          
-          wateringGif.style.display = 'none';
-          loadUserPlantData(user);
-        });
-    }
-
-    function updateDateTimeAndButton() {
-      const now = new Date();
-      const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
-      const dateStr = now.toLocaleDateString('en-US', options);
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      document.getElementById("datetime-box").textContent = `${dateStr} at ${hours}:${minutes}`;
-
-      const hour = now.getHours();
-      const button = document.getElementById("time-button");
-      let imageUrl = '';
-      if (hour >= 5 && hour < 8) { imageUrl = 'images/Morning.PNG'; } 
-      else if (hour >= 8 && hour < 11) { imageUrl = 'images/LateMorning.PNG'; } 
-      else if (hour >= 11 && hour < 15) { imageUrl = 'images/Afternoon.PNG'; } 
-      else if (hour >= 15 && hour < 18) { imageUrl = 'images/Evening.PNG'; } 
-      else if (hour >= 18 && hour < 21) { imageUrl = 'images/Night.PNG'; } 
-      else if (hour >= 21 && hour < 24) { imageUrl = 'images/LateNight.PNG'; } 
-      else { imageUrl = 'images/Midnight.PNG'; }
-      button.style.backgroundImage = `url('${imageUrl}')`;
-    }
-    
-    function getAchievements() {
-      const achievements = localStorage.getItem('growQuestAchievements');
-      if (!achievements) {
-        const defaultAchievements = {
-          firstLight: { unlocked: false, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
-          greenThumb: { unlocked: false, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
-          aGentleTouch: { unlocked: false, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
-          curiousGardner: { unlocked: false, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" }
-        };
-        localStorage.setItem('growQuestAchievements', JSON.stringify(defaultAchievements));
-        return defaultAchievements;
-      }
-      return JSON.parse(achievements);
-    }
-    function saveAchievements(achievements) { localStorage.setItem('growQuestAchievements', JSON.stringify(achievements)); }
-    function notifyAchievement(achievementName) { alert(`Achievement Unlocked: ${achievementName}!`); }
-    function getDailyCheckInData() {
-      let dailyData = localStorage.getItem('growQuestDailyData');
-      if (!dailyData) { return {}; }
-      return JSON.parse(dailyData);
-    }
-    function saveDailyCheckInData(dailyData) { localStorage.setItem('growQuestDailyData', JSON.stringify(dailyData)); }
-  </script> -->
-
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
@@ -356,12 +148,21 @@
     const auth = getAuth(app);
 
     document.addEventListener("DOMContentLoaded", () => {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                await checkNotificationStatus();
-                await loadUserPlantData(user);
-                // --- MODIFIED: Pass the user object to the setup function ---
-                setupPageEventListeners(user); 
+                onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            await checkNotificationStatus();
+            await loadUserPlantData(user);
+            // 🔧 Link raspi_01 to current user UID
+            try {
+              const raspiID = "raspi_01"; // Static 
+              await setDoc(doc(db, "sensorLinks", raspiID), {
+                uid: user.uid
+              });
+              console.log(`✅ Linked ${raspiID} to UID: ${user.uid}`);
+            } catch (e) {
+              console.error("🔥 Failed to link RasPi ID:", e);
+            }
+            setupPageEventListeners(user);
             } else {
                 console.log("No user logged in, redirecting...");
                 window.location.href = 'LoginPage.html';
