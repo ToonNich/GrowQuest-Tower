@@ -3,53 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>History</title>
+  <title>Notification</title>
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-      authDomain: "seniorproject-684c1.firebaseapp.com",
-      projectId: "seniorproject-684c1",
-      storageBucket: "seniorproject-684c1.appspot.com",
-      messagingSenderId: "847138584376",
-      appId: "1:847138584376:web:eface0926c96092daef3cd"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.db = getFirestore(app); // ให้ใช้ window.db ใน Vue script ด้านล่าง
-  </script>
-
   <style>
-    /* ✅ CSS เดิมของคุณ */
     body {
-      font-family: 'Pixelify Sans', sans-serif;
       background: url('images/info.gif') no-repeat center center fixed;
       background-size: cover;
+      font-family: 'Pixelify Sans', sans-serif;
       margin: 0;
       padding: 0;
     }
-    .back-button {
-      position: absolute;
-      top: 4%;
-      left: 2%;
-      width: 60px;
-      height: 44px;
-      background: url('images/backButton1.png') no-repeat center center;
-      background-size: cover;
-      border: none;
-      cursor: pointer;
-      z-index: 3;
-    }
-    .back-button:hover {
-      background: url('images/backButton2.png') no-repeat center center;
-      background-size: cover;
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.322);
+      z-index: 0;
     }
     .middle-image {
       position: absolute;
@@ -59,26 +29,93 @@
       width: 70%;
       z-index: 1;
     }
-    .chart-container {
+    .notification-list {
       position: absolute;
       top: 12%;
       left: 50%;
       transform: translateX(-50%);
-      width: 90%;
+      width: 55%;
       z-index: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      align-items: center;
-      padding-bottom: 60px;
+      margin-bottom: 140px;
     }
-    canvas {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 10px;
-      padding: 10px;
+    .notification-item {
+      background-color: rgba(255, 255, 255, 0.2);
+      margin-bottom: 12px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .notification-item:hover {
+      background-color: rgba(255, 255, 255, 0.35);
+    }
+    .notification-left {
+      display: flex;
+      align-items: center;
+    }
+    .notification-icon {
+      width: 60px;
+      height: 60px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .notification-title {
+      font-size: 20px;
+      margin-left: 20px;
+      color: #000;
+    }
+    .notification-actions {
+      display: flex;
+      align-items: center;
+    }
+    .bin-button {
+      width: 36px;
+      height: 36px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      background-color: transparent;
+    }
+    .bin-button {
+      background-image: url('images/bin1.PNG');
+    }
+    .star-button {
+      width: 36px;
+      height: 36px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      background-color: transparent;
+    }
+
+    .starred {
+      background-image: url('images/star1.PNG');
+    }
+
+    .starred:hover {
+      background-image: url('images/star2.PNG');
+    }
+
+    .unstarred {
+      background-image: url('images/star3.PNG');
+    }
+
+    .divider {
       width: 100%;
-      max-width: 900px;
-      height: 600px !important;
+      height: 0.5px;
+      background-color: #000000;
+      opacity: 0.4;
+      margin: 8px 0;
     }
     .pagination {
       margin-top: 20px;
@@ -86,6 +123,11 @@
       gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
+      position: absolute;
+      bottom: 11%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
     }
     .pagination button {
       padding: 10px 16px;
@@ -104,143 +146,244 @@
       transform: translateY(2px);
       box-shadow: 2px 2px 0px #333;
     }
+    .pagination button.active {
+      background-color: #ff8c00;
+      transform: none;
+      box-shadow: none;
+    }
     .pagination button.disabled {
       background-color: #ccc;
       color: #666;
       cursor: not-allowed;
       box-shadow: none;
-      transform: none;
+    }
+    .back-button {
+      width: 60px;
+      height: 44px;
+      background: url('images/backButton1.png') no-repeat center center;
+      background-size: cover;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 6%;
+      left: 4%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .back-button:hover {
+      background: url('images/backButton2.png') no-repeat center center;
+      background-size: cover;
     }
   </style>
 </head>
-
 <body>
-  <div id="app">
-    <button @click="goBack" class="back-button"></button>
-    <div class="chart-container">
-      <canvas v-for="(item, index) in currentData" :key="index" :ref="'chart-' + index"></canvas>
+  <button class="back-button" onclick="location.href='HomePage.html'"></button>
+  <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
+  <div class="notification-list" id="notificationList"></div>
+  <div class="pagination" id="pagination"></div>
 
-      <div class="pagination">
-        <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Previous</button>
-        <button v-for="page in visiblePages" :key="page" :class="{ 'disabled': currentPage === page }" @click="changePage(page)">
-          {{ page }}
-        </button>
-        <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Next</button>
-      </div>
-    </div>
-  </div>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, collection, getDocs, updateDoc, doc, deleteDoc , query, orderBy } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
-  <!-- ✅ Vue script -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      new Vue({
-        el: '#app',
-        data: {
-          allData: [],
-          currentPage: 1,
-          limit: 7,
-          totalPages: 0,
-          maxVisiblePages: 10,
-          chartInstances: []
-        },
-        computed: {
-          currentData() {
-            const start = (this.currentPage - 1) * this.limit;
-            const end = start + this.limit;
-            return this.allData.slice(start, end);
-          },
-          visiblePages() {
-            const pages = [];
-            let start = Math.max(1, this.currentPage - Math.floor(this.maxVisiblePages / 2));
-            let end = start + this.maxVisiblePages - 1;
-            if (end > this.totalPages) {
-              end = this.totalPages;
-              start = Math.max(1, end - this.maxVisiblePages + 1);
-            }
-            for (let i = start; i <= end; i++) {
-              pages.push(i);
-            }
-            return pages;
-          }
-        },
-        methods: {
-          goBack() {
-            window.location.href = 'DashboardPage.html';
-          },
-          async fetchData() {
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let notifications = [];
+    const perPage = 5;
+    let currentPage = 1;
+
+    async function fetchNotifications() {
+      const q = query(collection(db, "Main"), orderBy("timestamp"));
+      const snapshot = await getDocs(q);
+      notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderNotifications();
+      renderPagination();
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById('notificationList');
+      list.innerHTML = '';
+      const start = (currentPage - 1) * perPage;
+      const pageItems = notifications.slice(start, start + perPage);
+
+      pageItems.forEach((noti, index) => {
+        const isStarred = noti.starred;
+        const starClass = isStarred ? 'starred' : 'unstarred';
+
+        const div = document.createElement('div');
+        div.className = 'notification-item';
+
+        // --- UPDATED CLICK EVENT LISTENER ---
+        div.addEventListener('click', async () => {
+          // --- FIX: Only try to update the document if it's currently unread ---
+          if (noti.read === false) {
+            const docRef = doc(db, "Main", noti.id);
             try {
-              const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js');
-              const q = query(collection(window.db, "Main"), orderBy("timestamp"));
-              const snapshot = await getDocs(q);
-
-              const data = snapshot.docs.map((doc, index) => {
-                const d = doc.data();
-                return {
-                  label: `Record ${index + 1}`,
-                  data: [d.EC, d.Humidity, d.Temperature, d.Ph, d.Light]
-                };
-              });
-
-              this.allData = data;
-              this.totalPages = Math.ceil(this.allData.length / this.limit);
+              await updateDoc(docRef, { read: true });
+              noti.read = true; // Update local state to avoid re-clicking
+              renderNotifications(); // Re-render to show the icon change immediately
+              renderPagination();
             } catch (error) {
-              console.error("Firebase fetch error:", error);
+              console.error("Failed to mark as read:", error);
             }
-          },
-          changePage(page) {
-            if (page < 1 || page > this.totalPages) return;
-            this.currentPage = page;
-          },
-          renderCharts() {
-            this.chartInstances.forEach(chart => chart.destroy());
-            this.chartInstances = [];
-
-            this.$nextTick(() => {
-              this.currentData.forEach((item, index) => {
-                const canvasRef = this.$refs['chart-' + index];
-                const ctx = (Array.isArray(canvasRef) ? canvasRef[0] : canvasRef).getContext('2d');
-
-                const chart = new Chart(ctx, {
-                  type: 'line',
-                  data: {
-                    labels: ['EC', 'Humidity', 'Temperature', 'Ph', 'Light'],
-                    datasets: [{
-                      label: item.label,
-                      data: item.data,
-                      borderColor: 'rgba(75, 192, 192, 1)',
-                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      fill: false,
-                      tension: 0.1
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    plugins: {
-                      legend: { display: true }
-                    },
-                    scales: {
-                      y: { beginAtZero: true }
-                    }
-                  }
-                });
-
-                this.chartInstances.push(chart);
-              });
-            });
           }
-        },
-        watch: {
-          currentPage() {
-            this.renderCharts();
-          }
-        },
-        mounted() {
-          this.fetchData().then(() => {
-            this.renderCharts();
-          });
+          
+          // Always navigate to the detail page, regardless of read status
+          setTimeout(() => {
+            window.location.href = `NotificationDetail.html?id=${noti.id}`;
+          }, 150);
+        });
+
+        div.innerHTML = `
+          <div class="notification-left">
+            <div class="notification-icon" style="background-image: url('images/${noti.read ? 'bell2.PNG' : 'bell1.PNG'}')"></div>
+            <div class="notification-title">${noti.title}</div>
+          </div>
+          <div class="notification-actions">
+            <button class="star-button ${starClass}" onclick="toggleStar(event, '${noti.id}', ${isStarred})"></button>
+            <button class="bin-button"></button>
+          </div>
+        `;
+
+        const starBtn = div.querySelector('.star-button');
+        const binBtn = div.querySelector('.bin-button');
+
+        starBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+
+        binBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
+          if (!confirmed) return;
+          await deleteDoc(doc(db, "Main", noti.id));
+          await fetchNotifications();
+        });
+
+        list.appendChild(div);
+
+        if (index < pageItems.length - 1) {
+          const divider = document.createElement('div');
+          divider.className = 'divider';
+          list.appendChild(divider);
         }
       });
-    });
+    }
+
+    window.toggleStar = async function(event, docId, currentState) {
+      event.stopPropagation();
+      const newState = !currentState;
+      const docRef = doc(db, "Main", docId);
+      await updateDoc(docRef, { starred: newState });
+
+      await fetchNotifications();
+    }
+
+
+    function renderPagination() {
+      const container = document.getElementById('pagination');
+      container.innerHTML = '';
+      const totalPages = Math.ceil(notifications.length / perPage);
+
+      const prevBtn = document.createElement('button');
+      prevBtn.textContent = 'Prev';
+      prevBtn.disabled = currentPage === 1;
+      if (prevBtn.disabled) prevBtn.classList.add('disabled');
+      prevBtn.onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderNotifications();
+          renderPagination();
+        }
+      };
+      container.appendChild(prevBtn);
+
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, currentPage + 2);
+
+      if (currentPage <= 3) {
+        endPage = Math.min(5, totalPages);
+      }
+      if (currentPage >= totalPages - 2) {
+        startPage = Math.max(totalPages - 4, 1);
+      }
+
+      if (startPage > 1) {
+        const first = document.createElement('button');
+        first.textContent = '1';
+        first.onclick = () => {
+          currentPage = 1;
+          renderNotifications();
+          renderPagination();
+        };
+        container.appendChild(first);
+
+        if (startPage > 2) {
+          const dots = document.createElement('span');
+          dots.textContent = '...';
+          dots.style.margin = '0 5px';
+          container.appendChild(dots);
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        if (i === currentPage) btn.classList.add('active');
+        btn.onclick = () => {
+          currentPage = i;
+          renderNotifications();
+          renderPagination();
+        };
+        container.appendChild(btn);
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          const dots = document.createElement('span');
+          dots.textContent = '...';
+          dots.style.margin = '0 5px';
+          container.appendChild(dots);
+        }
+
+        const last = document.createElement('button');
+        last.textContent = totalPages;
+        last.onclick = () => {
+          currentPage = totalPages;
+          renderNotifications();
+          renderPagination();
+        };
+        container.appendChild(last);
+      }
+
+
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next';
+      nextBtn.disabled = currentPage === totalPages;
+      if (nextBtn.disabled) nextBtn.classList.add('disabled');
+      nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderNotifications();
+          renderPagination();
+        }
+      };
+      container.appendChild(nextBtn);
+    }
+
+    fetchNotifications();
   </script>
 </body>
 </html>
