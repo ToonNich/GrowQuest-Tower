@@ -121,7 +121,11 @@ void loop() {
   Serial.print(",\"ec\":");
   Serial.print(ecVoltage, 2);
   Serial.print(",\"light\":");
-  Serial.print(lux);
+  if (isnan(lux)) {
+    Serial.print("0");  // fallback value if sensor fails
+  } else {
+    Serial.print(lux);
+  }
   // --- NEW: Add water levels to JSON string ---
   Serial.print(",\"main_tank\":");
   Serial.print(mainTankLevel);

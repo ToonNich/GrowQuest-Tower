@@ -116,7 +116,7 @@
   // --- UPDATED: Added Firestore imports ---
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
   import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
-  import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  import { getFirestore, doc, getDoc , setDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
   
   const firebaseConfig = {
     apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -157,6 +157,14 @@
                 console.log(`✅ Linked ${raspiID} to UID: ${user.uid}`);
                 } catch (e) {
                 console.error("🔥 Failed to link RasPi ID:", e);
+                }
+
+                // ✅  /tubeData/[UID] exists
+                try {
+                await setDoc(doc(db, "tubeData", user.uid), { init: "yes" }, { merge: true });
+                console.log("✅ tubeData root initialized for UID:", user.uid);
+                } catch (e) {
+                console.error("❌ Failed to create tubeData document:", e);
                 }
 
                 // 🌱 Redirect based on plant setup
