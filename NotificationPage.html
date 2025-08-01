@@ -185,6 +185,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
     import { getFirestore, collection, getDocs, updateDoc, doc, deleteDoc , query, orderBy } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js'; //Firebase auth
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
@@ -202,16 +203,29 @@
     let notifications = [];
     const perPage = 5;
     let currentPage = 1;
+    const auth = getAuth();
 
-    async function fetchNotifications() {
-      const q = query(collection(db, "Main"), orderBy("timestamp"));
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userId = user.uid;
+        await fetchNotifications(user.uid);
+      } else {
+        alert("Please log in to view your notifications.");
+        window.location.href = "Login.html"
+      }
+    })
+
+     async function fetchNotifications(userId) {
+      if (!userId) return; 
+      const q = query(collection(db, "notifications", userId, "userNotifications"),
+                orderBy("timestamp","desc"));
       const snapshot = await getDocs(q);
       notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderNotifications();
+      renderNotifications(userId);
       renderPagination();
     }
 
-    function renderNotifications() {
+    function renderNotifications(userId) {
       const list = document.getElementById('notificationList');
       list.innerHTML = '';
       const start = (currentPage - 1) * perPage;
@@ -228,11 +242,11 @@
         div.addEventListener('click', async () => {
           // --- FIX: Only try to update the document if it's currently unread ---
           if (noti.read === false) {
-            const docRef = doc(db, "Main", noti.id);
+            const docRef = doc(db, "notifications", userId, "userNotifications", noti.id);
             try {
               await updateDoc(docRef, { read: true });
               noti.read = true; // Update local state to avoid re-clicking
-              renderNotifications(); // Re-render to show the icon change immediately
+              renderNotifications(userId); // Re-render to show the icon change immediately
               renderPagination();
             } catch (error) {
               console.error("Failed to mark as read:", error);
@@ -251,7 +265,7 @@
             <div class="notification-title">${noti.title}</div>
           </div>
           <div class="notification-actions">
-            <button class="star-button ${starClass}" onclick="toggleStar(event, '${noti.id}', ${isStarred})"></button>
+            <button class="star-button ${starClass}" onclick="toggleStar(event, '${noti.id}', ${isStarred}, '${userId}')"></button>
             <button class="bin-button"></button>
           </div>
         `;
@@ -267,8 +281,8 @@
           e.stopPropagation();
           const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
           if (!confirmed) return;
-          await deleteDoc(doc(db, "Main", noti.id));
-          await fetchNotifications();
+          await deleteDoc(doc(db, "notifications",userId,"userNotifications", noti.id));
+          await fetchNotifications(userId);
         });
 
         list.appendChild(div);
@@ -281,13 +295,16 @@
       });
     }
 
-    window.toggleStar = async function(event, docId, currentState) {
+    window.toggleStar = async function(event, docId, currentState, userId) {
       event.stopPropagation();
+      if (!userId) {
+         alert("User not logged in");
+         return;
+      }
       const newState = !currentState;
-      const docRef = doc(db, "Main", docId);
+      const docRef = doc(db, "notifications", userId, "userNotifications", docId);
       await updateDoc(docRef, { starred: newState });
-
-      await fetchNotifications();
+      await fetchNotifications(userId);
     }
 
 
