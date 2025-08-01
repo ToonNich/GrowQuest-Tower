@@ -132,9 +132,6 @@
 </head>
 <body>
   <button class="back-button" onclick="location.href='HomePage.html'"></button>
-  <!-- --- NEW: Logout Button --- -->
-  <!-- <button class="logout-button" id="logoutButton">Logout</button> -->
-
   <div>
     <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
     <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
@@ -188,8 +185,7 @@
     const usernameInput = document.getElementById('usernameInput');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
-    //const saveButton = document.getElementById('saveButton');
-    const logoutButton = document.getElementById('logoutButton'); // --- NEW ---
+    const logoutButton = document.getElementById('logoutButton'); 
     const feedbackMsg = document.getElementById('feedback-msg');
     const profileName = document.getElementById('profileName');
 
@@ -204,48 +200,7 @@
             }
             emailInput.value = user.email;
 
-            // saveButton.addEventListener('click', async () => {
-            //     feedbackMsg.textContent = "Saving...";
-            //     feedbackMsg.style.color = "blue";
-                
-            //     const promises = [];
-                
-            //     if (usernameInput.value !== user.displayName) {
-            //         promises.push(updateProfile(user, { displayName: usernameInput.value }));
-            //     }
-
-            //     if (passwordInput.value) {
-            //         if (passwordInput.value.length < 6) {
-            //             feedbackMsg.textContent = "❌ Password must be at least 6 characters long.";
-            //             feedbackMsg.style.color = "red";
-            //             return;
-            //         }
-            //         promises.push(updatePassword(user, passwordInput.value));
-            //     }
-
-            //     if (promises.length === 0) {
-            //         feedbackMsg.textContent = "No changes to save.";
-            //         feedbackMsg.style.color = "black";
-            //         return;
-            //     }
-
-            //     try {
-            //         await Promise.all(promises);
-            //         feedbackMsg.textContent = "✅ Profile updated successfully!";
-            //         feedbackMsg.style.color = "green";
-                    
-            //         if(usernameInput.value) {
-            //            profileName.textContent = usernameInput.value;
-            //         }
-                    
-            //         passwordInput.value = ""; 
-            //     } catch (error) {
-            //         feedbackMsg.textContent = "❌ Error updating profile: " + error.message;
-            //         feedbackMsg.style.color = "red";
-            //     }
-            // });
-
-            // --- Logout Button Logic ---
+            
             logoutButton.addEventListener('click', () => {
                 signOut(auth).then(() => {
                     // Sign-out successful.
@@ -259,7 +214,6 @@
             });
 
         } else {
-            // --- UPDATED: Removed the alert from here to prevent the double-alert issue ---
             window.location.href = 'LoginPage.html';
         }
     });
