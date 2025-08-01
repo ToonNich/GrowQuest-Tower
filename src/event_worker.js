@@ -1,35 +1,39 @@
 const admin = require("firebase-admin");
-const mysql = require("mysql2/promise"); // Use promise-based MySQL
 
-// Firebase Service Account Key
+// กำหนด path ของไฟล์ Service Account Key ของ Firebase
+const serviceAccount = require("./firebase-key.json");
+
+// เริ่มต้น Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(require("./firebase-key.json")),
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://seniorproject-684c1.firebaseio.com"
 });
 
 const firestore = admin.firestore();
 
-const connectionConfig = {
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "senior_project"
-};
-
-async function checkEventQueue() {
-  const connection = await mysql.createConnection(connectionConfig);
-
+async function checkMainCollection() {
   try {
-    const [rows] = await connection.execute(
-      "SELECT * FROM event_queue WHERE sent = FALSE ORDER BY timestamp ASC LIMIT 1"
-    );
+    // ดึงเอกสารที่ sent = false เรียงตาม timestamp เก่าไปใหม่ 1 ตัว
+    const snapshot = await firestore
+      .collection("Main")
+      .where("sent", "==", false)
+      .orderBy("timestamp", "asc")
+      .limit(1)
+      .get();
 
-    if (rows.length === 0) return;
+    if (snapshot.empty) {
+      // ไม่มีเอกสารที่ยังไม่ได้ส่ง
+      return;
+    }
 
-    const event = rows[0];
-    const { id, temp, humidity, ec, ph, chemical, light } = event;
+    const doc = snapshot.docs[0];
+    const event = doc.data();
+    const docId = doc.id;
 
-    // Check full abnormal conditions
+    // ดึงค่าจากเอกสาร
+    const { temp, humidity, ec, ph, chemical, light } = event;
+
+    // ตรวจสอบความผิดปกติของค่าต่างๆ
     const isAbnormal =
       temp > 40 || temp < 10 ||
       humidity > 90 || humidity < 20 ||
@@ -41,7 +45,6 @@ async function checkEventQueue() {
       let title = "Abnormal Sensor Alert";
       let content = "";
 
-      // High/Low condition messages
       if (temp > 40) {
         title = "Temperature too high";
         content = `Temperature exceeds normal level: ${temp} °C`;
@@ -76,6 +79,7 @@ async function checkEventQueue() {
 
       const message = `Alert: ${content}`;
 
+      // บันทึกแจ้งเตือนไปยัง collection alerts
       await firestore.collection("alerts").add({
         title,
         content,
@@ -88,17 +92,15 @@ async function checkEventQueue() {
       console.log("📢 Alert sent to Firebase:", message);
     }
 
-    // Mark as sent
-    await connection.execute("UPDATE event_queue SET sent = TRUE WHERE id = ?", [id]);
+    // อัปเดตเอกสารใน Main ว่าได้ส่งแจ้งเตือนแล้ว
+    await firestore.collection("Main").doc(docId).update({ sent: true });
 
   } catch (error) {
     console.error("❌ ERROR:", error.message);
-  } finally {
-    await connection.end();
   }
 }
 
-// Run check every 1 second
+// ทำงานทุก 1 วินาที
 setInterval(() => {
-  checkEventQueue();
+  checkMainCollection();
 }, 1000);
