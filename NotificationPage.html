@@ -279,7 +279,7 @@
 
         binBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
+          const confirmed = confirm("Are you sure to delete this Notification");
           if (!confirmed) return;
           await deleteDoc(doc(db, "notifications",userId,"userNotifications", noti.id));
           await fetchNotifications(userId);
