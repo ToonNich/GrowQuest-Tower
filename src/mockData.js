@@ -18,12 +18,12 @@ async function generateMockData() {
   // กำหนดเวลาปัจจุบัน
   const now = new Date();
 
-  // สร้าง baseTime เป็นวันที่วันนี้ เวลา 18:30:00
+  // สร้าง baseTime เป็นวันที่วันนี้ เวลา 19:30:00
   const baseTime = new Date(
     now.getFullYear(),
     now.getMonth(),
     now.getDate(),
-    18, 30, 0, 0
+    21, 0, 0, 0
   );
 
   const intervalMs = 60 * 60 * 1000 / 120; // 30 วินาทีต่อชุด = 120 ชุด/ชม
@@ -31,12 +31,12 @@ async function generateMockData() {
   for (let i = 0; i < 120; i++) {
     const fakeData = {
       chem_tank: getRandomFloat(0, 100),
-      ec: getRandomFloat(0.5, 3.0),
-      hum: getRandomFloat(40, 90),
-      light: getRandomInt(0, 1000),
+      ec: getRandomFloat(50, 100),
+      hum: getRandomFloat(20, 100),
+      light: getRandomInt(0, 1000),        // light อาจจะเก็บเป็น int ก็ได้
       main_tank: getRandomFloat(0, 100),
-      ph: getRandomFloat(4.0, 8.0),
-      temp: getRandomFloat(20.0, 35.0),
+      ph: getRandomFloat(0, 14),
+      temp: getRandomFloat(20, 80),
       timestamp: Timestamp.fromDate(new Date(baseTime.getTime() + i * intervalMs))
     };
 
@@ -47,12 +47,12 @@ async function generateMockData() {
   console.log('✅ Done creating mock data');
 }
 
-function getRandomFloat(min, max) {
-  return +(Math.random() * (max - min) + min).toFixed(2);
-}
-
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomFloat(min, max) {
+  return +(Math.random() * (max - min) + min).toFixed(2);
 }
 
 generateMockData();
