@@ -8,25 +8,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-      authDomain: "seniorproject-684c1.firebaseapp.com",
-      projectId: "seniorproject-684c1",
-      storageBucket: "seniorproject-684c1.appspot.com",
-      messagingSenderId: "847138584376",
-      appId: "1:847138584376:web:eface0926c96092daef3cd"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.db = getFirestore(app);
-  </script>
-
   <style>
+    /* (คัดลอก style จากเดิมได้เลย) */
     body {
       font-family: 'Pixelify Sans', sans-serif;
       background: url('images/info.gif') no-repeat center center fixed;
@@ -121,127 +104,214 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      new Vue({
-        el: '#app',
-        data: {
-          allData: [],
-          currentPage: 1,
-          limit: 5,
-          totalPages: 0,
-          maxVisiblePages: 10,
-          chartInstances: []
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs, orderBy, addDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    new Vue({
+      el: '#app',
+      data: {
+        allData: [],         // data จาก averageDataHistory ที่ดึงมาแสดง
+        currentPage: 1,
+        limit: 5,
+        totalPages: 0,
+        maxVisiblePages: 10,
+        chartInstances: [],
+        currentUserId: null,
+      },
+      computed: {
+        currentData() {
+          const start = (this.currentPage - 1) * this.limit;
+          return this.allData.slice(start, start + this.limit);
         },
-        computed: {
-          currentData() {
-            const start = (this.currentPage - 1) * this.limit;
-            return this.allData.slice(start, start + this.limit);
-          },
-          visiblePages() {
-            const pages = [];
-            let start = Math.max(1, this.currentPage - 2);
-            let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
-            for (let i = start; i <= end; i++) pages.push(i);
-            return pages;
-          }
+        visiblePages() {
+          const pages = [];
+          let start = Math.max(1, this.currentPage - 2);
+          let end = Math.min(this.totalPages, start + this.maxVisiblePages - 1);
+          for (let i = start; i <= end; i++) pages.push(i);
+          return pages;
+        }
+      },
+      methods: {
+        goBack() {
+          window.location.href = 'DashboardPage.html';
         },
-        methods: {
-          goBack() {
-            window.location.href = 'DashboardPage.html';
-          },
-          async fetchData() {
-            const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js');
-            const q = query(collection(window.db, "tube"), orderBy("timestamp"));
-            const snapshot = await getDocs(q);
 
-            this.allData = snapshot.docs.map((doc, i) => {
-              const d = doc.data();
-              return {
-                label: `Record ${i + 1}`,
-                data: [d.ec, d.humidity, d.temp, d.ph]
-              };
-            });
-            this.totalPages = Math.ceil(this.allData.length / this.limit);
-          },
-          changePage(p) {
-            if (p < 1 || p > this.totalPages) return;
-            this.currentPage = p;
-          },
-          renderCharts() {
-            this.chartInstances.forEach(c => c.destroy());
-            this.chartInstances = [];
+        // ฟังก์ชันคำนวณค่าเฉลี่ยจาก array ของ readings
+        calculateAverage(readings) {
+          if (readings.length === 0) return null;
+          let sumEc = 0, sumHumidity = 0, sumTemp = 0, sumPh = 0;
 
-            this.$nextTick(() => {
-              this.currentData.forEach((item, index) => {
-                const canvasRef = this.$refs['chart-' + index];
-                const ctx = (Array.isArray(canvasRef) ? canvasRef[0] : canvasRef).getContext('2d');
+          readings.forEach(item => {
+            sumEc += item.ec || 0;
+            sumHumidity += item.humidity || 0;
+            sumTemp += item.temp || 0;
+            sumPh += item.ph || 0;
+          });
 
-                const chart = new Chart(ctx, {
-                  type: 'bar', // เปลี่ยนเป็นกราฟแท่ง
-                  data: {
-                    labels: ['EC', 'Humidity', 'Temperature', 'pH'],
-                    datasets: [{
-                      label: item.label,
-                      data: item.data,
-                      backgroundColor: ['#990000', '#0066CC', '#FFCC00', '#CC0099'],
-                      borderColor: '#000000',
-                      borderWidth: 3,
-                      barThickness: 60,
-                      hoverBackgroundColor: '#ffffff'
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    plugins: {
-                      legend: {
-                        labels: {
-                          font: {
-                            family: 'Pixelify Sans',
-                            size: 18
-                          }
-                        }
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                          stepSize: 10,
-                          font: {
-                            family: 'Pixelify Sans'
-                          }
-                        }
-                      },
-                      x: {
-                        ticks: {
-                          font: {
-                            family: 'Pixelify Sans'
-                          }
-                        },
-                        grid: {
-                          display: false
+          return {
+            ec: sumEc / readings.length,
+            humidity: sumHumidity / readings.length,
+            temp: sumTemp / readings.length,
+            ph: sumPh / readings.length,
+          };
+        },
+
+        // ดึงข้อมูล tubeData ของ user ปัจจุบัน ในช่วง 1 ชั่วโมงล่าสุด
+        async fetchAndSaveAverage() {
+          if (!this.currentUserId) return;
+
+          const now = new Date();
+          const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+
+          // Query readings ใน tubeData/{userId}/readings ที่ timestamp >= oneHourAgo
+          const readingsRef = collection(db, 'tubeData', this.currentUserId, 'readings');
+          const q = query(readingsRef, where('timestamp', '>=', Timestamp.fromDate(oneHourAgo)), orderBy('timestamp', 'asc'));
+          const querySnapshot = await getDocs(q);
+
+          const readings = querySnapshot.docs.map(doc => doc.data());
+
+          // คำนวณค่าเฉลี่ย
+          const average = this.calculateAverage(readings);
+          if (!average) return;
+
+          // บันทึกค่าเฉลี่ยลง averageDataHistory/{userId}/userHistory
+          const avgHistoryRef = collection(db, 'averageDataHistory', this.currentUserId, 'userHistory');
+          await addDoc(avgHistoryRef, {
+            ec: average.ec,
+            humidity: average.humidity,
+            temp: average.temp,
+            ph: average.ph,
+            timestamp: Timestamp.fromDate(now)
+          });
+        },
+
+        // ดึงข้อมูลจาก averageDataHistory มาแสดง
+        async fetchAverageHistory() {
+          if (!this.currentUserId) return;
+
+          const avgHistoryRef = collection(db, 'averageDataHistory', this.currentUserId, 'userHistory');
+          const q = query(avgHistoryRef, orderBy('timestamp', 'desc'));
+          const querySnapshot = await getDocs(q);
+
+          this.allData = querySnapshot.docs.map((doc, index) => {
+            const d = doc.data();
+            return {
+              id: doc.id,
+              label: new Date(d.timestamp.toDate()).toLocaleString(),
+              data: [d.ec, d.humidity, d.temp, d.ph]
+            };
+          });
+          this.totalPages = Math.ceil(this.allData.length / this.limit);
+        },
+
+        changePage(p) {
+          if (p < 1 || p > this.totalPages) return;
+          this.currentPage = p;
+        },
+
+        renderCharts() {
+          this.chartInstances.forEach(c => c.destroy());
+          this.chartInstances = [];
+
+          this.$nextTick(() => {
+            this.currentData.forEach((item, index) => {
+              const canvasRef = this.$refs['chart-' + index];
+              const ctx = (Array.isArray(canvasRef) ? canvasRef[0] : canvasRef).getContext('2d');
+
+              const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: ['EC', 'Humidity', 'Temperature', 'pH'],
+                  datasets: [{
+                    label: item.label,
+                    data: item.data,
+                    backgroundColor: ['#990000', '#0066CC', '#FFCC00', '#CC0099'],
+                    borderColor: '#000000',
+                    borderWidth: 3,
+                    barThickness: 60,
+                    hoverBackgroundColor: '#ffffff'
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      labels: {
+                        font: {
+                          family: 'Pixelify Sans',
+                          size: 18
                         }
                       }
                     }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      max: 100,
+                      ticks: {
+                        stepSize: 10,
+                        font: {
+                          family: 'Pixelify Sans'
+                        }
+                      }
+                    },
+                    x: {
+                      ticks: {
+                        font: {
+                          family: 'Pixelify Sans'
+                        }
+                      },
+                      grid: {
+                        display: false
+                      }
+                    }
                   }
-                });
-
-                this.chartInstances.push(chart);
+                }
               });
+
+              this.chartInstances.push(chart);
             });
-          }
-        },
-        watch: {
-          currentPage() {
-            this.renderCharts();
-          }
-        },
-        mounted() {
-          this.fetchData().then(() => this.renderCharts());
+          });
         }
-      });
+      },
+      watch: {
+        currentPage() {
+          this.renderCharts();
+        },
+        allData() {
+          this.totalPages = Math.ceil(this.allData.length / this.limit);
+          this.renderCharts();
+        }
+      },
+      mounted() {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.currentUserId = user.uid;
+            // ดึงข้อมูลและบันทึกค่าเฉลี่ยใหม่ก่อน
+            await this.fetchAndSaveAverage();
+            // แล้วดึงข้อมูลค่าเฉลี่ยมาแสดง
+            await this.fetchAverageHistory();
+          } else {
+            alert("Please Login");
+            window.location.href = "Login.html";
+          }
+        });
+      }
     });
   </script>
 </body>
