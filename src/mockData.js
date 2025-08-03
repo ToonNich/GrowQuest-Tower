@@ -15,7 +15,17 @@ const readingsRef = db.collection('tubeData')
   .collection('readings');
 
 async function generateMockData() {
-  const baseTime = new Date(); // เริ่มที่เวลาปัจจุบัน
+  // กำหนดเวลาปัจจุบัน
+  const now = new Date();
+
+  // สร้าง baseTime เป็นวันที่วันนี้ เวลา 18:30:00
+  const baseTime = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    18, 30, 0, 0
+  );
+
   const intervalMs = 60 * 60 * 1000 / 120; // 30 วินาทีต่อชุด = 120 ชุด/ชม
 
   for (let i = 0; i < 120; i++) {
