@@ -206,14 +206,14 @@ onAuthStateChanged(auth, async (user) => {
     currentUserId = user.uid;
     await fetchNotifications();
   } else {
-    alert("กรุณาเข้าสู่ระบบก่อนเข้าถึงหน้าการแจ้งเตือน");
+    alert("Please login before use notification");
     window.location.href = "Login.html";
   }
 });
 
 async function fetchNotifications() {
   const list = document.getElementById('notificationList');
-  list.innerHTML = '<p style="text-align:center; color:#333;">กำลังโหลด...</p>';
+  list.innerHTML = '<p style="text-align:center; color:#333;">Loading...</p>';
 
   try {
     const q = query(collection(db, "notifications", currentUserId, "userNotifications"), orderBy("timestamp", "desc"));
@@ -223,7 +223,7 @@ async function fetchNotifications() {
     renderNotifications();
     renderPagination();
   } catch (error) {
-    list.innerHTML = '<p style="text-align:center; color:red;">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+    list.innerHTML = '<p style="text-align:center; color:red;">Error fetching notifications</p>';
     console.error("Error fetching notifications:", error);
   }
 }
@@ -235,7 +235,7 @@ function renderNotifications() {
   const pageItems = notifications.slice(start, start + perPage);
 
   if (pageItems.length === 0) {
-    list.innerHTML = '<p style="text-align:center; color:#333;">ไม่มีการแจ้งเตือนในตอนนี้</p>';
+    list.innerHTML = '<p style="text-align:center; color:#333;">There are no notifications at this time.</p>';
     return;
   }
 
@@ -294,7 +294,7 @@ function renderNotifications() {
 
     binBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const confirmed = confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการแจ้งเตือนนี้?");
+      const confirmed = confirm("Are you sure you want to delete this notification?");
       if (!confirmed) return;
 
       try {
