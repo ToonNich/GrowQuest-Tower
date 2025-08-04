@@ -105,6 +105,7 @@
         <img src="images/board.PNG" class="board-image" style="top: 70%; left: 50%;">
          <div class="input-wrapper" style="top: 76%; left: 50%;">
             <input type="password" id="loginPassword" class="input-overlay" placeholder="Enter your password...">
+          <img src="images/hide.png" id="togglePassword" style="position: absolute; right: 50px; top: 45%; transform: translateY(-50%);width: 24px; height: 24px; cursor: pointer; z-index:2;">
          </div>
     </div>
     <div>
@@ -182,6 +183,17 @@
             });
 
         });
+
+    const passwordField = document.getElementById('loginPassword');
+    const toggleIcon = document.getElementById('togglePassword');
+
+    toggleIcon.addEventListener('click', () => {
+        const isPasswordHidden = passwordField.type === "password";
+        passwordField.type = isPasswordHidden ? "text" : "password";
+        toggleIcon.src = isPasswordHidden ? "images/visible.png" : "images/hide.png";
+    });
+
+    
 
 </script>
 </body>

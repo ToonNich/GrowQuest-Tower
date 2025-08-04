@@ -495,10 +495,10 @@
 
         updateTube('humidityBar', values.hum, 100);
         updateTube('temperatureBar', values.temp, 50);
-        updateTube('chemicalBar', values.chemical, 100);
+        updateTube('chemicalBar', values.chem_tank, 100);
         updateTube('ecBar', values.ec, 5);
         updateTube('phBar', values.ph, 14);
-        updateTube('lightBar', values.light, 100000);
+        updateTube('lightBar', values.light, 50000);
 
         const dismissed = values.dismissed || {};
         showWarningIcon('warningHumidity', !dismissed.humidity && (values.hum > 90 || values.hum < 20));
@@ -507,12 +507,17 @@
         showWarningIcon('warningEC', !dismissed.ec && (values.ec > 3 || values.ec < 0.2));
         showWarningIcon('warningChemical', !dismissed.chemical && (values.chemical < 10));
 
-        document.getElementById("humidityValue").innerText = values.hum.toFixed(1) + "%";
-        document.getElementById("temperatureValue").innerText = values.temp.toFixed(1) + "°C";
-        document.getElementById("chemicalValue").innerText = values.chemical.toFixed(0) + "%";
-        document.getElementById("ecValue").innerText = values.ec.toFixed(2);
-        document.getElementById("phValue").innerText = values.ph.toFixed(2);
-        document.getElementById("lightValue").innerText = values.light.toFixed(0) + " lux";
+        document.getElementById("humidityValue").innerText = (typeof values.hum === 'number' ? values.hum.toFixed(1) + "%" : "--");
+
+        document.getElementById("temperatureValue").innerText =(typeof values.temp === 'number' ? values.temp.toFixed(1) + "°C" : "--");
+
+        document.getElementById("chemicalValue").innerText =(typeof values.chem_tank === 'number' ? values.chem_tank.toFixed(0) + "%" : "--");
+
+        document.getElementById("ecValue").innerText =(typeof values.ec === 'number' ? values.ec.toFixed(2) : "--");
+
+        document.getElementById("phValue").innerText =(typeof values.ph === 'number' ? values.ph.toFixed(2) : "--");
+
+        document.getElementById("lightValue").innerText =(typeof values.light === 'number' ? values.light.toFixed(0) + " lux" : "--");
 
         console.log("📡 Real-time update:", values);
       });
