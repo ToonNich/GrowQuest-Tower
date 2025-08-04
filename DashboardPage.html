@@ -469,6 +469,8 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    let latestDocRef = null;
+
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         console.log("🔒 User not signed in.");
@@ -481,7 +483,7 @@
         limit(1)
       );
 
-      let latestDocRef = null;
+    
 
       onSnapshot(latestQuery, (snapshot) => {
         if (snapshot.empty) return;
