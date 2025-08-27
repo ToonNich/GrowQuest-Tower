@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Main Tank Level</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* cozy farm palette */
+      --pane: #f2c27b;
+      --pane-dark: #d69c53;
+      --frame-1: #5a3713;  /* darkest outline */
+      --frame-2: #b07535;  /* mid outline */
+      --ink: #213a57;      /* title/text */
+      --water-1:#27e0f2;   /* water top */
+      --water-2:#15b5d1;   /* water bottom */
+      --low:#c62828;
+      --ok:#1e8b3a;
+      --full:#3b7dd8;
+    }
+
+    * { box-sizing:border-box; }
+    html,body { height:100%; }
+    body{
+      margin:0;
+      font-family:'Pixelify Sans', system-ui, sans-serif;
+      color:var(--ink);
+      /* keep your background */
+      background:url('images/info.gif') center/cover fixed no-repeat;
+      position:relative;
+    }
+    body::before{
+      /* warm overlay for coziness */
+      content:""; position:fixed; inset:0;
+      background:rgba(255,245,225,.45);
+      pointer-events:none;
+    }
+
+    /* back arrow (reusing your asset) */
+    .back-button{
+      width:64px; height:48px;
+      background:url('images/backButton1.png') center/cover no-repeat;
+      border:0; cursor:pointer;
+      position:fixed; top:14px; left:18px; z-index:5;
+    }
+    .back-button:hover{ background-image:url('images/backButton2.png'); }
+
+    /* 8-bit panel */
+    .wrap{
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:3.5vh 3vw;
+    }
+    .pixel-card{
+      position:relative;
+      width:min(1100px, 92vw);
+      height:min(86vh, 900px);
+      background:var(--pane);
+      border-radius:6px;                 /* slight rounding looks nice even in 8-bit ui */
+      /* chunky “pixel” frame using stacked shadows */
+      box-shadow:
+        0 0 0 10px var(--frame-1),
+        0 0 0 18px var(--frame-2),
+        0 0 0 26px var(--frame-1),
+        0 18px 0 26px rgba(0,0,0,.18);
+    }
+
+    .title{
+      position:absolute;
+      left:50%; top:24px;
+      transform:translateX(-50%);
+      font-size:clamp(28px, 3.5vw, 56px);
+      letter-spacing:2px;
+      text-shadow:0 2px 0 #fff;
+    }
+
+    /* layout inside panel */
+    .content{
+      position:absolute; inset:110px clamp(22px, 3vw, 42px) clamp(70px, 6vh, 100px);
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap: clamp(20px, 4vw, 60px);
+      align-items:center;
+    }
+    @media (max-width: 900px){
+      .content{ grid-template-columns:1fr; gap:24px; }
+    }
+
+    /* TANK (pixel style) */
+    .tank{
+      margin:0 auto;
+      width:min(240px, 40vw);
+      height:min(520px, 60vh);
+      position:relative;
+      image-rendering: pixelated;
+      /* thick pixel border */
+      background:
+        linear-gradient(#fff,#fff) padding-box,
+        linear-gradient(#fff,#fff) border-box;
+      border:14px solid #fff;
+      border-radius:8px;
+      box-shadow:
+        0 0 0 6px #ffffff inset,            /* inner lip */
+        0 0 0 10px rgba(0,0,0,.06) inset;    /* soft inner shade */
+      overflow:hidden;
+    }
+    .marks{
+      position:absolute; inset:12px 10px 12px;
+      pointer-events:none;
+    }
+    .marks::before,
+    .marks::after{
+      content:"";
+      position:absolute; left:8px; right:8px;
+      height:2px; background:#ffffffcc;
+      box-shadow:
+        0 -25% 0 0 #ffffffcc,
+        0 -50% 0 0 #ffffffcc,
+        0 -75% 0 0 #ffffffcc;  /* gives 25/50/75/100 marks */
+      bottom:0;
+    }
+
+    .water{
+        left: 12px;   /* was 0 */
+        right: 12px;  /* was 0 */
+        position:absolute; left:0; right:0; bottom:0;
+        height:0%;
+        background:linear-gradient(var(--water-1), var(--water-2));
+        transition:height .6s cubic-bezier(.2,.9,.2,1);
+    }
+    
+    /* Keep the white tick marks aligned with the inner liquid */
+    .marks{
+    inset: 12px 12px 12px;  /* was 12px 10px 12px */
+    }
+    /* bubbly wave */
+    .water::before,
+    .water::after{
+      content:"";
+      position:absolute; left:-50%; right:-50%; top:-14px; height:22px;
+      background:
+        radial-gradient(14px 10px at 14px 10px, rgba(255,255,255,.85) 60%, transparent 61%) repeat-x 0 0/48px 20px;
+      mix-blend-mode:screen;
+      opacity:.55; animation:wave 4.8s linear infinite;
+    }
+    .water::after{
+      top:-8px; opacity:.38; animation:wave 6.5s linear infinite reverse;
+    }
+    @keyframes wave{ to{ transform:translateX(50%);} }
+
+    /* status badge + number */
+    .side{
+      display:grid; gap:18px; align-content:center; justify-items:center;
+    }
+    .badge{
+      font-size:clamp(18px, 2.2vw, 28px);
+      padding:8px 16px;
+      background:#fff8e6;
+      border:6px solid var(--frame-2);
+      box-shadow:0 0 0 6px var(--frame-1);
+      border-radius:6px;
+      text-align:center;
+      min-width: 220px;
+    }
+    .percent{
+      font-size:clamp(36px, 6vw, 88px);
+      line-height:1;
+      text-shadow: 0 3px 0 #fff;
+    }
+    .low   { color:var(--low); }
+    .ok    { color:var(--ok); }
+    .full  { color:var(--full); }
+
+    .timestamp{
+      position:absolute; left:50%; bottom:26px; transform:translateX(-50%);
+      font-size:clamp(12px, 1.4vw, 18px);
+      opacity:.9;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="location.href='DashboardPage.html'"></button>
+
+  <div class="wrap">
+    <section class="pixel-card">
+      <h1 class="title">MAIN TANK LEVEL</h1>
+
+      <div class="content">
+        <!-- Gauge -->
+        <div class="tank">
+          <div class="marks"></div>
+          <div id="water" class="water"></div>
+        </div>
+
+        <!-- Side info -->
+        <div class="side">
+          <div id="status" class="badge">Status: …</div>
+          <div id="percent" class="percent">--%</div>
+        </div>
+      </div>
+
+      <div id="lastUpdated" class="timestamp"></div>
+    </section>
+  </div>
+
+  <!-- Firebase + logic -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const el = id => document.getElementById(id);
+    const clamp = v => Math.max(0, Math.min(100, Number(v)||0));
+
+    function computeFromFlags(o){
+      const m100 = o?.main100 === true || o?.main100 === 1;
+      const m50  = o?.main50  === true || o?.main50  === 1;
+      const m10  = o?.main10  === true || o?.main10  === 1;
+      if (m100) return 100; if (m50) return 50; if (m10) return 10; return null;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) return;
+
+      const latest = query(
+        collection(db, "tubeData", user.uid, "readings"),
+        orderBy("timestamp","desc"), limit(1)
+      );
+
+      onSnapshot(latest, snap => {
+        if (snap.empty) return;
+        const v = snap.docs[0].data();
+
+        let level = v.main_tank ?? v.mainLevel ?? v.mainTank ?? computeFromFlags(v) ?? 0;
+        level = clamp(level);
+
+        // animate water height
+        el('water').style.height = level + '%';
+
+        // status + color
+        const percent = el('percent');
+        percent.textContent = Math.round(level) + '%';
+        percent.classList.remove('low','ok','full');
+        let statusText = 'Okay';
+        let statusClass = 'ok';
+        if (level <= 10){ statusText = 'Low'; statusClass = 'low'; }
+        else if (level >= 95){ statusText = 'Full'; statusClass = 'full'; }
+        percent.classList.add(statusClass);
+        el('status').textContent = 'Status: ' + statusText;
+
+        // timestamp
+        const ts = v.timestamp?.toDate ? v.timestamp.toDate() : null;
+        el('lastUpdated').textContent = ts ? `Last updated: ${ts.toLocaleString()}` : '';
+      });
+    });
+  </script>
+</body>
+</html>

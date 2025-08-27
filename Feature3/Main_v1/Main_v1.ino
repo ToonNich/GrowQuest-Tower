@@ -62,20 +62,28 @@ void setup() {
 
 
 void loop() {
-  // ---- Serial Command Listener ----
+  
   if (Serial.available()) {
-    String command = Serial.readStringUntil('\n');
-    command.trim();
+  String command = Serial.readStringUntil('\n');
+  command.trim();
 
-    if (command == "DOSE") {
-      Serial.println("Command received: DOSE");
-      runPump(15000);   // Run for 15 seconds
+  // ✅ Accept "DOSE" or "DOSE <ms>", no Serial prints (so your JSON stream stays clean)
+  if (command.startsWith("DOSE")) {
+    unsigned long ms = 3000;          // default dose
+    int sp = command.indexOf(' ');
+    if (sp > 0) {
+      unsigned long v = command.substring(sp + 1).toInt();
+      if (v > 0) ms = v;
     }
-    else {
-      Serial.print("Unknown command: ");
-      Serial.println(command);
-    }
+    // safety clamp
+    if (ms < 200)   ms = 200;
+    if (ms > 20000) ms = 20000;
+
+    runPump(ms);                       // reuse your existing pump function
   }
+  // else: silently ignore unknown commands
+}
+
 
   // ---- Read all sensors ----
   sensors.requestTemperatures();

@@ -289,6 +289,27 @@
   z-index: 10;
 }
 
+/* Tank button (left of History) */
+.tank-button {
+  min-width: 120px;
+  height: 40px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.8);
+  border: 4px solid #7a4b1c;
+  border-radius: 6px;
+  cursor: pointer;
+  position: absolute;
+  top: 93%;
+  right: 21%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 20px;
+  color: #1b3a5b;
+}
+.tank-button:hover { filter: brightness(0.9); }
+
+
 
 #humidityValue { top: 41.5%; left: 17.7%; }
 #temperatureValue { top: 41.5%; left: 46.5%; }
@@ -350,7 +371,7 @@
       <div class="value-label" id="chemicalValue">--</div>
 
       <div class="switch-chem-container">
-        <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 30.5%; right: 15%; position: absolute;" />
+        <!-- <img id="switchImageChem" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 30.5%; right: 15%; position: absolute;" /> -->
         <button class="auto-button"
           style="top: 31%; right: 15.2%; position: absolute;"
           onmouseover="changeImage('switchImageChem', 'images/AutoButton.PNG')"
@@ -405,7 +426,7 @@
         </div>
         <div class="value-label" id="lightValue">--</div>
         <div class="switch-mode-container">
-          <img id="switchImageLight" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 71.5%; right: 15%;" />
+          <!-- <img id="switchImageLight" src="images/SwitchAutoManual.PNG" alt="button-switch" class="SwitchAutoManual" style="top: 71.5%; right: 15%;" /> -->
           <button class="auto-button"
             style="top: 72%; right: 15.2%;"
             onmouseover="changeImage('switchImageLight', 'images/AutoButton.PNG')"
@@ -420,7 +441,7 @@
           ></button>
         </div>
     </div>
-
+    <button class="tank-button" onclick="location.href='MainTankLevelPage.html'">TANK</button>
     <button class="history-button" onclick="location.href='HistoryPage.html'"></button>
     <button class="infomation-label-button" onclick="location.href='InfomationLabelPage.html'"></button>
   </div>

@@ -173,6 +173,25 @@
         setInterval(updateDateTimeAndButton, 1000);
     });
 
+    // 👇 set this to your Pi address/port
+    const RASPI_BASE = "http://192.168.2.2:5001"; // or "http://<PI_IP>:8001"
+
+    async function triggerDose(user) {
+      try {
+        const res = await fetch(`${RASPI_BASE}/dose`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid: user?.uid || "" }) // optional
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        // simple success feedback (keep it light)
+        console.log("✅ Dose command sent");
+      } catch (err) {
+        console.error("❌ Dose command failed:", err);
+        alert("Could not send dose command to the Raspberry Pi.");
+      }
+    }
+
     async function checkNotificationStatus() {
       try {
         const q = query(collection(db, "Main"), where("read", "==", false));
@@ -278,6 +297,9 @@
           if (wateringGif.style.display === 'block') {
             if (plantRect.width > 0 && e.clientX >= plantRect.left && e.clientX <= plantRect.right && e.clientY >= plantRect.top && e.clientY <= plantRect.bottom) {
               
+              // ✅ SEND THE DOSE COMMAND TO THE PI
+              await triggerDose(user);
+
               const achievements = await getAchievements(user);
               if (!achievements.greenThumb.unlocked) {
                   achievements.greenThumb.unlocked = true;
