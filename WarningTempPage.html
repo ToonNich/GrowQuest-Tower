@@ -123,73 +123,76 @@
       <div class="blackboard-tip"></div>
     </div>
   </div>
+
   <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-    import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+  import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-      authDomain: "seniorproject-684c1.firebaseapp.com",
-      projectId: "seniorproject-684c1",
-      storageBucket: "seniorproject-684c1.appspot.com",
-      messagingSenderId: "847138584376",
-      appId: "1:847138584376:web:eface0926c96092daef3cd",
-      measurementId: "G-N0CM5TQBM8"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+    authDomain: "seniorproject-684c1.firebaseapp.com",
+    projectId: "seniorproject-684c1",
+    storageBucket: "seniorproject-684c1.appspot.com",
+    messagingSenderId: "847138584376",
+    appId: "1:847138584376:web:eface0926c96092daef3cd",
+    measurementId: "G-N0CM5TQBM8"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  const auth = getAuth(app);
 
-    const tempQuery = query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
+  // --------- TIP ARRAYS (unchanged) ---------
+  const tipsHigh = [
+    "Warning: Heatwave in your hydroponic tower! Move your system away from direct sunlight or hot windows. Set up a fan to move warm air out and help your roots chill.",
+    "It’s getting toasty around your hydro plants! If you can, set your lights on a timer to avoid peak heat hours, and don’t forget to check the nutrient solution temp too.",
+    "Plants wilting? The heat may be too much. Top up with cool (not cold) water and increase shade around the tower base."
+  ];
+  const tipsLow = [
+    "Brrr! Your tower is feeling frosty. Move it away from cold windows, or use a root-zone heating mat to keep nutrient temps steady.",
+    "Low temp detected! Set your grow light to come on during coldest hours, or insulate your reservoir with a towel.",
+    "Hydroponic roots love warmth—water that’s too cold slows growth. Use room-temperature water for top-ups during cold snaps."
+  ];
+  function pickTip(temp) {
+    if (temp >= 40) return tipsHigh[Math.floor(Math.random()*tipsHigh.length)];
+    if (temp <= 10) return tipsLow[Math.floor(Math.random()*tipsLow.length)];
+    return "Temperature is in the safe zone! Keep an eye out for any changes in your tower.";
+  }
 
-    // --------- TIP ARRAYS ---------
-    const tipsHigh = [
-      "Warning: Heatwave in your hydroponic tower! Move your system away from direct sunlight or hot windows. Set up a fan to move warm air out and help your roots chill.",
-      "It’s getting toasty around your hydro plants! If you can, set your lights on a timer to avoid peak heat hours, and don’t forget to check the nutrient solution temp too.",
-      "Plants wilting? The heat may be too much. Top up with cool (not cold) water and increase shade around the tower base."
-    ];
-    const tipsLow = [
-      "Brrr! Your tower is feeling frosty. Move it away from cold windows, or use a root-zone heating mat to keep nutrient temps steady.",
-      "Low temp detected! Set your grow light to come on during coldest hours, or insulate your reservoir with a towel.",
-      "Hydroponic roots love warmth—water that’s too cold slows growth. Use room-temperature water for top-ups during cold snaps."
-    ];
-    function pickTip(temp) {
-      if (temp >= 40) {
-        return tipsHigh[Math.floor(Math.random() * tipsHigh.length)];
-      } else if (temp <= 10) {
-        return tipsLow[Math.floor(Math.random() * tipsLow.length)];
-      } else {
-        return "Temperature is in the safe zone! Keep an eye out for any changes in your tower.";
-      }
-    }
+  // ---------- helpers ----------
+  function updateTube(id, value, max) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const percent = Math.min(100, Math.max(0, (Number(value)||0) / max * 100));
+    el.style.height = `${percent}%`;
+  }
+  function updateText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
+  }
+
+  // 🔑 Use the signed-in user's uid (like Dashboard); fallback to 'tube' when no user is logged in.
+  onAuthStateChanged(auth, (user) => {
+    const tempQuery = user
+      ? query(collection(db, "tubeData", user.uid, "readings"), orderBy("timestamp","desc"), limit(1))
+      : query(collection(db, "tube"), orderBy("timestamp","desc"), limit(1));
 
     onSnapshot(tempQuery, (snapshot) => {
       if (snapshot.empty) return;
 
       const data = snapshot.docs[0].data();
-      const temp = data.temp;
+      const temp = (typeof data.temp === 'number') ? data.temp : 0;
 
       updateTube('temperatureBar', temp, 50);
       updateText('temperatureValue', `${temp.toFixed(1)}°C`);
       console.log("🌡️ Temperature:", temp);
 
-      // ------- SHOW TIP LOGIC -------
       const tipDiv = document.querySelector('.blackboard-tip');
-      if (tipDiv) {
-        tipDiv.textContent = pickTip(temp);
-      }
+      if (tipDiv) tipDiv.textContent = pickTip(temp);
     });
-
-    function updateTube(id, value, max) {
-      const percent = Math.min(100, (value / max) * 100);
-      const el = document.getElementById(id);
-      if (el) el.style.height = `${percent}%`;
-    }
-
-    function updateText(id, text) {
-      const el = document.getElementById(id);
-      if (el) el.innerText = text;
-    }
+  });
   </script>
+
 </body>
 </html>
