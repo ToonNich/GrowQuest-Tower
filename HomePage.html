@@ -98,6 +98,30 @@
         z-index: 2;
     }
     .hp-image { position: absolute; top: 8%; left: 18%; transform: translateX(-50%); width: 20%; z-index: 1; }
+    
+    /* bottom-left Scan button */
+    .scan-button{
+      position: absolute;
+      bottom: 6%;
+      left: 2%;
+      z-index: 2;
+      width: 180px;            /* readable on all screens */
+      height: 56px;
+      border: 2px solid #FFBF00;
+      border-radius: 14px;
+      background: #ffe082;
+      box-shadow: 0 4px 0 #d1a500, 0 8px 12px rgba(0,0,0,.25);
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 24px;
+      color: #2c1e10;
+      cursor: pointer;
+    }
+    .scan-button:hover{ background:#ffecb3; }
+    .scan-button:disabled{
+      opacity:.55; cursor:not-allowed;
+      box-shadow: 0 4px 0 #bda05a, 0 8px 12px rgba(0,0,0,.15);
+    }
+
   </style>
 </head>
 <body>
@@ -114,6 +138,8 @@
   <button class="checkPlant-button" onclick="location.href='PlantAnalysis.html'"></button>
   <button class="achievements-button" onclick="location.href='AchievementsPage.html'"></button>
   <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
+  <button class="scan-button" id="scanButton" title="Scan tower now">SCAN TOWER</button>
+
   
   <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
   <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
@@ -192,6 +218,44 @@
         console.error("❌ Dose command failed:", err);
         alert("Could not send dose command to the PC dose server.");
       }
+    }
+
+    // 👇 Pi that runs app.py (the stream + /scan_tower)
+    const SCAN_BASE = "http://192.168.2.2:5000/";   // e.g. "http://192.168.1.23:5000"   // if you open the page on the Pi itself, use "http://127.0.0.1:5000"
+
+    const joinURL = (base, path) => base.replace(/\/+$/, '') + '/' + path.replace(/^\/+/, '');
+
+    async function triggerScanTower(){
+      setScanBusy(true);
+      try{
+        const res = await fetch(joinURL(SCAN_BASE, 'scan_tower'), { method:'POST' });
+        const data = await res.json().catch(()=> ({}));
+        if(res.status === 409) alert('A scan is already running. Please wait.');
+        else if(!res.ok)       alert(`Scan failed (${res.status}). ${data.error || data.stderr || ''}`);
+        else {
+          alert('Scan complete!');
+          console.log('scan result:', data);
+        }
+      }catch(err){
+        console.error(err);
+        alert('Could not reach the Pi to start the scan.');
+      }finally{
+        setScanBusy(false);
+      }
+    }
+
+ 
+    // wire up the button once the DOM is ready
+        document.addEventListener('DOMContentLoaded', ()=>{
+          const btn = document.getElementById('scanButton');
+          if(btn) btn.addEventListener('click', triggerScanTower);
+        });
+
+        function setScanBusy(busy) {
+      const btn = document.getElementById('scanButton');
+      if (!btn) return;
+      btn.disabled = busy;
+      btn.textContent = busy ? 'SCANNING…' : 'SCAN TOWER';
     }
 
 
