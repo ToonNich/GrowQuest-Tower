@@ -173,24 +173,27 @@
         setInterval(updateDateTimeAndButton, 1000);
     });
 
-    // 👇 set this to your Pi address/port
-    const RASPI_BASE = "http://192.168.2.2:5001"; // or "http://<PI_IP>:8001"
+    // ✅ Dose server now runs on the PC at :5001
+    // If you open this page ON THE SAME PC, keep localhost.
+    // If you open from another device, use your PC's LAN IP, e.g. "http://192.168.1.50:5001"
+    const DOSE_BASE = "http://127.0.0.1:5001";
 
-    async function triggerDose(user) {
+    async function triggerDose(user, durationMs = 3000) {
       try {
-        const res = await fetch(`${RASPI_BASE}/dose`, {
+        const res = await fetch(`${DOSE_BASE}/dose`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid: user?.uid || "" }) // optional
+          // uploader/dose_server accept duration_ms; uid is optional
+          body: JSON.stringify({ duration_ms: durationMs, uid: user?.uid || "" })
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        // simple success feedback (keep it light)
         console.log("✅ Dose command sent");
       } catch (err) {
         console.error("❌ Dose command failed:", err);
-        alert("Could not send dose command to the Raspberry Pi.");
+        alert("Could not send dose command to the PC dose server.");
       }
     }
+
 
     async function checkNotificationStatus() {
       try {
