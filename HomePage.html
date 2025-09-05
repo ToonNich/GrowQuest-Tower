@@ -122,6 +122,103 @@
       box-shadow: 0 4px 0 #bda05a, 0 8px 12px rgba(0,0,0,.15);
     }
 
+    /* --- tower scan summary panel --- */
+    .scan-summary{
+      position: absolute;
+      left: 50%;
+      bottom: 2%;
+      transform: translateX(-50%);
+      width: min(680px, 84vw);
+      background: #FFF2CB;
+      border: 2px solid #FFBF00;
+      border-radius: 18px;
+      box-shadow: 0 6px 0 #d1a500, 0 10px 22px rgba(0,0,0,.25);
+      padding: 12px 16px 16px;
+      z-index: 3;
+    }
+    .scan-summary h4{
+      margin: 0 0 6px;
+      text-align: center;
+      color: #2c1e10;
+      font-size: 22px;
+    }
+    .scan-summary .meta{
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #3a2d21;
+    }
+    .scan-summary .rows{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* will be overridden by JS */
+      gap: 8px;
+    }
+    .scan-summary .chip{
+      background:#ffe082;
+      border:2px solid #d1a500;
+      border-radius:12px;
+      padding:8px 6px;
+      text-align:center;
+      line-height:1.1;
+    }
+    .scan-summary .chip .idx{ font-size:13px; opacity:.75; }
+    .scan-summary .chip .stage{ font-size:20px; }
+    .scan-summary .chip .pct{ font-size:14px; opacity:.8; }
+
+    .scan-summary .close{
+      position:absolute; top:-10px; right:-10px;
+      width:34px; height:34px; border-radius:50%;
+      border:2px solid #FFBF00; background:#ffecb3;
+      box-shadow: 0 3px 0 #d1a500;
+      cursor:pointer; font-size:20px;
+    }
+    .hidden{ display:none; }
+
+    /* Summary toggle button (bottom-left, above SCAN TOWER) */
+    .summary-button{
+      position:absolute;
+      bottom:16%;
+      left:2%;
+      z-index:2;
+      width:180px;height:48px;
+      border:2px solid #4aa3ff;
+      border-radius:14px;
+      background:#cfe8ff;
+      box-shadow:0 4px 0 #2c75c9, 0 8px 12px rgba(0,0,0,.2);
+      font-family:'Pixelify Sans',sans-serif;
+      font-size:22px;color:#1d2a44;cursor:pointer;
+    }
+    .summary-button:hover{ background:#e7f3ff; }
+
+    /* --- Tower Level badge --- */
+    .level-badge{
+      display:inline-block;
+      margin: 2px auto 8px;
+      padding: 6px 14px;
+      border-radius: 14px;
+      border:2px solid #333;
+      background:#eee;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 18px;
+      color:#1d1d1d;
+    }
+    .level-badge.lv1{ background:#ffe0e0; border-color:#ff7a7a; color:#5a1a1a; }  /* Early */
+    .level-badge.lv2{ background:#fff1bf; border-color:#ffc94a; color:#4a3a12; }  /* Seedling */
+    .level-badge.lv3{ background:#d4f7c5; border-color:#7fd15a; color:#1f3b17; }  /* Growing */
+    .level-badge.lv4{ background:#cfe8ff; border-color:#4aa3ff; color:#1d2a44; }  /* Mature */
+
+        /* center inline content inside the panel */
+    #scanSummary { text-align: center; }
+
+    /* make the badge a shrink-to-fit pill and center it */
+    #scanSummaryLevel {
+      display: inline-block;   /* was block/inline-block earlier */
+      margin: 6px auto 8px;    /* centers with the text-align above */
+      width: auto;             /* shrink to content */
+    }
+
+
+
   </style>
 </head>
 <body>
@@ -139,8 +236,9 @@
   <button class="achievements-button" onclick="location.href='AchievementsPage.html'"></button>
   <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
   <button class="scan-button" id="scanButton" title="Scan tower now">SCAN TOWER</button>
+  <button class="summary-button" id="summaryButton" title="Show last scan summary">SUMMARY</button>
 
-  
+
   <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
   <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
   <p id="towerName">Loading Tower...</p>
@@ -152,6 +250,16 @@
     <div id="datetime-box"></div> 
     <button class="daily-check-in-button" onclick="location.href='DailyCheckIn.html'"></button>
   </div>
+
+  <!-- Tower scan summary panel -->
+  <div id="scanSummary" class="scan-summary hidden" aria-live="polite">
+    <button id="scanSummaryClose" class="close" title="Hide">×</button>
+    <h4>Tower Scan Summary</h4>
+    <div id="scanSummaryLevel" class="level-badge">Tower Level: —</div>
+    <div id="scanSummaryMeta" class="meta">—</div>
+    <div id="scanSummaryRows" class="rows"></div>
+  </div>
+
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
@@ -172,6 +280,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+
+    
+
 
     document.addEventListener("DOMContentLoaded", () => {
                 onAuthStateChanged(auth, async (user) => {
@@ -199,6 +310,20 @@
         setInterval(updateDateTimeAndButton, 1000);
     });
 
+      // Map avg_green_pct → tower level
+    // Tune thresholds if you like, these align with your stage cutoffs:
+    //   L1:   <5%   (Early)
+    //   L2: 5–12%   (Seedling)
+    //   L3: 12–20%  (Growing)
+    //   L4: ≥20%    (Mature)
+    function calcTowerLevel(avgGreenPct){
+      let level = 1, label = 'Early';
+      if (avgGreenPct >= 20) { level = 4; label = 'Mature'; }
+      else if (avgGreenPct >= 12) { level = 3; label = 'Growing'; }
+      else if (avgGreenPct >= 5)  { level = 2; label = 'Seedling'; }
+      return { level, label };
+    }
+
     // ✅ Dose server now runs on the PC at :5001
     // If you open this page ON THE SAME PC, keep localhost.
     // If you open from another device, use your PC's LAN IP, e.g. "http://192.168.1.50:5001"
@@ -220,31 +345,116 @@
       }
     }
 
+    // Build/paint the summary panel.
+    // visible=true -> show panel and remember "visible" in localStorage.
+    // visible=false -> hide but still cache the latest summary.
+    function renderScanSummary(summary, visible=true){
+      const panel = document.getElementById('scanSummary');
+      const meta  = document.getElementById('scanSummaryMeta');
+      const rows  = document.getElementById('scanSummaryRows');
+      const levelEl = document.getElementById('scanSummaryLevel');
+      if (!panel || !summary) return;
+
+      // 🔢 compute tower level from avg green
+      const avg = Number(summary.avg_green_pct || 0);
+      const lvl = calcTowerLevel(avg);
+      if (levelEl){
+        levelEl.textContent = `Tower Level: L${lvl.level} • ${lvl.label}`;
+        levelEl.className = `level-badge lv${lvl.level}`;
+      }
+
+      meta.textContent = `Avg green: ${avg}% • Sections: ${summary.count}`;
+      rows.innerHTML = '';
+
+      const cols = Math.max(2, Math.min(6, Number(summary.count) || 4));
+      rows.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+      (summary.sections || []).forEach((s, i) => {
+        const d = document.createElement('div');
+        d.className = 'chip';
+        d.innerHTML = `
+          <div class="idx">#${i+1}</div>
+          <div class="stage">${s.stage || '-'}</div>
+          <div class="pct">${s.green_pct ?? 0}%</div>`;
+        rows.appendChild(d);
+      });
+
+      // cache latest + visibility
+      try {
+        // also store computed level so SUMMARY button restores it instantly
+        localStorage.setItem('lastScanSummary', JSON.stringify({ ...summary, tower_level: lvl.level, tower_label: lvl.label }));
+      } catch(e){}
+
+      if (visible){
+        panel.classList.remove('hidden');
+        localStorage.setItem('summaryVisible', 'true');
+      } else {
+        panel.classList.add('hidden');
+        localStorage.setItem('summaryVisible', 'false');
+      }
+    }
+
+
+    // Close (X) should hide *and* remember hidden state
+    document.addEventListener('DOMContentLoaded', () => {
+      const panel = document.getElementById('scanSummary');
+      const closeBtn = document.getElementById('scanSummaryClose');
+      if (closeBtn && panel){
+        closeBtn.addEventListener('click', () => {
+          panel.classList.add('hidden');
+          localStorage.setItem('summaryVisible','false');
+        });
+      }
+
+      // SUMMARY button: reopen last cached summary on demand
+      const summaryBtn = document.getElementById('summaryButton');
+      if (summaryBtn){
+        summaryBtn.addEventListener('click', () => {
+          const cached = localStorage.getItem('lastScanSummary');
+          if (!cached){
+            alert('No scan summary yet. Run SCAN TOWER first.');
+            return;
+          }
+          renderScanSummary(JSON.parse(cached), true);
+        });
+      }
+
+      // On page load, restore only if user left it visible last time
+      try{
+        const cached = localStorage.getItem('lastScanSummary');
+        const vis = localStorage.getItem('summaryVisible') === 'true';
+        if (cached && vis) renderScanSummary(JSON.parse(cached), true);
+      }catch(e){}
+    });
+
+
     // 👇 Pi that runs app.py (the stream + /scan_tower)
     const SCAN_BASE = "http://192.168.2.2:5000/";   // e.g. "http://192.168.1.23:5000"   // if you open the page on the Pi itself, use "http://127.0.0.1:5000"
 
     const joinURL = (base, path) => base.replace(/\/+$/, '') + '/' + path.replace(/^\/+/, '');
 
     async function triggerScanTower(){
-      setScanBusy(true);
-      try{
-        const res = await fetch(joinURL(SCAN_BASE, 'scan_tower'), { method:'POST' });
-        const data = await res.json().catch(()=> ({}));
-        if(res.status === 409) alert('A scan is already running. Please wait.');
-        else if(!res.ok)       alert(`Scan failed (${res.status}). ${data.error || data.stderr || ''}`);
-        else {
-          alert('Scan complete!');
-          console.log('scan result:', data);
-        }
-      }catch(err){
-        console.error(err);
-        alert('Could not reach the Pi to start the scan.');
-      }finally{
-        setScanBusy(false);
+    setScanBusy(true);
+    try{
+      const res = await fetch(joinURL(SCAN_BASE, 'scan_tower'), { method:'POST' });
+      const data = await res.json().catch(()=> ({}));
+      if(res.status === 409){
+        alert('A scan is already running. Please wait.');
+      }else if(!res.ok){
+        alert(`Scan failed (${res.status}). ${data.error || data.stderr || ''}`);
+      }else{
+        // ✅ show the UI summary
+        if (data && data.summary) renderScanSummary(data.summary, true);
+        console.log('scan result:', data);
       }
+    }catch(err){
+      console.error(err);
+      alert('Could not reach the Pi to start the scan.');
+    }finally{
+      setScanBusy(false);
     }
+  }
 
- 
     // wire up the button once the DOM is ready
         document.addEventListener('DOMContentLoaded', ()=>{
           const btn = document.getElementById('scanButton');
