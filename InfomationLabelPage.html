@@ -24,14 +24,12 @@
       z-index: 0;
     }
 
-    /* Container สำหรับปุ่ม */
     .button-container {
       position: relative;
-      height: 100vh; /* ให้ container สูงเท่าหน้าจอ */
+      height: 100vh;
       z-index: 2;
     }
 
-    /* ปุ่ม back */
     .back-button {
       width: 60px;
       height: 44px;
@@ -42,7 +40,7 @@
       position: absolute;
       top: 4%;
       left: 2%;
-      z-index: 3; /* ให้อยู่หน้าสุด */
+      z-index: 3;
     }
 
     .back-button:hover {
@@ -67,14 +65,162 @@
       margin-bottom: 20px;
       z-index: 2;
     }
+
+    /* Chrome, Safari, Edge (WebKit) */
+    .info-box::-webkit-scrollbar {
+      display: none;
+    }
+
   </style>
 </head>
 <body>
-  <div class="button-container">
-    <button class="back-button" onclick="location.href='DashboardPage.html'"></button>
-  </div>
 
-  <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image">
-  <p class="head-text" style="top: 15%; left: 25%;">Infomationnnnnnnnnnnnnnnnnnnnnnnnnnnn</p>
+  <div class="button-container">
+      <button class="back-button" onclick="location.href='HomePage.html'"></button>
+    </div>
+
+    <img src="images/Scroll Long.PNG" alt="Middle Layer" class="middle-image">
+    <p class="head-text" style="top: 15%; left: 25%;">How to use GrowQuest Tower!</p>
+
+    <div class="info-box" style="
+      position: absolute;top: 24%;left: 25%;width: 45%;background-color: rgba(255, 255, 255, 0.2);backdrop-filter: blur(6px);border: 4px solid #333;border-radius: 16px;
+      padding: 30px;font-size: 18px;font-family: 'Pixelify Sans', monospace;color: #222;line-height: 1.8;box-shadow: 6px 6px 0px #000;z-index: 3;text-align: left;
+      max-height: 100%;overflow-y: auto;scrollbar-width: none;-ms-overflow-style: none;
+    ">
+
+    GrowQuest Tower is a pixel-style hydroponic tower simulation game where you raise, monitor, and care for a living digital plant. Below is a full guide on how to play, grow, and interact with your tower plant effectively.
+    <br><br>
+
+    <strong>🧑‍🌾 1. Begin Your Journey</strong><br>
+    After logging in, you’ll land on the <em>Home Page</em>. Before interacting, go to the <strong>Character Page</strong> to pick your plant and give your tower a name. Each plant has a unique sprite and behavior!
+    <br><br>
+
+    <strong>🌤 2. Daily Plant Care</strong><br>
+    Caring for your plant is the heart of GrowQuest. Visit your Home page daily and:
+    <ul style="margin-left: 20px;">
+      <li>💡 Turn on/off the Grow Light to support photosynthesis</li>
+      <li>💧 Water the plant to keep it hydrated</li>
+      <li>🖐 Click/tap the plant to interact with it — this builds connection!</li>
+    </ul>
+    These simple actions affect how your plant feels and unlock achievements!
+    <br><br>
+
+    <strong>📆 3. Daily Check-in System</strong><br>
+    Use the <strong>Daily Check-In</strong> page to complete care-based missions like watering or using the light. Completing these missions unlocks rewards, progress stamps, and keeps your streak alive.
+    <br><br>
+
+    <strong>📷 4. Analyze and Monitor Your Plant</strong><br>
+    Want to go deeper? These tools will help you:
+    <ul style="margin-left: 20px;">
+      <li><strong>Dashboard</strong> – Real-time display of EC, pH, temp, humidity, and light</li>
+      <li><strong>Camera Page</strong> – See live feed from your hydroponic tower camera</li>
+      <li><strong>Plant Analysis</strong> – Upload plant images to detect diseases or nutrient issues (⚠️ This is a helper only — not 100% accurate)</li>
+      <li><strong>History Page</strong> – Scroll through weekly environmental data</li>
+    </ul>
+    <br>
+
+    <strong>🏆 5. Earn Achievements</strong><br>
+    Your actions (watering, lighting, visiting pages) are tracked to unlock fun achievement badges. For example:
+    <ul style="margin-left: 20px;">
+      <li>“First Light” – When you toggle the light for the first time</li>
+      <li>“Green Thumb” – Your first watering</li>
+      <li>“Curious Gardner” – Visiting this Info Page</li>
+    </ul>
+    Achievements make growing more fun and track your progress.
+    <br><br>
+
+    <strong>🔔 6. Read Notifications</strong><br>
+    Important reminders, tips, or challenges appear in the <strong>Notification Page</strong>. Tap them to view full content — it might include environmental warnings or care suggestions!
+    <br><br>
+
+    <strong>🧪 7. Be Consistent</strong><br>
+    Hydroponic plants grow based on care over time. If you neglect them, they’ll look sad (animations will reflect this). The more love you show, the more your plant will flourish!
+    <br><br>
+
+    <strong>📎 Quick Tips</strong><br>
+    <ul style="margin-left: 20px;">
+      <li>Try changing the light color on the Dashboard (LED presets)</li>
+      <li>If EC or pH is off, check the tips written on the warning blackboards</li>
+      <li>Come back every day to keep your tower thriving</li>
+    </ul>
+    <br>
+
+    🌟 That’s it! You're ready to grow. Go water your first plant and start your hydroponic adventure now!
+
+    </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // --- HELPER FUNCTIONS ---
+
+    async function getAchievements(user) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data();
+        } else {
+            console.log("Creating default achievement doc for user.");
+             const defaultAchievements = {
+                firstLight: { unlocked: false, unlockedAt: null, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
+                greenThumb: { unlocked: false, unlockedAt: null, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
+                aGentleTouch: { unlocked: false, unlockedAt: null, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
+                curiousGardner: { unlocked: false, unlockedAt: null, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" },
+                dailyRoutine: { unlocked: false, unlockedAt: null, name: "Daily Routine", description: "Perform all three main care actions in a single day.", icon: "images/number-5.png" }
+            };
+            await setDoc(docRef, defaultAchievements);
+            return defaultAchievements;
+        }
+    }
+
+    async function saveAchievements(user, achievements) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        await updateDoc(docRef, achievements);
+    }
+
+    function notifyAchievement(achievementName) {
+        alert(`Achievement Unlocked: ${achievementName}!`);
+    }
+  
+    // --- UNLOCK LOGIC (Using DOMContentLoaded) ---
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const achievements = await getAchievements(user);
+
+                if (achievements && achievements.curiousGardner.unlocked === false) {
+                    achievements.curiousGardner.unlocked = true;
+                    achievements.curiousGardner.unlockedAt = new Date().toISOString();
+                    
+                    await saveAchievements(user, achievements);
+                    
+                    notifyAchievement("Curious Gardner");
+                }
+            } else {
+                console.log("No user logged in, cannot grant achievement.");
+            }
+        });
+    });
+  </script>
+
+
 </body>
 </html>
