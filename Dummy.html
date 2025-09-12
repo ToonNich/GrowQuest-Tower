@@ -1,217 +1,1003 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Warning Humidity</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <title>Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
   <style>
     body {
-      background: url('images/info.gif') no-repeat center center fixed;
+      background: url('images/Farm_BG.png') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Pixelify Sans', sans-serif;
     }
-     /* ปุ่ม back ที่ใช้รูปภาพเป็นพื้นหลัง */
-     .back-button {
-      width: 60px; /* กำหนดขนาดของปุ่ม */
-      height: 44px; /* กำหนดความสูงของปุ่ม */
-      background: url('images/backButton1.png') no-repeat center center;
-      background-size: cover; /* ให้รูปภาพปรับขนาดตามพื้นที่ของปุ่ม */
-      border: none;
-      cursor: pointer; /* เปลี่ยน cursor เป็นมือเมื่อ hover บนปุ่ม */
+    body::before {
+      content: "";
       position: absolute;
-      top: 6%; /* อยู่กลางหน้าจอในแนวตั้ง */
-      left: 4%;
-      transform: translate(-50%, -50%); /* จัดตำแหน่งให้ตรงกลาง */
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.155);
+      z-index: 0;
     }
-    /* เปลี่ยนแปลงเมื่อ hover ที่ปุ่ม */
-    .back-button:hover {
-      background: url('images/backButton2.png') no-repeat center center; /* เปลี่ยนเป็นรูปที่เตรียมไว้ */
-      background-size: cover; /* ให้รูปภาพที่ใหม่ปรับขนาด */
-    }
-
-    /* กล่องรูปภาพกลางที่อยู่ระหว่าง bg และ sprite */
-    .middle-image {
+    .box {
       position: absolute;
-      top: 3%;
+      top: 9%;
       left: 50%;
-      transform: translateX(-50%);
-      width: 70%; /* ปรับขนาดตามต้องการ */
-      z-index: 1; /* ให้รูปกลางอยู่ด้านล่าง */
+      transform: translate(-50%, -50%);
+      width: 28%; 
+      height: 90px;
+      background-color: #FFF2CB;
+      border: 2px solid #FFBF00;
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 10;
+      padding: 0 10px;
+      box-sizing: border-box;
     }
-    .head-text {
-      position: absolute;
-      font-size: 30px;
-      padding: 10px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      z-index: 2; /* ให้ปุ่มอยู่บนรูปภาพ */
+    #datetime-box {
+      font-size: 22px;
+      text-align: center;
+      flex-grow: 1; 
     }
-    .icon-huminity {
+    .midnight-images {
+      width: 100px;
+      height: 85px;
+      background: url('images/Midnight.PNG') no-repeat center center;
       background-size: cover;
       border: none;
       cursor: pointer;
+    }
+    .daily-check-in-button {
+      width: 70px;
+      height: 70px;
+      background: url('images/Calendar1.PNG') no-repeat center center;
+      background-size: contain;
+      border: none;
+      cursor: pointer;
+      margin-left: 15px;
+    }
+    .daily-check-in-button:hover {
+      background-image: url('images/Calendar2.PNG');
+    }
+    
+    .account-button { width: 5%; height: 10%; background: url('images/Account1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 3%; right: 1.5%; z-index: 2; }
+    .account-button:hover { background: url('images/Account2.PNG') no-repeat center center; background-size: cover; }
+    .notification-button { width: 5%; height: 10%; background: url('images/Noti1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 17%; right: 1.5%; z-index: 2; }
+    .notification-button:hover { background: url('images/Noti2.PNG') no-repeat center center; background-size: cover; }
+    .notification-alert-button { width: 5%; height: 10%; background: url('images/NotiAlert1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 17%; right: 1.5%; z-index: 2; }
+    .notification-alert-button:hover { background: url('images/NotiAlert2.PNG') no-repeat center center; background-size: cover; }
+    .infomation-button { width: 5%; height: 10%; background: url('images/info1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 31%; right: 1.5%; z-index: 2; }
+    .infomation-button:hover { background: url('images/info2.PNG') no-repeat center center; background-size: cover; }
+    .light-button { width: 5%; height: 10%; background: url('images/CloseLight.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 45%; right: 1.5%; z-index: 2; transition: background-image 0.2s ease; }
+    .light-button:hover:not(.on) { background: url('images/OpenLight.PNG') no-repeat center center; background-size: cover; }
+    .light-button.on { background: url('images/OpenLight.PNG') no-repeat center center; background-size: cover; }
+    .light-button.on:hover { background: url('images/OpenLight.PNG') no-repeat center center; background-size: cover; }
+    .wateringcan-button { width: 5%; height: 10%; background: url('images/WateringCan1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 17%; left: 2%; z-index: 2; }
+    .wateringcan-button:hover { background: url('images/WateringCan2.PNG') no-repeat center center; background-size: cover; }
+    .watering-gif { position: absolute; top: 0; left: 0; width: 20%; pointer-events: none; display: none; z-index: 99; }
+    .camera-button { width: 4.5%; height: 9.5%; background: url('images/Camera1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 30%; left: 2.25%; z-index: 2; }
+    .camera-button:hover { background: url('images/Camera2.PNG') no-repeat center center; background-size: cover; }
+    .checkPlant-button { width: 5%; height: 10%; background: url('images/CheckPlantBut2.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 43%; left: 2%; z-index: 2; }
+    .checkPlant-button:hover { background: url('images/CheckPlantBut1.PNG') no-repeat center center; background-size: cover; }
+    .achievements-button { width: 243px; height: 56px; background: url('images/Achievement1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 90%; right: 1.5%; z-index: 2; }
+    .achievements-button:hover { background: url('images/Achievement2.PNG') no-repeat center center; background-size: cover; }
+    .dashboard-button { width: 236px; height: 56px; background: url('images/Dashboard1.PNG') no-repeat center center; background-size: cover; border: none; cursor: pointer; position: absolute; top: 82%; right: 1.5%; z-index: 2; }
+    .dashboard-button:hover { background: url('images/Dashboard2.PNG') no-repeat center center; background-size: cover; }
+    .plant-image { position: absolute; top: 12%; left: 50%; transform: translateX(-50%); width: 35%; z-index: 1; }
+    .Profile-image { position: absolute; top: 2%; left: 4.5%; transform: translateX(-50%); width: 6.5%; z-index: 1; }
+    #towerName { 
+        position: absolute; 
+        top: 2.5%; 
+        left: 8%; 
+        font-size: 24px; 
+        color: #3a2d21;
+        font-weight: bold;
+        z-index: 2;
+    }
+    .hp-image { position: absolute; top: 8%; left: 18%; transform: translateX(-50%); width: 20%; z-index: 1; }
+    
+    /* bottom-left Scan button */
+    .scan-button{
       position: absolute;
-      width: 180px; /* ปรับขนาดไอคอน */
-      height: auto;
-      top: 13.5%; 
-      left: 25%; 
+      bottom: 6%;
+      left: 2%;
       z-index: 2;
-    } 
-    .icon-label {
-      position: absolute;
-      width: 70px; /* ปรับขนาดไอคอน */
-      height: auto;
-      z-index: 4; 
+      width: 180px;            /* readable on all screens */
+      height: 56px;
+      border: 2px solid #FFBF00;
+      border-radius: 14px;
+      background: #ffe082;
+      box-shadow: 0 4px 0 #d1a500, 0 8px 12px rgba(0,0,0,.25);
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 24px;
+      color: #2c1e10;
+      cursor: pointer;
+    }
+    .scan-button:hover{ background:#ffecb3; }
+    .scan-button:disabled{
+      opacity:.55; cursor:not-allowed;
+      box-shadow: 0 4px 0 #bda05a, 0 8px 12px rgba(0,0,0,.15);
     }
 
-   .board-images {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 4;
-   }
+    /* --- tower scan summary panel --- */
+    .scan-summary{
+      position: absolute;
+      left: 50%;
+      bottom: 2%;
+      transform: translateX(-50%);
+      width: min(680px, 84vw);
+      background: #FFF2CB;
+      border: 2px solid #FFBF00;
+      border-radius: 18px;
+      box-shadow: 0 6px 0 #d1a500, 0 10px 22px rgba(0,0,0,.25);
+      padding: 12px 16px 16px;
+      z-index: 3;
+    }
+    .scan-summary h4{
+      margin: 0 0 6px;
+      text-align: center;
+      color: #2c1e10;
+      font-size: 22px;
+    }
+    .scan-summary .meta{
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #3a2d21;
+    }
+    .scan-summary .rows{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* will be overridden by JS */
+      gap: 8px;
+    }
+    .scan-summary .chip{
+      background:#ffe082;
+      border:2px solid #d1a500;
+      border-radius:12px;
+      padding:8px 6px;
+      text-align:center;
+      line-height:1.1;
+    }
+    .scan-summary .chip .idx{ font-size:13px; opacity:.75; }
+    .scan-summary .chip .stage{ font-size:20px; }
+    .scan-summary .chip .pct{ font-size:14px; opacity:.8; }
 
+    .scan-summary .close{
+      position:absolute; top:-10px; right:-10px;
+      width:34px; height:34px; border-radius:50%;
+      border:2px solid #FFBF00; background:#ffecb3;
+      box-shadow: 0 3px 0 #d1a500;
+      cursor:pointer; font-size:20px;
+    }
+    .hidden{ display:none; }
 
- .tube-outer {
-  width: 45px;
-  height: 315px;
-  border: 6px solid white;
-  background-color: transparent;
-  overflow: hidden;
-  position: absolute; /* ต้องมี */
-}
+    /* Summary toggle button (bottom-left, above SCAN TOWER) */
+    .summary-button{
+      position:absolute;
+      bottom:16%;
+      left:2%;
+      z-index:2;
+      width:180px;height:48px;
+      border:2px solid #4aa3ff;
+      border-radius:14px;
+      background:#cfe8ff;
+      box-shadow:0 4px 0 #2c75c9, 0 8px 12px rgba(0,0,0,.2);
+      font-family:'Pixelify Sans',sans-serif;
+      font-size:22px;color:#1d2a44;cursor:pointer;
+    }
+    .summary-button:hover{ background:#e7f3ff; }
 
-.tube-inner {
-  width: 100%;
-  background-color: #00ffff;
-  position: absolute;
-  bottom: 0;
-  transition: height 0.5s ease-in-out;
-}
+    /* --- Tower Level badge --- */
+    .level-badge{
+      display:inline-block;
+      margin: 2px auto 8px;
+      padding: 6px 14px;
+      border-radius: 14px;
+      border:2px solid #333;
+      background:#eee;
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 18px;
+      color:#1d1d1d;
+    }
+    .level-badge.lv1{ background:#ffe0e0; border-color:#ff7a7a; color:#5a1a1a; }  /* Early */
+    .level-badge.lv2{ background:#fff1bf; border-color:#ffc94a; color:#4a3a12; }  /* Seedling */
+    .level-badge.lv3{ background:#d4f7c5; border-color:#7fd15a; color:#1f3b17; }  /* Growing */
+    .level-badge.lv4{ background:#cfe8ff; border-color:#4aa3ff; color:#1d2a44; }  /* Mature */
 
-.blackboard-tip {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  color: #fffbe0;
-  font-family: 'Pixelify Sans', monospace;
-  font-size: 20px;
-  text-shadow: 1px 2px 2px #222, 0 0 10px #0a2e12;
-  padding: 15% 12%; /* Adjusted padding */
-  box-sizing: border-box;
-  z-index: 5; /* Ensure text is on top of blackboard */
-  pointer-events: none;
-  line-height: 1.6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
+        /* center inline content inside the panel */
+    #scanSummary { text-align: center; }
 
+    /* make the badge a shrink-to-fit pill and center it */
+    #scanSummaryLevel {
+      display: inline-block;   /* was block/inline-block earlier */
+      margin: 6px auto 8px;    /* centers with the text-align above */
+      width: auto;             /* shrink to content */
+    }
+
+    /* Toggle: set true in JS to use the grid instead of the single #character */
+    .plot-grid { display: none; }
+
+    /* Position over the dirt patch; tweak top/width if needed to fit perfectly */
+    .plot-grid{
+      position:absolute; 
+      top:27%;           /* adjust to align with the soil */
+      left:50%; 
+      transform:translateX(-50%);
+      width:58vw;          /* responsive width (tweak) */
+      max-width:980px;
+      aspect-ratio: 2.1 / 1; /* rough shape of your field */
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: clamp(26px, 6.8vw, 46px);
+      z-index: 2;
+      pointer-events: none; /* children re-enable */
+    }
+
+    .pot{
+      position:relative;
+      pointer-events:auto;
+      filter: drop-shadow(0 3px 0 rgba(0,0,0,.15));
+      --plantScale: 1;
+      --plantYOffset: 2px;  
+    }
+
+    .pot-base{
+      position:absolute;
+      bottom:-5%;
+      left:50%;
+      transform:translateX(-50%);
+      width:64%;
+      image-rendering: pixelated;
+      z-index: 3;   
+    }
+
+    .plant-sprite{
+      position:absolute;
+      bottom:48.5%;
+      left:50%;
+      transform:translateX(-50%);
+      transform: translate(-50%, 2px);
+      width:58%;
+      image-rendering: pixelated;
+      user-select:none;
+      cursor:pointer;
+      z-index: 2;     
+      transform-origin: bottom center;        /* grow upward from rim */
+      transform: translate(-50%, var(--plantYOffset)) scale(var(--plantScale));
+    }
+
+    .pot-ring{
+      position:absolute;
+      inset:6%;
+      border:2px dashed rgba(255,215,0,.0);
+      border-radius:12px;
+      transition: border-color .12s ease;
+      pointer-events:none;
+    }
+    .pot:hover .pot-ring{ border-color: rgba(255,215,0,.85); }
+
+    /* Water splash overlay (shown dynamically) */
+    .pot .splash{
+      position:absolute;
+      bottom:25%;
+      left:50%;
+      transform:translateX(-50%);
+      width:58%;
+      pointer-events:none;
+      image-rendering: pixelated;
+      z-index: 5;
+    }
+
+    .pot::after{
+      content: attr(data-index);        /* uses your data-index="1..6" */
+      position: absolute;
+      right: 4%;                        /* nudge horizontally */
+      bottom: -6%;                      /* place near pot base; tweak as you like */
+      width: clamp(18px, 2.2vw, 26px);
+      height: clamp(18px, 2.2vw, 26px);
+      display: grid; place-items: center;
+      background: #ffd84d;
+      border: 2px solid #222;
+      border-radius: 8px;               /* make it a small rounded badge */
+      font-family: 'Pixelify Sans', monospace;
+      font-size: 0.8em;                 /* scales with the box */
+      color: #111;
+      box-shadow: 0 2px 0 #000;
+      z-index: 10;                      /* above pot/rim/plant */
+      pointer-events: none;             /* never blocks clicks */
+    }
+
+    /* Sizes for each stage (tweak to taste) */
+    .pot[data-stage="1"] { 
+      --plantScale: 0.55;
+      --plantYOffset: -8px; 
+    }  /* smallest */
+    .pot[data-stage="2"] { --plantScale: 0.90; }
+    .pot[data-stage="3"] { --plantScale: 1.10; }
+    .pot[data-stage="4"] { --plantScale: 1.30; }  /* largest */
 
   </style>
 </head>
-
-
 <body>
-  <button class="back-button" onclick="location.href='DashboardPage.html'"></button>
-  <div>
-    <img src="images/Scroll 3.png" alt="Middle Layer" class="middle-image">
-    <div>
-        <img src="images/Huminity.PNG" class="icon-huminity" alt="huminity" />
-        <img src="images/label.PNG" class="icon-label" alt="label" style="top: 27%; left: 28%;" />
-        <div class="tube-outer" style="top: 27.5%; left: 28.5%; position: absolute; z-index: 3;">
-          <div class="tube-inner" id="humidityBar"></div>
-        </div>
-        <div id="humidityValue" style="position: absolute;top: 65%;left: 28.8%;font-size: 20px;font-weight: bold;font-family: 'Pixelify Sans', sans-serif;color: #003366;z-index: 4;">--</div>
 
-    </div>
+  <button class="account-button" onclick="location.href='AccountPage.html'"></button>
+  
+  <button id="notiNormal" class="notification-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
+  <button id="notiAlert" class="notification-alert-button" onclick="location.href='NotificationPage.html'" style="display: none;"></button>
+  
+  <button class="infomation-button" onclick="location.href='InfomationPage.html'"></button>
+  <button class="light-button" id="lightButton"></button>
+  <button class="wateringcan-button"></button>
+  <button class="camera-button" onclick="location.href='CameraPage.html'"></button>
+  <button class="checkPlant-button" onclick="location.href='PlantAnalysis.html'"></button>
+  <button class="achievements-button" onclick="location.href='AchievementsPage.html'"></button>
+  <button class="dashboard-button" onclick="location.href='DashboardPage.html'"></button>
+  <button class="scan-button" id="scanButton" title="Scan tower now">SCAN TOWER</button>
+  <button class="summary-button" id="summaryButton" title="Show last scan summary">SUMMARY</button>
 
-    <div style="position: absolute; top: 18%; left: 35%; width: 38%; height: 60%; z-index: 3;">
-      <img src="images/Blackboard.PNG" class="board-images" alt="board" />
-      <div class="blackboard-tip"></div>
+
+  <img id="wateringGif" src="images/watering.gif" class="watering-gif" />
+  <img src="images/Prof.PNG" alt="Profile" class="Profile-image">
+  <p id="towerName">Loading Tower...</p>
+  <!-- <img src="images/HP1.PNG" alt="Hp" class="hp-image"> -->
+  <!-- 6-pot avatar grid (overlayed on the soil). Shown when USE_POT_GRID = true -->
+  <div id="plotGrid" class="plot-grid" aria-label="Hydroponic pots (6)">
+    <!-- Pot 1..6 (left→right, top→bottom) -->
+    <div class="pot" data-index="1">
+      <img class="pot-base" src="images/ClayPot.png" alt="Clay pot">
+      <img class="plant-sprite" alt="Pot 1 plant">
+      <div class="pot-ring" aria-hidden="true"></div>
     </div>
-    
+    <div class="pot" data-index="2">
+      <img class="pot-base" src="images/ClayPot.png" alt="Clay pot">
+      <img class="plant-sprite" alt="Pot 2 plant">
+      <div class="pot-ring" aria-hidden="true"></div>
+    </div>
+    <div class="pot" data-index="3">
+      <img class="pot-base" src="images/ClayPot.png" alt="Clay pot">
+      <img class="plant-sprite" alt="Pot 3 plant">
+      <div class="pot-ring" aria-hidden="true"></div>
+    </div>
+    <div class="pot" data-index="4">
+      <img class="pot-base" src="images/ClayPot.png" alt="Clay pot">
+      <img class="plant-sprite" alt="Pot 4 plant">
+      <div class="pot-ring" aria-hidden="true"></div>
+    </div>
+    <div class="pot" data-index="5">
+      <img class="pot-base" src="images/ClayPot.png" alt="Clay pot">
+      <img class="plant-sprite" alt="Pot 5 plant">
+      <div class="pot-ring" aria-hidden="true"></div>
+    </div>
+    <div class="pot" data-index="6">
+      <img class="pot-base" src="images/ClayPot.png" alt="Clay pot">
+      <img class="plant-sprite" alt="Pot 6 plant">
+      <div class="pot-ring" aria-hidden="true"></div>
+    </div>
   </div>
 
-  <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
-import { getFirestore, collection, query, orderBy, limit, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
-  authDomain: "seniorproject-684c1.firebaseapp.com",
-  projectId: "seniorproject-684c1",
-  storageBucket: "seniorproject-684c1.appspot.com",
-  messagingSenderId: "847138584376",
-  appId: "1:847138584376:web:eface0926c96092daef3cd",
-  measurementId: "G-N0CM5TQBM8"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-function updateTube(id, value, max) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const pct = Math.min(100, Math.max(0, (Number(value)||0) / max * 100));
-  el.style.height = `${pct}%`;
-}
-
-
-
-onAuthStateChanged(auth, (user) => {
-  const q = user
-    ? query(collection(db, "tubeData", user.uid, "readings"), orderBy("timestamp", "desc"), limit(1))
-    : query(collection(db, "tube"), orderBy("timestamp", "desc"), limit(1));
-
-  onSnapshot(q, (snap) => {
-    if (snap.empty) return;
-    const v = snap.docs[0].data();
-    const hum = (typeof v.hum === 'number') ? v.hum :
-                (typeof v.humidity === 'number') ? v.humidity : null;
-    if (hum == null) return;
-    updateTube('humidityBar', hum, 100);
-    const el = document.getElementById('humidityValue');
-    if (el) el.innerText = hum.toFixed(1) + '%';
-  });
-});
-</script>
-
   
-  <script>
+  <div class="box">
+    <button id="time-button" class="midnight-images"></button>
+    <div id="datetime-box"></div> 
+    <button class="daily-check-in-button" onclick="location.href='DailyCheckIn.html'"></button>
+  </div>
 
-    const tipsHigh = [
-      "Whoa! The air around your hydroponic tower is thick with moisture. If this keeps up, your greens could get moldy or droopy! Boost airflow with a fan or crack open a window in the grow room. Check for pooled water around your system and dry it up. Hold off on misting until humidity drops!",
-      "Your tower farm feels like a tropical swamp! Not all plants want to live in a rainforest—too much humidity can cause algae and fungal issues. Try a dehumidifier or run your ventilation system longer.",
-      "Warning: High humidity detected! Check if the nutrient solution is evaporating too fast and if condensation is building up on your pipes. Good airflow is key to happy, crisp greens."
-    ];
+  <!-- Tower scan summary panel -->
+  <div id="scanSummary" class="scan-summary hidden" aria-live="polite">
+    <button id="scanSummaryClose" class="close" title="Hide">×</button>
+    <h4>Tower Scan Summary</h4>
+    <div id="scanSummaryLevel" class="level-badge">Tower Level: —</div>
+    <div id="scanSummaryMeta" class="meta">—</div>
+    <div id="scanSummaryRows" class="rows"></div>
+  </div>
 
-    const tipsLow = [
-      "Dry air alert in the hydroponic zone! Your leaves might get crispy at the edges. Add a shallow tray of water under your tower, mist gently (but don’t overdo it), or use a humidifier for a boost.",
-      "It’s like a desert around your tower farm! Plants in hydroponics love steady moisture, so group them closer together or block drafts from AC or heaters.",
-      "Low humidity can stress even water-loving plants. Try covering the top of your tower with a loose dome for a while to keep humidity up—just remember to vent for fresh air, too."
-    ];
 
-  function pickTip(humidity) {
-    if (humidity >= 90) {
-      return tipsHigh[Math.floor(Math.random() * tipsHigh.length)];
-    } else if (humidity <= 20) {
-      return tipsLow[Math.floor(Math.random() * tipsLow.length)];
-    } else {
-      return "Humidity is in the safe zone! Keep an eye out for any changes.";
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+    // --- MODIFIED: Added setDoc and updateDoc for saving data ---
+    import { getFirestore, getDocs, collection, query, where, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    
+
+    // Turn on the new 6-pot grid UI
+    const USE_POT_GRID = true;
+
+    // Stage → normal and touch sprites (use web-relative paths)
+    const NORMAL_SPRITE = {
+      1: 'images/NormalPlant.gif',
+      2: 'images/Stage2Normal.gif',
+      3: 'images/Stage3Normal.gif',
+      4: 'images/Stage4Normal.gif',
+    };
+    const TOUCH_SPRITE = {
+      1: 'images/Stage2Touch.gif', // stage 1 uses Stage2Touch per your files
+      2: 'images/Stage2Touch.gif',
+      3: 'images/Stage3Touch.gif',
+      4: 'images/Stage4Touch.gif',
+    };
+
+    // Preload to prevent first-use flicker
+    (function preloadSprites(){
+      [...Object.values(NORMAL_SPRITE), ...Object.values(TOUCH_SPRITE), 'images/ClayPot.png'].forEach(src=>{
+        const img = new Image(); img.src = src;
+      });
+    })();
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          // Make user available to grid interactions
+          window.currentUser = user;
+
+          // NEW: init the 6-pot grid and hydrate from cached scan (if any)
+          initPotGrid();
+          try {
+            const cached = localStorage.getItem('lastScanSummary');
+            if (cached) updatePotGridFromSummary(JSON.parse(cached));
+          } catch (e) { console.warn(e); }
+
+          // Your existing startup work
+          await checkNotificationStatus();
+          await loadUserPlantData(user);
+          try {
+            const raspiID = "raspi_01";
+            await setDoc(doc(db, "sensorLinks", raspiID), { uid: user.uid });
+            console.log(`✅ Linked ${raspiID} to UID: ${user.uid}`);
+          } catch (e) {
+            console.error("🔥 Failed to link RasPi ID:", e);
+          }
+
+          setupPageEventListeners(user);
+        } else {
+          console.log("No user logged in, redirecting...");
+          window.location.href = 'LoginPage.html';
+        }
+      });
+
+      // Keep these TWO lines ONCE (not duplicated anywhere else)
+      updateDateTimeAndButton();
+      setInterval(updateDateTimeAndButton, 1000);
+    });
+
+
+      // Map avg_green_pct → tower level
+    // Tune thresholds if you like, these align with your stage cutoffs:
+    //   L1:   <5%   (Early)
+    //   L2: 5–12%   (Seedling)
+    //   L3: 12–20%  (Growing)
+    //   L4: ≥20%    (Mature)
+    function calcTowerLevel(avgGreenPct){
+      let level = 1, label = 'Early';
+      if (avgGreenPct >= 20) { level = 4; label = 'Mature'; }
+      else if (avgGreenPct >= 12) { level = 3; label = 'Growing'; }
+      else if (avgGreenPct >= 5)  { level = 2; label = 'Seedling'; }
+      return { level, label };
+    }
+
+    // --- 6-pot state kept in memory ---
+    const pots = Array.from({length:6}, ()=>({
+      hasPlant:false, stageIdx:1, greenPct:0, sectionImgUrl:''
+    }));
+
+    function stageIndexFromSection(s){
+      if (s?.stage){
+        const name = s.stage.toLowerCase();
+        if (name.includes('seed')) return 1;                 // Seedling
+        if (name.includes('grow')) return 2;                 // Growing
+        if (name.includes('mature')) return 3;               // Mature
+        if (name.includes('flower') || name.includes('fruit') || name.includes('harvest')) return 4;
+      }
+      const g = Number(s?.green_pct ?? 0);                   // fallback by greenness
+      if (g < 5)  return 1;
+      if (g < 15) return 2;
+      if (g < 30) return 3;
+      return 4;
+    }
+
+    function initPotGrid(){
+      const grid = document.getElementById('plotGrid');
+      const character = document.getElementById('character');
+      if (!grid) return;
+      if (USE_POT_GRID){
+        grid.style.display = 'grid';
+        if (character) character.style.display = 'none'; // hide single avatar
+      }
+      // default sprites
+      grid.querySelectorAll('.pot .plant-sprite').forEach((sprite)=>{
+        sprite.src = NORMAL_SPRITE[1];
+      });
+      // per-pot touch
+      grid.addEventListener('mousedown', async (ev)=>{
+        const potEl = ev.target.closest('.pot');
+        if (!potEl) return;
+        const i = Number(potEl.dataset.index) - 1;
+        const sprite = potEl.querySelector('.plant-sprite');
+        const stage = pots[i]?.stageIdx || 1;
+        sprite.src = TOUCH_SPRITE[stage];
+        setTimeout(()=>{ sprite.src = NORMAL_SPRITE[stage]; }, 1200);
+
+        // achievement reuse
+        try{
+          const achievements = await getAchievements(currentUser);
+          if (!achievements.aGentleTouch.unlocked) {
+            achievements.aGentleTouch.unlocked = true;
+            achievements.aGentleTouch.unlockedAt = new Date().toISOString();
+            notifyAchievement("A Gentle Touch");
+            await saveAchievements(currentUser, achievements);
+          }
+        }catch(e){}
+      });
+    }
+
+    function renderPots(){
+      if (!USE_POT_GRID) return;
+      const grid = document.getElementById('plotGrid');
+      if (!grid) return;
+
+            grid.querySelectorAll('.pot').forEach((potEl, i)=>{
+        const sprite = potEl.querySelector('.plant-sprite');
+        const p = pots[i];
+
+        // NEW: compute stage index and expose it to CSS
+        const stageIdx = (p && p.stageIdx) ? p.stageIdx : 1;
+        potEl.dataset.stage = stageIdx;               // <— drives CSS scale per stage
+        potEl.classList.toggle('empty', !p || !p.hasPlant); // <— optional: style empties
+
+        if (!p || !p.hasPlant){
+          sprite.style.opacity = .15;                 // empty pot look
+          sprite.src = NORMAL_SPRITE[1];
+        }else{
+          sprite.style.opacity = 1;
+          sprite.src = NORMAL_SPRITE[stageIdx];       // use the computed stage
+        }
+      });
+
+    }
+
+    // Map scan summary → 6 pots (left→right, top→bottom)
+    function updatePotGridFromSummary(summary){
+      if (!summary) return;
+      const base = (summary.scan_dir || '').replace(/\/+$/,'');
+      const sections = summary.sections || [];
+      for (let i=0;i<6;i++){
+        const s = sections[i];
+        pots[i] = s ? {
+          hasPlant: !!s.has_plant,
+          stageIdx: stageIndexFromSection(s),
+          greenPct: Number(s.green_pct ?? 0),
+          sectionImgUrl: s.image ? `${base}/${s.image}` : ''
+        } : { hasPlant:false, stageIdx:1, greenPct:0, sectionImgUrl:'' };
+      }
+      renderPots();
+    }
+
+
+    // ✅ Dose server now runs on the PC at :5001
+    // If you open this page ON THE SAME PC, keep localhost.
+    // If you open from another device, use your PC's LAN IP, e.g. "http://192.168.1.50:5001"
+    const DOSE_BASE = "http://127.0.0.1:5001";
+
+    async function triggerDose(user, durationMs = 3000, potIndex = null) {
+      try {
+        const body = { duration_ms: durationMs, uid: user?.uid || "" };
+        if (potIndex !== null) body.pot_index = potIndex; // 0..5
+        const res = await fetch(`${DOSE_BASE}/dose`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        console.log("✅ Dose command sent", body);
+      } catch (err) {
+        console.error("❌ Dose command failed:", err);
+        alert("Could not send dose command to the PC dose server.");
+      }
+    }
+
+
+    // Build/paint the summary panel.
+    // visible=true -> show panel and remember "visible" in localStorage.
+    // visible=false -> hide but still cache the latest summary.
+    function renderScanSummary(summary, visible=true){
+      const panel = document.getElementById('scanSummary');
+      const meta  = document.getElementById('scanSummaryMeta');
+      const rows  = document.getElementById('scanSummaryRows');
+      const levelEl = document.getElementById('scanSummaryLevel');
+      if (!panel || !summary) return;
+
+      // 🔢 compute tower level from avg green
+      const avg = Number(summary.avg_green_pct || 0);
+      const lvl = calcTowerLevel(avg);
+      if (levelEl){
+        levelEl.textContent = `Tower Level: L${lvl.level} • ${lvl.label}`;
+        levelEl.className = `level-badge lv${lvl.level}`;
+      }
+
+      meta.textContent = `Avg green: ${avg}% • Sections: ${summary.count}`;
+      rows.innerHTML = '';
+
+      const cols = Math.max(2, Math.min(6, Number(summary.count) || 4));
+      rows.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+      (summary.sections || []).forEach((s, i) => {
+        const d = document.createElement('div');
+        d.className = 'chip';
+        d.innerHTML = `
+          <div class="idx">#${i+1}</div>
+          <div class="stage">${s.stage || '-'}</div>
+          <div class="pct">${s.green_pct ?? 0}%</div>`;
+        rows.appendChild(d);
+      });
+
+      // cache latest + visibility
+      try {
+        // also store computed level so SUMMARY button restores it instantly
+        localStorage.setItem('lastScanSummary', JSON.stringify({ ...summary, tower_level: lvl.level, tower_label: lvl.label }));
+      } catch(e){}
+
+      if (visible){
+        panel.classList.remove('hidden');
+        localStorage.setItem('summaryVisible', 'true');
+      } else {
+        panel.classList.add('hidden');
+        localStorage.setItem('summaryVisible', 'false');
+      }
+    }
+
+
+    // Close (X) should hide *and* remember hidden state
+    document.addEventListener('DOMContentLoaded', () => {
+      const panel = document.getElementById('scanSummary');
+      const closeBtn = document.getElementById('scanSummaryClose');
+      if (closeBtn && panel){
+        closeBtn.addEventListener('click', () => {
+          panel.classList.add('hidden');
+          localStorage.setItem('summaryVisible','false');
+        });
+      }
+
+      // SUMMARY button: reopen last cached summary on demand
+      const summaryBtn = document.getElementById('summaryButton');
+      if (summaryBtn){
+        summaryBtn.addEventListener('click', () => {
+          const cached = localStorage.getItem('lastScanSummary');
+          if (!cached){
+            alert('No scan summary yet. Run SCAN TOWER first.');
+            return;
+          }
+          renderScanSummary(JSON.parse(cached), true);
+        });
+      }
+
+      // On page load, restore only if user left it visible last time
+      try{
+        const cached = localStorage.getItem('lastScanSummary');
+        const vis = localStorage.getItem('summaryVisible') === 'true';
+        if (cached && vis) renderScanSummary(JSON.parse(cached), true);
+      }catch(e){}
+    });
+
+
+    // 👇 Pi that runs app.py (the stream + /scan_tower)
+    const SCAN_BASE = "http://192.168.2.2:5000/";   // e.g. "http://192.168.1.23:5000"   // if you open the page on the Pi itself, use "http://127.0.0.1:5000"
+
+    const joinURL = (base, path) => base.replace(/\/+$/, '') + '/' + path.replace(/^\/+/, '');
+
+    async function triggerScanTower(){
+    setScanBusy(true);
+    try{
+      const res = await fetch(joinURL(SCAN_BASE, 'scan_tower'), { method:'POST' });
+      const data = await res.json().catch(()=> ({}));
+      if(res.status === 409){
+        alert('A scan is already running. Please wait.');
+      }else if(!res.ok){
+        alert(`Scan failed (${res.status}). ${data.error || data.stderr || ''}`);
+      }else{
+        // ✅ show the UI summary
+        if (data && data.summary) 
+        renderScanSummary(data.summary, true);
+        updatePotGridFromSummary(data.summary);
+        console.log('scan result:', data);
+      }
+    }catch(err){
+      console.error(err);
+      alert('Could not reach the Pi to start the scan.');
+    }finally{
+      setScanBusy(false);
     }
   }
-  </script>
 
-  
+    // wire up the button once the DOM is ready
+        document.addEventListener('DOMContentLoaded', ()=>{
+          const btn = document.getElementById('scanButton');
+          if(btn) btn.addEventListener('click', triggerScanTower);
+        });
+
+        function setScanBusy(busy) {
+      const btn = document.getElementById('scanButton');
+      if (!btn) return;
+      btn.disabled = busy;
+      btn.textContent = busy ? 'SCANNING…' : 'SCAN TOWER';
+    }
+
+
+    async function checkNotificationStatus() {
+      try {
+        const q = query(collection(db, "Main"), where("read", "==", false));
+        const querySnapshot = await getDocs(q);
+        const hasUnread = !querySnapshot.empty;
+
+        document.getElementById("notiNormal").style.display = hasUnread ? "none" : "block";
+        document.getElementById("notiAlert").style.display = hasUnread ? "block" : "none";
+      } catch (error) {
+        console.error("Error checking notifications:", error);
+      }
+    }
+    
+    async function loadUserPlantData(user) {
+      const towerNameElement = document.getElementById("towerName");
+      const characterElement = document.getElementById("character"); // may be null in 6-pot view
+
+      const plantDocRef = doc(db, "userPlants", user.uid);
+      const docSnap = await getDoc(plantDocRef);
+
+      if (docSnap.exists()) {
+        const plantData = docSnap.data();
+        towerNameElement.textContent = plantData.plantName || "My Tower";
+        if (characterElement) {
+          characterElement.src = plantData.plantImage || "images/Stage4Normal.gif";
+        }
+      } else {
+        towerNameElement.textContent = "Setup Your Plant!";
+        if (characterElement) {
+          characterElement.src = "images/Stage4Normal.gif";
+        }
+      }
+    }
+
+    
+    // --- MODIFIED: This function now requires the user object ---
+    async function setupPageEventListeners(user) {
+        const lightButton = document.getElementById("lightButton");
+        let lightIsOn = localStorage.getItem("lightIsOn") === "true";
+        if (lightIsOn) lightButton.classList.add("on");
+
+        // --- MODIFIED: This event listener is now async to handle awaits ---
+        lightButton.addEventListener("click", async () => {
+          try {
+            if (!lightIsOn) {
+              const response = await fetch("http://localhost:8000/turn_on", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ colortemp: 6500, brightness: 100 }),
+              });
+              if (!response.ok) throw new Error("Failed to turn on light");
+              lightIsOn = true;
+              // --- MODIFIED: Await the new async function ---
+              const achievements = await getAchievements(user);
+              if (!achievements.firstLight.unlocked) {
+                  achievements.firstLight.unlocked = true;
+                  achievements.firstLight.unlockedAt = new Date().toISOString();
+                  notifyAchievement("First Light");
+                  // --- MODIFIED: Await the new async function ---
+                  await saveAchievements(user, achievements);
+              }
+            } else {
+              const response = await fetch("http://localhost:8000/turn_off", { method: "POST" });
+              if (!response.ok) throw new Error("Failed to turn off light");
+              lightIsOn = false;
+            }
+            lightButton.classList.toggle("on", lightIsOn);
+            localStorage.setItem("lightIsOn", String(lightIsOn));
+          } catch (err) {
+            alert("Error controlling light: " + err.message);
+          }
+        });
+
+        // ---------- WATERING: drag the can and drop on a pot ----------
+        const wateringBtn = document.querySelector('.wateringcan-button');
+        const wateringGif = document.getElementById('wateringGif');
+        let isWatering = false;
+
+        function moveWaterGif(e){
+          if (!wateringGif) return;
+          wateringGif.style.left = e.clientX + 'px';
+          wateringGif.style.top  = e.clientY + 'px';
+        }
+
+        wateringBtn?.addEventListener('mousedown', (e) => {
+          if (!wateringGif) return;
+          isWatering = true;
+          wateringGif.style.display = 'block';
+          moveWaterGif(e);
+
+          // Optional: keep old single-avatar visual if it exists
+          const charEl = document.getElementById('character');
+          if (charEl) charEl.src = 'images/Stage4Warerting.gif';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isWatering) return;
+          moveWaterGif(e);
+        });
+
+        document.addEventListener('mouseup', async (e) => {
+          if (!isWatering) return;
+          isWatering = false;
+          if (wateringGif) wateringGif.style.display = 'none';
+
+          // Prefer the pot under the cursor
+          let potIndex = null;
+          const elUnder = document.elementFromPoint(e.clientX, e.clientY);
+          const potEl = elUnder?.closest?.('.pot') || null;
+          if (potEl) potIndex = Number(potEl.dataset.index) - 1;   // 0..5
+
+          // Fallback: old single avatar (if present)
+          if (potIndex === null) {
+            const charEl = document.getElementById('character');
+            if (charEl) {
+              const r = charEl.getBoundingClientRect();
+              const inside = e.clientX >= r.left && e.clientX <= r.right &&
+                            e.clientY >= r.top  && e.clientY <= r.bottom;
+              if (inside) potIndex = 0;
+            }
+          }
+
+          // Nothing targeted — done.
+          if (potIndex === null) return;
+
+          // If this is a real pot with a plant, play its touch/water animation + splash
+          if (potEl) {
+            const p = pots[potIndex];
+            if (p && p.hasPlant) {
+              const sprite = potEl.querySelector('.plant-sprite');
+              const stage  = p.stageIdx || 1;
+              if (sprite) {
+                sprite.src = TOUCH_SPRITE[stage];
+                setTimeout(() => { sprite.src = NORMAL_SPRITE[stage]; }, 1000);
+              }
+              // quick splash
+              const splash = document.createElement('img');
+              splash.src = 'images/watering.gif';   // your existing asset
+              splash.className = 'splash';
+              potEl.appendChild(splash);
+              setTimeout(() => splash.remove(), 900);
+            }
+          }
+
+          // Send dose (now includes pot_index)
+          try { await triggerDose(user, 1500, potIndex); } catch (_) {}
+
+          // Achievements + daily check-in (unchanged from your code)
+          try{
+            const achievements = await getAchievements(user);
+            if (!achievements.greenThumb.unlocked) {
+              achievements.greenThumb.unlocked = true;
+              achievements.greenThumb.unlockedAt = new Date().toISOString();
+              notifyAchievement("Green Thumb");
+              await saveAchievements(user, achievements);
+            }
+            const today = getTodayLocalString();
+            const dailyData = await getDailyCheckInData(user);
+            if (!dailyData.checkIns[today]) dailyData.checkIns[today] = { taskComplete:false, rewardClaimed:false };
+            if (dailyData.checkIns[today].taskComplete === false){
+              dailyData.checkIns[today].taskComplete = true;
+              await saveDailyCheckInData(user, dailyData);
+              alert("Daily Task Complete: Water the plant!");
+            }
+          }catch(_){}
+
+          // keep your existing refresh
+          loadUserPlantData(user);
+        });
+        // ---------- /WATERING ----------
+
+
+    }
+
+    function updateDateTimeAndButton() {
+      const now = new Date();
+      const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' };
+      const dateStr = now.toLocaleDateString('en-US', options);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById("datetime-box").textContent = `${dateStr} at ${hours}:${minutes}`;
+
+      const hour = now.getHours();
+      const button = document.getElementById("time-button");
+      let imageUrl = '';
+      if (hour >= 5 && hour < 8) { imageUrl = 'images/Morning.PNG'; } 
+      else if (hour >= 8 && hour < 11) { imageUrl = 'images/LateMorning.PNG'; } 
+      else if (hour >= 11 && hour < 15) { imageUrl = 'images/Afternoon.PNG'; } 
+      else if (hour >= 15 && hour < 18) { imageUrl = 'images/Evening.PNG'; } 
+      else if (hour >= 18 && hour < 21) { imageUrl = 'images/Night.PNG'; } 
+      else if (hour >= 21 && hour < 24) { imageUrl = 'images/LateNight.PNG'; } 
+      else { imageUrl = 'images/Midnight.PNG'; }
+      button.style.backgroundImage = `url('${imageUrl}')`;
+    }
+    
+    // --- NEW: Helper function to get the local date as a YYYY-MM-DD string ---
+    function getTodayLocalString() {
+        const localDate = new Date();
+        const year = localDate.getFullYear();
+        const month = String(localDate.getMonth() + 1).padStart(2, '0');
+        const day = String(localDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // --- MODIFIED: Fetches achievements from Firestore ---
+    async function getAchievements(user) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data();
+        } else {
+            // Document doesn't exist, so create it for a new user
+            const defaultAchievements = {
+                firstLight: { unlocked: false, unlockedAt: null, name: "First Light", description: "Turn on the grow light for the first time.", icon: "images/circle-1.png" },
+                greenThumb: { unlocked: false, unlockedAt: null, name: "Green Thumb", description: "Water your plant for the first time.", icon: "images/number-2.png" },
+                aGentleTouch: { unlocked: false, unlockedAt: null, name: "A Gentle Touch", description: "Interact with (click on) your plant.", icon: "images/number-3.png" },
+                curiousGardner: { unlocked: false, unlockedAt: null, name: "Curious Gardner", description: "Visit the 'Information' page.", icon: "images/number-4.png" },
+                dailyRoutine: { unlocked: false, unlockedAt: null, name: "Daily Routine", description: "Perform all three main care actions in a single day.", icon: "images/number-5.png" }
+            };
+            await setDoc(docRef, defaultAchievements);
+            return defaultAchievements;
+        }
+    }
+    
+    // --- MODIFIED: Saves achievements to Firestore ---
+    async function saveAchievements(user, achievements) {
+        const docRef = doc(db, "userAchievements", user.uid);
+        // Use updateDoc to modify the existing document
+        await updateDoc(docRef, achievements);
+    }
+
+    function notifyAchievement(achievementName) { 
+        alert(`Achievement Unlocked: ${achievementName}!`);
+    }
+
+    // --- MODIFIED: Fetches daily data from Firestore ---
+    async function getDailyCheckInData(user) {
+        const docRef = doc(db, "userDailyData", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data();
+        } else {
+            // Create a default structure for a new user
+            const defaultData = { checkIns: {} };
+            await setDoc(docRef, defaultData);
+            return defaultData;
+        }
+    }
+
+    // --- MODIFIED: Saves daily data to Firestore ---
+    async function saveDailyCheckInData(user, dailyData) {
+        const docRef = doc(db, "userDailyData", user.uid);
+        await updateDoc(docRef, dailyData);
+    }
+  </script>
 </body>
 </html>
