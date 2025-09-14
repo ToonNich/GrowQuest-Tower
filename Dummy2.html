@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+
+  <style>
+    /* --------------------------------------------------
+       Base + Theme
+    -------------------------------------------------- */
+    :root{
+      --bg-overlay: rgba(255,255,255,.155);
+      --panel-bg: #FFF2CB;
+      --panel-border: #FFBF00;
+      --ink: #2c1e10;
+      --ink-dark: #1d2a44;
+      --shadow-1: 0 0 10px rgba(0,0,0,.1);
+      --focus: #0b6efd;
+      --font: 'Pixelify Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: url('images/Farm_BG.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background: var(--bg-overlay);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Utilities */
+    .abs { position: absolute; }
+    .hidden{ display:none !important; }
+    .sr-only{ position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .btn { border: 0; background: transparent; cursor: pointer; }
+    .btn:focus-visible { outline: 3px dashed var(--focus); outline-offset: 3px; }
+
+    /* Icon buttons using background images */
+    .btn-icon {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      border-radius: 8px;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      * { scroll-behavior: auto !important; }
+      .btn, .btn-icon, .pot-ring { transition: none !important; }
+    }
+
+    /* --------------------------------------------------
+       Header time box
+    -------------------------------------------------- */
+    .time-box {
+      position: absolute; top: 9%; left: 50%; transform: translate(-50%, -50%);
+      width: 28%; height: 90px; padding: 0 10px;
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 20px; box-shadow: var(--shadow-1);
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 10;
+    }
+    #datetimeBox { flex: 1; text-align: center; font-size: 22px; }
+    #timeButton { width: 100px; height: 85px; background-image: url('images/Midnight.PNG'); }
+    .btn-daily { width: 70px; height: 70px; background-image: url('images/Calendar1.PNG'); background-size: contain; }
+    .btn-daily:hover { background-image: url('images/Calendar2.PNG'); }
+
+    /* --------------------------------------------------
+       Right-side controls
+    -------------------------------------------------- */
+    .btn-account       { width: 5%; height: 10%; top: 3%;  right: 1.5%; background-image: url('images/Account1.PNG'); }
+    .btn-account:hover { background-image: url('images/Account2.PNG'); }
+
+    .btn-noti          { width: 5%; height: 10%; top: 17%; right: 1.5%; background-image: url('images/Noti1.PNG'); }
+    .btn-noti:hover    { background-image: url('images/Noti2.PNG'); }
+
+    .btn-notiAlert       { width: 5%; height: 10%; top: 17%; right: 1.5%; background-image: url('images/NotiAlert1.PNG'); }
+    .btn-notiAlert:hover { background-image: url('images/NotiAlert2.PNG'); }
+
+    .btn-info       { width: 5%; height: 10%; top: 31%; right: 1.5%; background-image: url('images/info1.PNG'); }
+    .btn-info:hover { background-image: url('images/info2.PNG'); }
+
+    .btn-light { width: 5%; height: 10%; top: 45%; right: 1.5%; background-image: url('images/CloseLight.PNG'); transition: background-image .2s ease; }
+    .btn-light:hover:not(.on) { background-image: url('images/OpenLight.PNG'); }
+    .btn-light.on, .btn-light.on:hover { background-image: url('images/OpenLight.PNG'); }
+
+    /* --------------------------------------------------
+       Left-side controls
+    -------------------------------------------------- */
+    .btn-water       { width: 5%; height: 10%; top: 17%; left: 2%; background-image: url('images/WateringCan1.PNG'); }
+    .btn-water:hover { background-image: url('images/WateringCan2.PNG'); }
+
+    .btn-camera       { width: 4.5%; height: 9.5%; top: 30%; left: 2.25%; background-image: url('images/Camera1.PNG'); }
+    .btn-camera:hover { background-image: url('images/Camera2.PNG'); }
+
+    .btn-check       { width: 5%; height: 10%; top: 43%; left: 2%; background-image: url('images/CheckPlantBut2.PNG'); }
+    .btn-check:hover { background-image: url('images/CheckPlantBut1.PNG'); }
+
+    /* --------------------------------------------------
+       Bottom-right buttons
+    -------------------------------------------------- */
+    .btn-achieve       { width: 243px; height: 56px; bottom: 2%; right: 1.5%; background-image: url('images/Achievement1.PNG'); }
+    .btn-achieve:hover { background-image: url('images/Achievement2.PNG'); }
+
+    .btn-dashboard       { width: 236px; height: 56px; bottom: 10%; right: 1.5%; background-image: url('images/Dashboard1.PNG'); }
+    .btn-dashboard:hover { background-image: url('images/Dashboard2.PNG'); }
+
+    /* --------------------------------------------------
+       Profile + labels
+    -------------------------------------------------- */
+    .img-profile { position: absolute; top: 2%; left: 4.5%; transform: translateX(-50%); width: 6.5%; z-index: 1; }
+    #towerName   { position: absolute; top: 2.5%; left: 8%; font-size: 24px; color: #3a2d21; font-weight: bold; z-index: 2; }
+
+    /* --------------------------------------------------
+       Scan & Summary buttons (bottom-left)
+    -------------------------------------------------- */
+    .btn-scan, .btn-summary {
+      position: absolute; left: 2%; z-index: 2; font-family: var(--font); color: var(--ink);
+      border-radius: 14px; cursor: pointer;
+    }
+    .btn-scan{
+      bottom: 6%; width: 180px; height: 56px;
+      border: 2px solid var(--panel-border); background: #ffe082;
+      box-shadow: 0 4px 0 #d1a500, 0 8px 12px rgba(0,0,0,.25);
+      font-size: 24px;
+    }
+    .btn-scan:hover { background:#ffecb3; }
+    .btn-scan:disabled{ opacity:.55; cursor:not-allowed; box-shadow: 0 4px 0 #bda05a, 0 8px 12px rgba(0,0,0,.15); }
+
+    .btn-summary{
+      bottom: 16%; width: 180px; height: 48px; font-size: 22px; color: var(--ink-dark);
+      border: 2px solid #4aa3ff; background: #cfe8ff;
+      box-shadow: 0 4px 0 #2c75c9, 0 8px 12px rgba(0,0,0,.2);
+    }
+    .btn-summary:hover{ background: #e7f3ff; }
+
+    /* --------------------------------------------------
+       Six-pot grid (overlayed on soil)
+    -------------------------------------------------- */
+    .plot-grid { display: none; }
+    .plot-grid.show {
+      position: absolute; top: 27%; left: 50%; transform: translateX(-50%);
+      width: 58vw; max-width: 980px; aspect-ratio: 2.1 / 1;
+      display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
+      gap: clamp(26px, 6.8vw, 46px);
+      z-index: 2; pointer-events: none; /* children re-enable */
+    }
+
+    .pot { position: relative; pointer-events: auto; filter: drop-shadow(0 3px 0 rgba(0,0,0,.15));
+      --plantScale: 1; --plantYOffset: 2px; }
+
+    .pot:focus-visible{ outline: 3px dashed var(--focus); outline-offset: 6px; border-radius: 14px; }
+
+    .pot-base{ position: absolute; bottom: -5%; left: 50%; transform: translateX(-50%); width: 64%; image-rendering: pixelated; z-index: 3; }
+
+    .plant-sprite{
+      position: absolute; left: 50%; bottom: 48.5%; transform-origin: bottom center;
+      width: 58%; image-rendering: pixelated; user-select: none; cursor: pointer; z-index: 2;
+      /* Apply stage transforms via CSS variables */
+      transform: translate(-50%, var(--plantYOffset)) scale(var(--plantScale));
+    }
+
+    .pot-ring{ position: absolute; inset: 6%; border: 2px dashed rgba(255,215,0,0); border-radius: 12px; transition: border-color .12s ease; pointer-events: none; }
+    .pot:hover .pot-ring{ border-color: rgba(255,215,0,.85); }
+
+    .pot .splash{ position: absolute; bottom: 25%; left: 50%; transform: translateX(-50%); width: 58%; pointer-events: none; image-rendering: pixelated; z-index: 5; }
+
+    .pot::after{
+      content: attr(data-index);
+      position: absolute; right: 4%; bottom: -6%; width: clamp(18px,2.2vw,26px); height: clamp(18px,2.2vw,26px);
+      display: grid; place-items: center; background: #ffd84d; border: 2px solid #222; border-radius: 8px; color: #111;
+      font-size: .8em; box-shadow: 0 2px 0 #000; pointer-events: none; z-index: 10;
+    }
+
+    /* Stage scales */
+    .pot[data-stage="1"] { --plantScale: .55; --plantYOffset: -8px; }
+    .pot[data-stage="2"] { --plantScale: .90; }
+    .pot[data-stage="3"] { --plantScale: 1.10; }
+    .pot[data-stage="4"] { --plantScale: 1.30; }
+
+    /* --------------------------------------------------
+       Scan summary panel
+    -------------------------------------------------- */
+    .scan-summary{
+      position: absolute; left: 50%; bottom: 2%; transform: translateX(-50%);
+      width: min(680px, 84vw); padding: 12px 16px 16px;
+      background: var(--panel-bg); border: 2px solid var(--panel-border); border-radius: 18px;
+      box-shadow: 0 6px 0 #d1a500, 0 10px 22px rgba(0,0,0,.25); z-index: 3;
+      text-align: center;
+    }
+    .scan-summary h4{ margin: 0 0 6px; color: var(--ink); font-size: 22px; }
+    .scan-summary .meta{ margin-bottom: 8px; font-size: 16px; color: #3a2d21; }
+    .scan-summary .rows{ display: grid; gap: 8px; grid-template-columns: repeat(4, 1fr); }
+    .scan-summary .chip{ background:#ffe082; border:2px solid #d1a500; border-radius:12px; padding:8px 6px; line-height:1.1; }
+    .scan-summary .chip .idx{ font-size:13px; opacity:.75; }
+    .scan-summary .chip .stage{ font-size:20px; }
+    .scan-summary .chip .pct{ font-size:14px; opacity:.8; }
+    .scan-summary .close{ position:absolute; top:-10px; right:-10px; width:34px; height:34px; border-radius:50%; border:2px solid var(--panel-border); background:#ffecb3; box-shadow:0 3px 0 #d1a500; cursor:pointer; font-size:20px; }
+
+    /* --------------------------------------------------
+       Misc visuals
+    -------------------------------------------------- */
+    .watering-gif { position: absolute; top: 0; left: 0; width: 20%; pointer-events: none; display: none; z-index: 99; }
+  </style>
+</head>
+<body>
+  <!-- Right cluster -->
+  <button id="accountBtn"      class="btn btn-icon abs btn-account"    aria-label="Account"          data-href="AccountPage.html"></button>
+  <button id="notiNormalBtn"   class="btn btn-icon abs btn-noti hidden" aria-label="Notifications"    data-href="NotificationPage.html"></button>
+  <button id="notiAlertBtn"    class="btn btn-icon abs btn-notiAlert hidden" aria-label="New alerts" data-href="NotificationPage.html"></button>
+  <button id="infoBtn"         class="btn btn-icon abs btn-info"       aria-label="Information"      data-href="InfomationPage.html"></button>
+  <button id="lightButton"     class="btn btn-icon abs btn-light"      aria-label="Toggle grow light" type="button"></button>
+
+  <!-- Left cluster -->
+  <button id="waterBtn"        class="btn btn-icon abs btn-water"      aria-label="Watering can"     type="button"></button>
+  <button id="cameraBtn"       class="btn btn-icon abs btn-camera"     aria-label="Camera"           data-href="CameraPage.html"></button>
+  <button id="checkBtn"        class="btn btn-icon abs btn-check"      aria-label="Check plant"      data-href="PlantAnalysis.html"></button>
+
+  <!-- Bottom-right -->
+  <button id="achievementsBtn" class="btn btn-icon abs btn-achieve"    aria-label="Achievements"     data-href="AchievementsPage.html"></button>
+  <button id="dashboardBtn"    class="btn btn-icon abs btn-dashboard"  aria-label="Dashboard"        data-href="DashboardPage.html"></button>
+
+  <!-- Bottom-left actions -->
+  <button id="scanButton"    class="btn btn-scan"    type="button" title="Scan tower now">SCAN TOWER</button>
+  <button id="summaryButton" class="btn btn-summary" type="button" title="Show last scan summary">SUMMARY</button>
+
+  <!-- Profile + name -->
+  <img src="images/Prof.PNG" alt="Profile" class="img-profile" loading="lazy" decoding="async" />
+  <p id="towerName">Loading Tower...</p>
+
+  <!-- Time + daily box -->
+  <div class="time-box" role="group" aria-label="Date, time and daily check-in">
+    <button id="timeButton"   class="btn btn-icon" type="button" aria-label="Time of day image"></button>
+    <div id="datetimeBox" aria-live="polite"></div>
+    <button id="dailyBtn"     class="btn btn-icon btn-daily" type="button" aria-label="Daily check-in" data-href="DailyCheckIn.html"></button>
+  </div>
+
+  <!-- Watering cursor effect -->
+  <img id="wateringGif" src="images/watering.gif" alt="Watering animation" class="watering-gif" />
+
+  <!-- Six-pot grid (overlayed over soil) -->
+  <div id="plotGrid" class="plot-grid" aria-label="Hydroponic pots (6)">
+    <!-- Pot 1..6 (left→right, top→bottom) -->
+    <div class="pot" data-index="1" role="button" tabindex="0" aria-label="Pot 1"><img class="pot-base" src="images/ClayPot.png" alt="Clay pot" loading="lazy" decoding="async"><img class="plant-sprite" alt="Pot 1 plant" loading="lazy" decoding="async"><div class="pot-ring" aria-hidden="true"></div></div>
+    <div class="pot" data-index="2" role="button" tabindex="0" aria-label="Pot 2"><img class="pot-base" src="images/ClayPot.png" alt="Clay pot" loading="lazy" decoding="async"><img class="plant-sprite" alt="Pot 2 plant" loading="lazy" decoding="async"><div class="pot-ring" aria-hidden="true"></div></div>
+    <div class="pot" data-index="3" role="button" tabindex="0" aria-label="Pot 3"><img class="pot-base" src="images/ClayPot.png" alt="Clay pot" loading="lazy" decoding="async"><img class="plant-sprite" alt="Pot 3 plant" loading="lazy" decoding="async"><div class="pot-ring" aria-hidden="true"></div></div>
+    <div class="pot" data-index="4" role="button" tabindex="0" aria-label="Pot 4"><img class="pot-base" src="images/ClayPot.png" alt="Clay pot" loading="lazy" decoding="async"><img class="plant-sprite" alt="Pot 4 plant" loading="lazy" decoding="async"><div class="pot-ring" aria-hidden="true"></div></div>
+    <div class="pot" data-index="5" role="button" tabindex="0" aria-label="Pot 5"><img class="pot-base" src="images/ClayPot.png" alt="Clay pot" loading="lazy" decoding="async"><img class="plant-sprite" alt="Pot 5 plant" loading="lazy" decoding="async"><div class="pot-ring" aria-hidden="true"></div></div>
+    <div class="pot" data-index="6" role="button" tabindex="0" aria-label="Pot 6"><img class="pot-base" src="images/ClayPot.png" alt="Clay pot" loading="lazy" decoding="async"><img class="plant-sprite" alt="Pot 6 plant" loading="lazy" decoding="async"><div class="pot-ring" aria-hidden="true"></div></div>
+  </div>
+
+  <!-- Tower scan summary -->
+  <div id="scanSummary" class="scan-summary hidden" aria-live="polite">
+    <button id="scanSummaryClose" class="close" type="button" title="Hide">×</button>
+    <h4>Tower Scan Summary</h4>
+    <div id="scanSummaryLevel" class="level-badge">Tower Level: —</div>
+    <div id="scanSummaryMeta" class="meta">—</div>
+    <div id="scanSummaryRows" class="rows"></div>
+  </div>
+
+  <!-- Firebase + App logic -->
+  <script type="module">
+    // --------------------------------------------------
+    // Imports
+    // --------------------------------------------------
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+    import { getFirestore, getDocs, collection, query, where, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    // --------------------------------------------------
+    // Config
+    // --------------------------------------------------
+    const USE_POT_GRID = true;
+
+    const NORMAL_SPRITE = { 1: 'images/NormalPlant.gif', 2: 'images/Stage2Normal.gif', 3: 'images/Stage3Normal.gif', 4: 'images/Stage4Normal.gif' };
+    const TOUCH_SPRITE  = { 1: 'images/Stage2Touch.gif',  2: 'images/Stage2Touch.gif',  3: 'images/Stage3Touch.gif',  4: 'images/Stage4Touch.gif'  };
+
+    // Endpoints (overridable via localStorage: doseBase, scanBase)
+    const DEFAULTS = { DOSE_BASE: 'http://127.0.0.1:5001', SCAN_BASE: 'http://192.168.2.2:5000/' };
+    const DOSE_BASE = localStorage.getItem('doseBase') || DEFAULTS.DOSE_BASE;
+    const SCAN_BASE = localStorage.getItem('scanBase') || DEFAULTS.SCAN_BASE;
+    // Quick helper to change endpoints at runtime from DevTools
+    window.setEndpoints = (dose, scan) => {
+      if (dose) localStorage.setItem('doseBase', dose);
+      if (scan) localStorage.setItem('scanBase', scan);
+      alert('Endpoints updated. Reload the page to apply.');
+    };
+
+    // Preload to prevent first-use flicker
+    (function preloadSprites(){
+      [...Object.values(NORMAL_SPRITE), ...Object.values(TOUCH_SPRITE), 'images/ClayPot.png'].forEach(src => { const img = new Image(); img.src = src; });
+    })();
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6oeXokIhQuOj8RJ2mpXPqwqP10gD0Xd0",
+      authDomain: "seniorproject-684c1.firebaseapp.com",
+      projectId: "seniorproject-684c1",
+      storageBucket: "seniorproject-684c1.appspot.com",
+      messagingSenderId: "847138584376",
+      appId: "1:847138584376:web:eface0926c96092daef3cd",
+      measurementId: "G-N0CM5TQBM8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const auth = getAuth(app);
+
+    // --------------------------------------------------
+    // State
+    // --------------------------------------------------
+    const pots = Array.from({ length: 6 }, () => ({ hasPlant: false, stageIdx: 1, greenPct: 0, sectionImgUrl: '' }));
+
+    // --------------------------------------------------
+    // Utilities
+    // --------------------------------------------------
+    const $  = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    const joinURL = (base, path) => base.replace(/\/+$/, '') + '/' + String(path).replace(/^\/+/, '');
+
+    function getTodayLocalString() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function calcTowerLevel(avgGreenPct){
+      let level = 1, label = 'Early';
+      if (avgGreenPct >= 20) { level = 4; label = 'Mature'; }
+      else if (avgGreenPct >= 12) { level = 3; label = 'Growing'; }
+      else if (avgGreenPct >= 5)  { level = 2; label = 'Seedling'; }
+      return { level, label };
+    }
+
+    function stageIndexFromSection(s){
+      if (s?.stage){
+        const n = s.stage.toLowerCase();
+        if (n.includes('seed')) return 1;
+        if (n.includes('grow')) return 2;
+        if (n.includes('mature')) return 3;
+        if (n.includes('flower') || n.includes('fruit') || n.includes('harvest')) return 4;
+      }
+      const g = Number(s?.green_pct ?? 0);
+      if (g < 5)  return 1;
+      if (g < 15) return 2;
+      if (g < 30) return 3;
+      return 4;
+    }
+
+    function setScanBusy(busy) {
+      const btn = $('#scanButton');
+      if (!btn) return;
+      btn.disabled = busy;
+      btn.textContent = busy ? 'SCANNING…' : 'SCAN TOWER';
+    }
+
+    // Safer fetch with timeout + better errors
+    async function safeFetch(url, options = {}, timeoutMs = 8000){
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try{
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        return res;
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
+    function formatDateTime(now = new Date()){
+      const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      return `${dateStr} at ${hh}:${mm}`;
+    }
+
+    function updateTimeImage(now = new Date()){
+      const h = now.getHours();
+      const map = [
+        ['images/Midnight.PNG'],        // 0
+        ['images/Midnight.PNG'],        // 1
+        ['images/Midnight.PNG'],        // 2
+        ['images/Midnight.PNG'],        // 3
+        ['images/Midnight.PNG'],        // 4
+        ['images/Morning.PNG'],         // 5
+        ['images/Morning.PNG'],         // 6
+        ['images/Morning.PNG'],         // 7
+        ['images/LateMorning.PNG'],     // 8
+        ['images/LateMorning.PNG'],     // 9
+        ['images/LateMorning.PNG'],     // 10
+        ['images/Afternoon.PNG'],       // 11
+        ['images/Afternoon.PNG'],       // 12
+        ['images/Afternoon.PNG'],       // 13
+        ['images/Afternoon.PNG'],       // 14
+        ['images/Evening.PNG'],         // 15
+        ['images/Evening.PNG'],         // 16
+        ['images/Evening.PNG'],         // 17
+        ['images/Night.PNG'],           // 18
+        ['images/Night.PNG'],           // 19
+        ['images/LateNight.PNG'],       // 20
+        ['images/LateNight.PNG'],       // 21
+        ['images/LateNight.PNG'],       // 22
+        ['images/Midnight.PNG']         // 23
+      ];
+      $('#timeButton').style.backgroundImage = `url('${map[h][0]}')`;
+    }
+
+    function startDateTimeTicker(){
+      const box = $('#datetimeBox');
+      function update(){ box.textContent = formatDateTime(); updateTimeImage(); }
+      update();
+      const now = new Date();
+      const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+      setTimeout(() => { update(); setInterval(update, 60*1000); }, Math.max(0, msToNextMinute));
+    }
+
+    // --------------------------------------------------
+    // Pots UI
+    // --------------------------------------------------
+    function animatePlantTouch(index){
+      const potEl = $(`#plotGrid .pot[data-index="${index+1}"]`);
+      if (!potEl) return;
+      const sprite = potEl.querySelector('.plant-sprite');
+      const stage  = pots[index]?.stageIdx || 1;
+      if (!sprite) return;
+      sprite.src = TOUCH_SPRITE[stage];
+      setTimeout(() => { sprite.src = NORMAL_SPRITE[stage]; }, 1200);
+    }
+
+    function initPotGrid(){
+      const grid = $('#plotGrid');
+      if (!grid) return;
+      if (USE_POT_GRID){ grid.classList.add('show'); }
+
+      // default sprite
+      grid.querySelectorAll('.plant-sprite').forEach(el => el.src = NORMAL_SPRITE[1]);
+
+      // Mouse/touch animation + achievement
+      grid.addEventListener('mousedown', async (ev) => {
+        const potEl = ev.target.closest('.pot');
+        if (!potEl) return;
+        const i = Number(potEl.dataset.index) - 1;
+        animatePlantTouch(i);
+
+        try{
+          const achievements = await getAchievements(window.currentUser);
+          if (!achievements.aGentleTouch.unlocked) {
+            achievements.aGentleTouch.unlocked = true;
+            achievements.aGentleTouch.unlockedAt = new Date().toISOString();
+            notifyAchievement('A Gentle Touch');
+            await saveAchievements(window.currentUser, achievements);
+          }
+        }catch(e){ /* no-op */ }
+      });
+
+      // Keyboard: Enter/Space on a focused pot triggers the same animation
+      grid.addEventListener('keydown', (ev) => {
+        const potEl = ev.target.closest?.('.pot');
+        if (!potEl) return;
+        if (ev.key === 'Enter' || ev.key === ' '){
+          ev.preventDefault();
+          const i = Number(potEl.dataset.index) - 1;
+          animatePlantTouch(i);
+        }
+      });
+    }
+
+    function updatePotA11y(){
+      $$('#plotGrid .pot').forEach((potEl, i) => {
+        const p = pots[i];
+        const stageName = ['Seedling','Growing','Mature','Harvest'][Math.max(0, (p.stageIdx||1)-1)];
+        const has = p.hasPlant ? 'with plant' : 'empty';
+        const green = `${Math.round(p.greenPct||0)}% green`;
+        potEl.setAttribute('aria-label', `Pot ${i+1}, ${has}, ${stageName}, ${green}`);
+      });
+    }
+
+    function renderPots(){
+      if (!USE_POT_GRID) return;
+      $$('#plotGrid .pot').forEach((potEl, i) => {
+        const sprite = potEl.querySelector('.plant-sprite');
+        const p = pots[i];
+        const stageIdx = (p && p.stageIdx) ? p.stageIdx : 1;
+        potEl.dataset.stage = stageIdx;
+        potEl.classList.toggle('empty', !p || !p.hasPlant);
+        if (!p || !p.hasPlant){ sprite.style.opacity = .15; sprite.src = NORMAL_SPRITE[1]; }
+        else { sprite.style.opacity = 1; sprite.src = NORMAL_SPRITE[stageIdx]; }
+      });
+      updatePotA11y();
+    }
+
+    function updatePotGridFromSummary(summary){
+      if (!summary) return;
+      const base = (summary.scan_dir || '').replace(/\/+$/,'');
+      const list = summary.sections || [];
+      for (let i=0;i<6;i++){
+        const s = list[i];
+        pots[i] = s ? {
+          hasPlant: !!s.has_plant,
+          stageIdx: stageIndexFromSection(s),
+          greenPct: Number(s.green_pct ?? 0),
+          sectionImgUrl: s.image ? `${base}/${s.image}` : ''
+        } : { hasPlant:false, stageIdx:1, greenPct:0, sectionImgUrl:'' };
+      }
+      renderPots();
+    }
+
+    // --------------------------------------------------
+    // Scan summary UI
+    // --------------------------------------------------
+    function renderScanSummary(summary, visible=true){
+      if (!summary) return;
+      const panel = $('#scanSummary');
+      const meta  = $('#scanSummaryMeta');
+      const rows  = $('#scanSummaryRows');
+      const levelEl = $('#scanSummaryLevel');
+
+      const avg = Number(summary.avg_green_pct || 0);
+      const lvl = calcTowerLevel(avg);
+      levelEl.textContent = `Tower Level: L${lvl.level} • ${lvl.label}`;
+      levelEl.className = `level-badge lv${lvl.level}`;
+
+      meta.textContent = `Avg green: ${avg}% • Sections: ${summary.count}`;
+      rows.innerHTML = '';
+
+      const cols = Math.max(2, Math.min(6, Number(summary.count) || 4));
+      rows.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+      (summary.sections || []).forEach((s, i) => {
+        const d = document.createElement('div');
+        d.className = 'chip';
+        d.innerHTML = `<div class="idx">#${i+1}</div><div class="stage">${s.stage || '-'}</div><div class="pct">${s.green_pct ?? 0}%</div>`;
+        rows.appendChild(d);
+      });
+
+      try { localStorage.setItem('lastScanSummary', JSON.stringify({ ...summary, tower_level: lvl.level, tower_label: lvl.label })); } catch(e){}
+      if (visible){ panel.classList.remove('hidden'); localStorage.setItem('summaryVisible','true'); }
+      else { panel.classList.add('hidden'); localStorage.setItem('summaryVisible','false'); }
+    }
+
+    // --------------------------------------------------
+    // Networking (Pi / PC services)
+    // --------------------------------------------------
+    async function triggerDose(user, durationMs = 3000, potIndex = null){
+      try{
+        const body = { duration_ms: durationMs, uid: user?.uid || '' };
+        if (potIndex !== null) body.pot_index = potIndex; // 0..5
+        const res = await safeFetch(joinURL(DOSE_BASE, 'dose'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, 8000);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        console.log('✅ Dose command sent', body);
+      }catch(err){ console.error('❌ Dose command failed:', err); alert('Could not send dose command to the PC dose server.'); }
+    }
+
+    async function triggerScanTower(){
+      if ($('#scanButton').disabled) return; // prevent double-clicks
+      setScanBusy(true);
+      try{
+        const res = await safeFetch(joinURL(SCAN_BASE, 'scan_tower'), { method:'POST' }, 20000);
+        let data = {};
+        try{ data = await res.json(); } catch(_){ data = {}; }
+        if (res.status === 409)      alert('A scan is already running. Please wait.');
+        else if (!res.ok)           alert(`Scan failed (${res.status}). ${data.error || data.stderr || ''}`);
+        else if (data?.summary){    renderScanSummary(data.summary, true); updatePotGridFromSummary(data.summary); }
+        else                        alert('Scan finished but no summary was returned.');
+      }catch(err){ console.error(err); alert('Could not reach the Pi to start the scan.'); }
+      finally { setScanBusy(false); }
+    }
+
+    // --------------------------------------------------
+    // Firestore helpers
+    // --------------------------------------------------
+    async function getAchievements(user){
+      const ref = doc(db, 'userAchievements', user.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) return snap.data();
+      const defaultAchievements = {
+        firstLight: { unlocked: false, unlockedAt: null, name: 'First Light', description: 'Turn on the grow light for the first time.', icon: 'images/circle-1.png' },
+        greenThumb: { unlocked: false, unlockedAt: null, name: 'Green Thumb', description: 'Water your plant for the first time.', icon: 'images/number-2.png' },
+        aGentleTouch: { unlocked: false, unlockedAt: null, name: 'A Gentle Touch', description: 'Interact with (click on) your plant.', icon: 'images/number-3.png' },
+        curiousGardner: { unlocked: false, unlockedAt: null, name: 'Curious Gardner', description: "Visit the 'Information' page.", icon: 'images/number-4.png' },
+        dailyRoutine: { unlocked: false, unlockedAt: null, name: 'Daily Routine', description: 'Perform all three main care actions in a single day.', icon: 'images/number-5.png' }
+      };
+      await setDoc(ref, defaultAchievements);
+      return defaultAchievements;
+    }
+
+    async function saveAchievements(user, achievements){
+      const ref = doc(db, 'userAchievements', user.uid);
+      await updateDoc(ref, achievements);
+    }
+
+    function notifyAchievement(name){ alert(`Achievement Unlocked: ${name}!`); }
+
+    async function getDailyCheckInData(user){
+      const ref = doc(db, 'userDailyData', user.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) return snap.data();
+      const defaultData = { checkIns: {} };
+      await setDoc(ref, defaultData);
+      return defaultData;
+    }
+
+    async function saveDailyCheckInData(user, dailyData){
+      const ref = doc(db, 'userDailyData', user.uid);
+      await updateDoc(ref, dailyData);
+    }
+
+    async function checkNotificationStatus(){
+      try{
+        const qy = query(collection(db, 'Main'), where('read', '==', false));
+        const qs = await getDocs(qy);
+        const hasUnread = !qs.empty;
+        $('#notiNormalBtn').classList.toggle('hidden', hasUnread);
+        $('#notiAlertBtn').classList.toggle('hidden', !hasUnread);
+      }catch(err){ console.error('Error checking notifications:', err); }
+    }
+
+    async function loadUserPlantData(user){
+      const nameEl = $('#towerName');
+      const plantRef = doc(db, 'userPlants', user.uid);
+      const snap = await getDoc(plantRef);
+      if (snap.exists()){
+        const data = snap.data();
+        nameEl.textContent = data.plantName || 'My Tower';
+      } else {
+        nameEl.textContent = 'Setup Your Plant!';
+      }
+    }
+
+    // --------------------------------------------------
+    // Event wiring (once)
+    // --------------------------------------------------
+    function setupEventHandlers(user){
+      // Generic nav buttons
+      $$('button[data-href]').forEach(btn => btn.addEventListener('click', () => { location.href = btn.dataset.href; }));
+
+      // Light toggle
+      const lightBtn = $('#lightButton');
+      let lightIsOn = localStorage.getItem('lightIsOn') === 'true';
+      if (lightIsOn) lightBtn.classList.add('on');
+
+      lightBtn.addEventListener('click', async () => {
+        try{
+          if (!lightIsOn){
+            const res = await safeFetch('http://localhost:8000/turn_on', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ colortemp: 6500, brightness: 100 }) }, 8000);
+            if (!res.ok) throw new Error('Failed to turn on light');
+            lightIsOn = true;
+            const achievements = await getAchievements(user);
+            if (!achievements.firstLight.unlocked){
+              achievements.firstLight.unlocked = true;
+              achievements.firstLight.unlockedAt = new Date().toISOString();
+              notifyAchievement('First Light');
+              await saveAchievements(user, achievements);
+            }
+          } else {
+            const res = await safeFetch('http://localhost:8000/turn_off', { method:'POST' }, 8000);
+            if (!res.ok) throw new Error('Failed to turn off light');
+            lightIsOn = false;
+          }
+          lightBtn.classList.toggle('on', lightIsOn);
+          localStorage.setItem('lightIsOn', String(lightIsOn));
+        }catch(err){ alert('Error controlling light: ' + err.message); }
+      });
+
+      // Watering drag → drop on pot
+      const wateringGif = $('#wateringGif');
+      let isWatering = false;
+
+      function moveWaterGif(e){ if (wateringGif){ wateringGif.style.left = e.clientX + 'px'; wateringGif.style.top = e.clientY + 'px'; } }
+
+      $('#waterBtn')?.addEventListener('mousedown', (e) => {
+        isWatering = true; if (wateringGif){ wateringGif.style.display = 'block'; moveWaterGif(e); }
+        const charEl = document.getElementById('character'); // legacy single avatar (kept)
+        if (charEl) charEl.src = 'images/Stage4Warerting.gif';
+      });
+
+      document.addEventListener('mousemove', (e) => { if (isWatering) moveWaterGif(e); });
+
+      document.addEventListener('mouseup', async (e) => {
+        if (!isWatering) return; isWatering = false; if (wateringGif) wateringGif.style.display = 'none';
+
+        // Find pot under cursor (if any)
+        let potIndex = null;
+        const elUnder = document.elementFromPoint(e.clientX, e.clientY);
+        const potEl = elUnder?.closest?.('.pot') || null;
+        if (potEl) potIndex = Number(potEl.dataset.index) - 1; // 0..5
+
+        if (potIndex === null) return; // nothing targeted
+
+        // Visuals for watering
+        if (potEl){
+          const p = pots[potIndex];
+          if (p && p.hasPlant){
+            const sprite = potEl.querySelector('.plant-sprite');
+            const stage  = p.stageIdx || 1;
+            if (sprite){ sprite.src = TOUCH_SPRITE[stage]; setTimeout(() => { sprite.src = NORMAL_SPRITE[stage]; }, 1000); }
+            const splash = document.createElement('img'); splash.src = 'images/watering.gif'; splash.className = 'splash'; potEl.appendChild(splash); setTimeout(() => splash.remove(), 900);
+          }
+        }
+
+        try { await triggerDose(user, 1500, potIndex); } catch(_){}
+
+        // Achievements + daily check-in
+        try{
+          const achievements = await getAchievements(user);
+          if (!achievements.greenThumb.unlocked){
+            achievements.greenThumb.unlocked = true; achievements.greenThumb.unlockedAt = new Date().toISOString();
+            notifyAchievement('Green Thumb'); await saveAchievements(user, achievements);
+          }
+          const today = getTodayLocalString();
+          const daily = await getDailyCheckInData(user);
+          if (!daily.checkIns[today]) daily.checkIns[today] = { taskComplete:false, rewardClaimed:false };
+          if (daily.checkIns[today].taskComplete === false){
+            daily.checkIns[today].taskComplete = true; await saveDailyCheckInData(user, daily); alert('Daily Task Complete: Water the plant!');
+          }
+        }catch(_){ /* ignore */ }
+
+        loadUserPlantData(user);
+      });
+
+      // Scan + Summary
+      $('#scanButton')?.addEventListener('click', triggerScanTower);
+      $('#summaryButton')?.addEventListener('click', () => {
+        const cached = localStorage.getItem('lastScanSummary');
+        if (!cached) { alert('No scan summary yet. Run SCAN TOWER first.'); return; }
+        renderScanSummary(JSON.parse(cached), true);
+      });
+
+      // Summary panel close
+      $('#scanSummaryClose')?.addEventListener('click', () => { $('#scanSummary').classList.add('hidden'); localStorage.setItem('summaryVisible','false'); });
+    }
+
+    // --------------------------------------------------
+    // App start
+    // --------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+      // Date/time ticker (minute-aligned)
+      startDateTimeTicker();
+
+      // Pot grid
+      initPotGrid();
+      try { const cached = localStorage.getItem('lastScanSummary'); if (cached) updatePotGridFromSummary(JSON.parse(cached)); } catch(e){}
+
+      // Restore summary panel if it was left open
+      try { const cached = localStorage.getItem('lastScanSummary'); const vis = localStorage.getItem('summaryVisible') === 'true'; if (cached && vis) renderScanSummary(JSON.parse(cached), true); } catch(e){}
+
+      // Auth gate
+      onAuthStateChanged(auth, async (user) => {
+        if (!user){ location.href = 'LoginPage.html'; return; }
+        window.currentUser = user; // used in some handlers
+
+        setupEventHandlers(user);
+        await checkNotificationStatus();
+        await loadUserPlantData(user);
+
+        // Link RasPi → UID
+        try { const raspiID = 'raspi_01'; await setDoc(doc(db, 'sensorLinks', raspiID), { uid: user.uid }); console.log(`✅ Linked ${raspiID} to UID: ${user.uid}`); }
+        catch (e) { console.error('🔥 Failed to link RasPi ID:', e); }
+      });
+    });
+  </script>
+</body>
+</html>
