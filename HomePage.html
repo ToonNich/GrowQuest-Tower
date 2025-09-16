@@ -320,6 +320,59 @@
     .pot[data-stage="3"] { --plantScale: 1.10; }
     .pot[data-stage="4"] { --plantScale: 1.30; }  /* largest */
 
+
+    .pot::before{
+    content: attr(data-banner);         /* text comes from JS: potEl.dataset.banner */
+    position: absolute;
+    left: 50%;
+    bottom: 88%;                        /* position above the pot; tweak as needed */
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background: #fffbe6;
+    border: 2px solid #222;
+    border-radius: 10px;
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 12px;
+    line-height: 1;
+    color: #222;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 #000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .12s ease;
+    pointer-events: none;               /* never blocks clicks or watering */
+    z-index: 30;                        /* above pot/rim/plant */
+  }
+
+  /* little pointer arrow under the banner */
+ .pot-ring::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2%);            /* sit just under the banner */
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px; height: 8px;
+  background: #fffbe6;                 /* same as banner bg */
+  border-left: 2px solid #222;         /* same border as banner */
+  border-bottom: 2px solid #222;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .12s ease;
+  pointer-events: none;
+  z-index: 29;
+}
+
+  .pot:hover::before,
+  .pot:hover::after{
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Optional: dim or hide banner on empty pots */
+  .pot.empty::before,
+  .pot.empty::after{
+    opacity: .25;              /* or: visibility:hidden; to hide completely */
+  }  
   </style>
 </head>
 <body>
@@ -408,22 +461,45 @@
 
     // Stage → normal and touch sprites (use web-relative paths)
     const NORMAL_SPRITE = {
-      1: 'images/NormalPlant.gif',
+      1: 'images/Stage1Normal.gif',
       2: 'images/Stage2Normal.gif',
       3: 'images/Stage3Normal.gif',
       4: 'images/Stage4Normal.gif',
     };
     const TOUCH_SPRITE = {
-      1: 'images/Stage2Touch.gif', // stage 1 uses Stage2Touch per your files
+      1: 'images/Stage1Touch.gif', // stage 1 uses Stage2Touch per your files
       2: 'images/Stage2Touch.gif',
       3: 'images/Stage3Touch.gif',
       4: 'images/Stage4Touch.gif',
     };
 
+    // Stage → watering animation sprites
+    const WATERING_SPRITE = {
+      1: 'images/Stage1Watering.gif',
+      2: 'images/Stage2Watering.gif',
+      3: 'images/Stage3Watering.gif',
+      4: 'images/Stage4Warerting.gif',  // keep your current filename spelling
+    };
+    // Duration to keep the watering animation on before reverting
+    const WATERING_ANIM_MS = 1500;       // matches your 1.5s dose call
+
+
+
+    // Human-readable labels for the hover banner
+    const STAGE_LABEL = Object.freeze({
+      1: "Seedling",
+      2: "Growing",
+      3: "Mature",
+      4: "Harvest",
+    });
+
     // Preload to prevent first-use flicker
     (function preloadSprites(){
-      [...Object.values(NORMAL_SPRITE), ...Object.values(TOUCH_SPRITE), 'images/ClayPot.png'].forEach(src=>{
-        const img = new Image(); img.src = src;
+      [ ...Object.values(NORMAL_SPRITE), 
+        ...Object.values(TOUCH_SPRITE), 
+        ...Object.values(WATERING_SPRITE), 
+        'images/ClayPot.png']
+        .forEach(src=>{ const img = new Image(); img.src = src;
       });
     })();
 
@@ -555,7 +631,7 @@
       const grid = document.getElementById('plotGrid');
       if (!grid) return;
 
-            grid.querySelectorAll('.pot').forEach((potEl, i)=>{
+      grid.querySelectorAll('.pot').forEach((potEl, i)=>{
         const sprite = potEl.querySelector('.plant-sprite');
         const p = pots[i];
 
@@ -563,6 +639,14 @@
         const stageIdx = (p && p.stageIdx) ? p.stageIdx : 1;
         potEl.dataset.stage = stageIdx;               // <— drives CSS scale per stage
         potEl.classList.toggle('empty', !p || !p.hasPlant); // <— optional: style empties
+
+        const isEmpty = !p || !p.hasPlant;
+        if (isEmpty) {
+          potEl.dataset.banner = "Empty pot";
+        } else {
+          const green = Math.round(Number(p.greenPct || 0));
+          potEl.dataset.banner = `Lv.${stageIdx} • ${STAGE_LABEL[stageIdx] || "Stage"} • ${green}% green`;
+        }
 
         if (!p || !p.hasPlant){
           sprite.style.opacity = .15;                 // empty pot look
@@ -873,10 +957,13 @@
             if (p && p.hasPlant) {
               const sprite = potEl.querySelector('.plant-sprite');
               const stage  = p.stageIdx || 1;
+
               if (sprite) {
-                sprite.src = TOUCH_SPRITE[stage];
-                setTimeout(() => { sprite.src = NORMAL_SPRITE[stage]; }, 1000);
+                // play watering animation, then restore to the normal sprite
+                sprite.src = WATERING_SPRITE[stage] || TOUCH_SPRITE[stage];
+                setTimeout(() => { sprite.src = NORMAL_SPRITE[stage]; }, WATERING_ANIM_MS);
               }
+              
               // quick splash
               const splash = document.createElement('img');
               splash.src = 'images/watering.gif';   // your existing asset
