@@ -114,4 +114,4 @@ def generate_advice(pred_label):
     return advices.get(pred_label, "No advice available.")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
